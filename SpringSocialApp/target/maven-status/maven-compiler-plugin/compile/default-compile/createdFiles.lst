@@ -1,0 +1,6 @@
+com\socialapp\springsocialapp\JakartaRestConfiguration.class
+com\socialapp\configs\ThymeleafConfig.class
+com\socialapp\springsocialapp\resources\JakartaEE11Resource.class
+com\socialapp\configs\WebAppContextConfigs.class
+com\socialapp\configs\DispatcherServletInit.class
+com\socialapp\controllers\IndexController.class
