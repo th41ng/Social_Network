@@ -4,10 +4,15 @@
  */
 package com.socialapp.repository;
 
+import com.socialapp.pojo.User;
+
 /**
  *
  * @author DELL G15
  */
 public interface UserRepository {
-    
+     User getUserByUsername(String username);
+    User getUserByEmail(String email);
+    User getUserById(int id);
+    User addUser(User user);
 }

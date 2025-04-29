@@ -4,10 +4,23 @@
  */
 package com.socialapp.repository;
 
+import com.socialapp.pojo.Comment;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author DELL G15
  */
 public interface CommentRepository {
-    
+
+    List<Comment> getComments(Map<String, String> params);
+
+    Comment getCommentById(int id);
+
+    Comment addOrUpdateComment(Comment comment);
+
+    void deleteComment(int id);
+
+    List<Comment> getCommentsByPostId(int postId);
 }

@@ -4,10 +4,25 @@
  */
 package com.socialapp.repository;
 
+import com.socialapp.pojo.Reaction;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author DELL G15
  */
 public interface ReactionRepository {
-    
+
+    List<Reaction> getReactions(Map<String, String> params);
+
+    Reaction getReactionById(int id);
+
+    Reaction addOrUpdateReaction(Reaction reaction);
+
+    void deleteReaction(int id);
+
+    List<Reaction> getReactionsByPostId(int postId);
+
+    List<Reaction> getReactionsByCommentId(int commentId);
 }
