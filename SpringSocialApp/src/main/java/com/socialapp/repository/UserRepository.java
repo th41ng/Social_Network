@@ -1,18 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.socialapp.repository;
 
-import com.socialapp.pojo.User;
+import com.socialapp.pojo.Users;
 
 /**
- *
- * @author DELL G15
+ * Giao diện cho các thao tác với người dùng
  */
 public interface UserRepository {
-     User getUserByUsername(String username);
-    User getUserByEmail(String email);
-    User getUserById(int id);
-    User addUser(User user);
+    // Lấy thông tin người dùng theo tên đăng nhập
+    Users getUserByUsername(String username);
+
+    // Lấy thông tin người dùng theo email
+    Users getUserByEmail(String email);
+
+    // Lấy thông tin người dùng theo ID
+    Users getUserById(int id);
+
+    // Thêm mới một người dùng
+    Users addUser(Users user);
+
+    // Cập nhật thông tin người dùng
+    Users updateUser(Users user);
+
+    // Xóa người dùng theo ID
+    void deleteUser(int id);
+
+    // Xác thực người dùng theo tên đăng nhập hoặc email và mật khẩu
+    boolean authenticate(String usernameOrEmail, String password);
 }

@@ -1,10 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.repository.impl;
 
-import com.socialapp.pojo.User;
+import com.socialapp.pojo.Users;
 import com.socialapp.repository.UserRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
@@ -14,10 +10,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- * @author DELL G15
- */
 @Repository
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
@@ -26,45 +18,69 @@ public class UserRepositoryImpl implements UserRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public User getUserByUsername(String username) {
+    public Users getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
         try {
-            Query q = s.createNamedQuery("User.findByUsername", User.class);
+            Query q = s.createNamedQuery("User.findByUsername", Users.class);
             q.setParameter("username", username);
-            return (User) q.getSingleResult();
+            return (Users) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public Users getUserByEmail(String email) {
         Session s = this.factory.getObject().getCurrentSession();
         try {
-            Query q = s.createNamedQuery("User.findByEmail", User.class);
+            Query q = s.createNamedQuery("User.findByEmail", Users.class);
             q.setParameter("email", email);
-            return (User) q.getSingleResult();
+            return (Users) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public User getUserById(int id) {
+    public Users getUserById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        try {
-            Query q = s.createNamedQuery("User.findById", User.class);
-            q.setParameter("id", id);
-            return (User) q.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return s.get(Users.class, id);
     }
 
     @Override
-    public User addUser(User user) {
+    public Users addUser(Users user) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(user);
         return user;
+    }
+
+    @Override
+    public boolean authenticate(String usernameOrEmail, String password) {
+        Session s = this.factory.getObject().getCurrentSession();
+        try {
+            String hql = "FROM Users u WHERE (u.username = :usernameOrEmail OR u.email = :usernameOrEmail) AND u.password = :password";
+            Query q = s.createQuery(hql, Users.class);
+            q.setParameter("usernameOrEmail", usernameOrEmail);
+            q.setParameter("password", password);
+            return !q.getResultList().isEmpty();
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public Users updateUser(Users user) {
+        Session s = this.factory.getObject().getCurrentSession();
+        s.update(user);
+        return user;
+    }
+
+    @Override
+    public void deleteUser(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Users user = s.get(Users.class, id);
+        if (user != null) {
+            s.delete(user);
+        }
     }
 }

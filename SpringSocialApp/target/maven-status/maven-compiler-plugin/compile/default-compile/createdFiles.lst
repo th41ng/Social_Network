@@ -11,6 +11,7 @@ com\socialapp\repository\impl\SurveyRepositoryImpl.class
 com\socialapp\service\impl\ReactionServiceImpl.class
 com\socialapp\repository\UserRepository.class
 com\socialapp\controllers\EventController.class
+com\socialapp\pojo\SurveyQuestion.class
 com\socialapp\service\SurveyResponseService.class
 com\socialapp\repository\GroupRepository.class
 com\socialapp\controllers\ApiController.class
@@ -28,6 +29,7 @@ com\socialapp\pojo\Comment.class
 com\socialapp\service\ReactionService.class
 com\socialapp\configs\HibernateConfigs.class
 com\socialapp\repository\ReactionRepository.class
+com\socialapp\pojo\SurveyOption.class
 com\socialapp\service\impl\SurveyResponseServiceImpl.class
 com\socialapp\service\impl\EmailServiceImpl.class
 com\socialapp\service\impl\EventServiceImpl.class

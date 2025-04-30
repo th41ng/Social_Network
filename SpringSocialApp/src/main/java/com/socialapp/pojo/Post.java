@@ -53,7 +53,7 @@ public class Post implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     @JsonIgnore
-    private User userId;
+    private Users userId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
     @JsonIgnore
@@ -69,7 +69,7 @@ public class Post implements Serializable {
     }
 
    
-    public Post(Integer postId, String content, Date createdAt, Date updatedAt, Boolean isCommentLocked, Boolean isDeleted, User userId) {
+    public Post(Integer postId, String content, Date createdAt, Date updatedAt, Boolean isCommentLocked, Boolean isDeleted, Users userId) {
         this.postId = postId;
         this.content = content;
         this.createdAt = createdAt;
@@ -128,11 +128,11 @@ public class Post implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public User getUserId() {
+    public Users getUserId() {
         return userId;
     }
 
-    public void setUserId(User userId) {
+    public void setUserId(Users userId) {
         this.userId = userId;
     }
 

@@ -42,7 +42,7 @@ public class Reaction implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     @JsonIgnore
-    private User userId;
+    private Users userId;
 
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     @ManyToOne(optional = false)
@@ -61,7 +61,7 @@ public class Reaction implements Serializable {
         this.reactionId = reactionId;
     }
 
-    public Reaction(Integer reactionId, String reactionType, Date createdAt, User userId, Post postId) {
+    public Reaction(Integer reactionId, String reactionType, Date createdAt, Users userId, Post postId) {
         this.reactionId = reactionId;
         this.reactionType = reactionType;
         this.createdAt = createdAt;
@@ -94,11 +94,11 @@ public class Reaction implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public User getUserId() {
+    public Users getUserId() {
         return userId;
     }
 
-    public void setUserId(User userId) {
+    public void setUserId(Users userId) {
         this.userId = userId;
     }
 

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,9 +24,9 @@ import java.util.Set;
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
 })
-public class User implements Serializable {
+public class Users implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,18 +80,23 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "userId")
     @JsonIgnore
     private Set<Post> postSet;
-
     
-    public User() {
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserGroups> managedGroups; // Quan hệ với UserGroups (admin_id)
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupMembers> groupMemberships; // Quan hệ với GroupMembers (user_id)
+    
+    public Users() {
     }
 
    
-    public User(Integer id) {
+    public Users(Integer id) {
         this.id = id;
     }
 
     
-    public User(Integer id, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
+    public Users(Integer id, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
         this.id = id;
         this.studentId = studentId;
         this.email = email;
@@ -227,16 +233,58 @@ public class User implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof User)) {
+        if (!(object instanceof Users)) {
             return false;
         }
-        User other = (User) object;
+        Users other = (Users) object;
         return (this.id != null || other.id == null) && (this.id == null || this.id.equals(other.id));
     }
 
     @Override
     public String toString() {
         return "com.socialapp.pojo.User[ id=" + id + " ]";
+    }
+
+    /**
+     * @return the serialVersionUID
+     */
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    /**
+     * @param aSerialVersionUID the serialVersionUID to set
+     */
+    public static void setSerialVersionUID(long aSerialVersionUID) {
+        serialVersionUID = aSerialVersionUID;
+    }
+
+    /**
+     * @return the managedGroups
+     */
+    public List<UserGroups> getManagedGroups() {
+        return managedGroups;
+    }
+
+    /**
+     * @param managedGroups the managedGroups to set
+     */
+    public void setManagedGroups(List<UserGroups> managedGroups) {
+        this.managedGroups = managedGroups;
+    }
+
+    /**
+     * @return the groupMemberships
+     */
+    public List<GroupMembers> getGroupMemberships() {
+        return groupMemberships;
+    }
+
+    /**
+     * @param groupMemberships the groupMemberships to set
+     */
+    public void setGroupMemberships(List<GroupMembers> groupMemberships) {
+        this.groupMemberships = groupMemberships;
     }
 
 }
