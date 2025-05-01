@@ -31,7 +31,11 @@
                         <hr>
                         <h6>Bình luận:</h6>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="c : ${commentsMap[post.postId]}" th:text="${c.content}"></li>
+                            <li class="list-group-item" th:each="c : ${commentsMap[post.postId]}">
+                                <strong th:text="${c.userId.fullName} + ':'"></strong>
+                                <span th:text="${c.content}"></span>
+                            </li>
+
                         </ul>
                     </div>
                 </div>
