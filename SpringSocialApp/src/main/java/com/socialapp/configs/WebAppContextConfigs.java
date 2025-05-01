@@ -17,7 +17,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {
-    "com.socialapp.controllers"
+    "com.socialapp.controllers",
+    "com.socialapp.repository",
+    "com.socialapp.service"
    
 })
 public class WebAppContextConfigs implements WebMvcConfigurer{
