@@ -63,7 +63,7 @@ public class PostRepositoryImpl implements PostRepository {
             if (orderBy != null && !orderBy.isEmpty()) {
                 q.orderBy(b.desc(root.get(orderBy))); 
             } else {
-                q.orderBy(b.desc(root.get("createdDate"))); 
+                q.orderBy(b.desc(root.get("createdAt"))); 
             }
         }
 

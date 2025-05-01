@@ -52,11 +52,11 @@ public class Post implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    @JsonIgnore
+//    @JsonIgnore
     private User userId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
-    @JsonIgnore
+//    @JsonIgnore
     private Set<Comment> commentSet;
 
    

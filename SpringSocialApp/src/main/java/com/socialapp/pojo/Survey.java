@@ -6,7 +6,7 @@ package com.socialapp.pojo;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
+
 /**
  *
  * @author DELL G15
@@ -43,9 +43,9 @@ public class Survey implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @JoinColumn(name = "admin_id", referencedColumnName = "admin_id")
+    @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private Admin adminId;
+    private User adminId;
 
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     @ManyToOne(optional = false)
@@ -58,7 +58,7 @@ public class Survey implements Serializable {
         this.surveyId = surveyId;
     }
 
-    public Survey(Integer surveyId, String title, String description, Boolean isMultipleChoice, Date createdAt, Admin adminId, Post postId) {
+    public Survey(Integer surveyId, String title, String description, Boolean isMultipleChoice, Date createdAt, User adminId, Post postId) {
         this.surveyId = surveyId;
         this.title = title;
         this.description = description;
@@ -109,11 +109,11 @@ public class Survey implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Admin getAdminId() {
+    public User getAdminId() {
         return adminId;
     }
 
-    public void setAdminId(Admin adminId) {
+    public void setAdminId(User adminId) {
         this.adminId = adminId;
     }
 
