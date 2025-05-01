@@ -52,11 +52,11 @@ public class EventNotification implements Serializable{
     // Quan hệ
     @ManyToOne
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
-    private Users admin;
+    private User admin;
 
     @ManyToOne
     @JoinColumn(name = "receiver_user_id", referencedColumnName = "user_id")
-    private Users receiverUser;
+    private User receiverUser;
 
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")
@@ -200,28 +200,28 @@ public class EventNotification implements Serializable{
     /**
      * @return the admin
      */
-    public Users getAdmin() {
+    public User getAdmin() {
         return admin;
     }
 
     /**
      * @param admin the admin to set
      */
-    public void setAdmin(Users admin) {
+    public void setAdmin(User admin) {
         this.admin = admin;
     }
 
     /**
      * @return the receiverUser
      */
-    public Users getReceiverUser() {
+    public User getReceiverUser() {
         return receiverUser;
     }
 
     /**
      * @param receiverUser the receiverUser to set
      */
-    public void setReceiverUser(Users receiverUser) {
+    public void setReceiverUser(User receiverUser) {
         this.receiverUser = receiverUser;
     }
 

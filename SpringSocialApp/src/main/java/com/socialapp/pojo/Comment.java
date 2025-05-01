@@ -49,7 +49,7 @@ public class Comment implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     @JsonIgnore
-    private Users userId;
+    private User userId;
 
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     @ManyToOne(optional = false)
@@ -63,7 +63,7 @@ public class Comment implements Serializable {
         this.commentId = commentId;
     }
 
-    public Comment(Integer commentId, String content, Date createdAt, Date updatedAt, Boolean isDeleted, Users userId, Post postId) {
+    public Comment(Integer commentId, String content, Date createdAt, Date updatedAt, Boolean isDeleted, User userId, Post postId) {
         this.commentId = commentId;
         this.content = content;
         this.createdAt = createdAt;
@@ -114,11 +114,11 @@ public class Comment implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 

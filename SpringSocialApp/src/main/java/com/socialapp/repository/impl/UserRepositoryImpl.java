@@ -1,6 +1,6 @@
 package com.socialapp.repository.impl;
 
-import com.socialapp.pojo.Users;
+import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
@@ -18,37 +18,37 @@ public class UserRepositoryImpl implements UserRepository {
     private LocalSessionFactoryBean factory;
 
     @Override
-    public Users getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
         try {
-            Query q = s.createNamedQuery("User.findByUsername", Users.class);
+            Query q = s.createNamedQuery("User.findByUsername", User.class);
             q.setParameter("username", username);
-            return (Users) q.getSingleResult();
+            return (User) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public Users getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         Session s = this.factory.getObject().getCurrentSession();
         try {
-            Query q = s.createNamedQuery("User.findByEmail", Users.class);
+            Query q = s.createNamedQuery("User.findByEmail", User.class);
             q.setParameter("email", email);
-            return (Users) q.getSingleResult();
+            return (User) q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
 
     @Override
-    public Users getUserById(int id) {
+    public User getUserById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        return s.get(Users.class, id);
+        return s.get(User.class, id);
     }
 
     @Override
-    public Users addUser(Users user) {
+    public User addUser(User user) {
         Session s = this.factory.getObject().getCurrentSession();
         s.persist(user);
         return user;
@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
         Session s = this.factory.getObject().getCurrentSession();
         try {
             String hql = "FROM Users u WHERE (u.username = :usernameOrEmail OR u.email = :usernameOrEmail) AND u.password = :password";
-            Query q = s.createQuery(hql, Users.class);
+            Query q = s.createQuery(hql, User.class);
             q.setParameter("usernameOrEmail", usernameOrEmail);
             q.setParameter("password", password);
             return !q.getResultList().isEmpty();
@@ -69,7 +69,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Users updateUser(Users user) {
+    public User updateUser(User user) {
         Session s = this.factory.getObject().getCurrentSession();
         s.update(user);
         return user;
@@ -78,7 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void deleteUser(int id) {
         Session s = this.factory.getObject().getCurrentSession();
-        Users user = s.get(Users.class, id);
+        User user = s.get(User.class, id);
         if (user != null) {
             s.delete(user);
         }

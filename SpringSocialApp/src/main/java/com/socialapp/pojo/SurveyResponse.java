@@ -34,7 +34,7 @@ public class SurveyResponse implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-    private Users userId;
+    private User userId;
 
     @JoinColumn(name = "question_id", referencedColumnName = "question_id")
     @ManyToOne(optional = false)
@@ -54,7 +54,7 @@ public class SurveyResponse implements Serializable {
         this.responseId = responseId;
     }
 
-    public SurveyResponse(Integer responseId, Survey surveyId, Users userId, SurveyQuestion questionId, Integer optionId, Date responseAt) {
+    public SurveyResponse(Integer responseId, Survey surveyId, User userId, SurveyQuestion questionId, Integer optionId, Date responseAt) {
         this.responseId = responseId;
         this.surveyId = surveyId;
         this.userId = userId;
@@ -80,11 +80,11 @@ public class SurveyResponse implements Serializable {
         this.surveyId = surveyId;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 

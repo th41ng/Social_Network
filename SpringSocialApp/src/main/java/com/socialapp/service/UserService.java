@@ -4,7 +4,7 @@
  */
 package com.socialapp.service;
 
-import com.socialapp.pojo.Users;
+import com.socialapp.pojo.User;
 
 /**
  *
@@ -13,22 +13,22 @@ import com.socialapp.pojo.Users;
 public interface UserService {
 
     // Lấy thông tin người dùng bằng tên đăng nhập
-    Users getUserByUsername(String username);
+    User getUserByUsername(String username);
 
     // Lấy thông tin người dùng bằng email
-    Users getUserByEmail(String email);
+    User getUserByEmail(String email);
 
     // Lấy thông tin người dùng bằng ID
-    Users getUserById(int id);
+    User getUserById(int id);
 
     // Thêm mới một người dùng
-    Users addUser(Users user);
+    User addUser(User user);
 
     // Xác thực người dùng với tên đăng nhập/email và mật khẩu
     boolean authenticate(String usernameOrEmail, String password);
 
     // Thay đổi thông tin người dùng
-    Users updateUser(Users user);
+    User updateUser(User user);
 
     // Xóa người dùng bằng ID
     void deleteUser(int id);

@@ -1,10 +1,44 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Home Page</title>
-    </head>
-    <body>
-        <h1 th:text="'Hello, ' + ${name}"></h1>
-    </body>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+    <main class="container mt-4">
+        <h1>Bài viết mới nhất</h1>
+
+        <div class="row" th:if="${#lists.isEmpty(posts)}">
+            <p>Không có bài viết nào.</p>
+        </div>
+
+        <div class="row" th:each="post : ${posts}">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="'Bài viết #' + ${post.postId}"></h5>
+                    <p class="card-text" th:text="${post.content}"></p>
+                    <p class="card-text">
+                        <strong>Người đăng:</strong> <span th:text="${post.userId.fullName}"></span>
+                    </p>
+
+                    <p class="card-text">
+                        <small class="text-muted" th:text="${#dates.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+                    </p>
+
+                    <!-- Bình luận -->
+                    <div th:if="${commentsMap[post.postId] != null and !commentsMap[post.postId].isEmpty()}">
+                        <hr>
+                        <h6>Bình luận:</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="c : ${commentsMap[post.postId]}" th:text="${c.content}"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+</body>
 </html>

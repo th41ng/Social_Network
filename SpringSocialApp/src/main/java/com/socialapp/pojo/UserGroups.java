@@ -59,7 +59,7 @@ public class UserGroups implements Serializable{
     //quan hệ
     @ManyToOne
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id", nullable = false)
-    private Users admin; // Quan hệ với Users (admin_id)
+    private User admin; // Quan hệ với Users (admin_id)
     
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMembers> members; // Quan hệ với GroupMembers (group_id)
@@ -166,14 +166,14 @@ public class UserGroups implements Serializable{
     /**
      * @return the admin
      */
-    public Users getAdmin() {
+    public User getAdmin() {
         return admin;
     }
 
     /**
      * @param admin the admin to set
      */
-    public void setAdmin(Users admin) {
+    public void setAdmin(User admin) {
         this.admin = admin;
     }
 

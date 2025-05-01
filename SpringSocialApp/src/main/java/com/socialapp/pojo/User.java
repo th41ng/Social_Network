@@ -22,9 +22,9 @@ import java.util.Set;
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username")
+    
 })
-public class Users implements Serializable {
+public class User implements Serializable {
 
     private static long serialVersionUID = 1L;
 
@@ -87,16 +87,16 @@ public class Users implements Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupMembers> groupMemberships; // Quan hệ với GroupMembers (user_id)
     
-    public Users() {
+    public User() {
     }
 
    
-    public Users(Integer id) {
+    public User(Integer id) {
         this.id = id;
     }
 
     
-    public Users(Integer id, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
+    public User(Integer id, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
         this.id = id;
         this.studentId = studentId;
         this.email = email;
@@ -233,10 +233,10 @@ public class Users implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Users)) {
+        if (!(object instanceof User)) {
             return false;
         }
-        Users other = (Users) object;
+        User other = (User) object;
         return (this.id != null || other.id == null) && (this.id == null || this.id.equals(other.id));
     }
 

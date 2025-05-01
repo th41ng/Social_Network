@@ -49,7 +49,7 @@ public class GroupMembers implements Serializable{
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private Users user; // Quan hệ với Users (user_id)
+    private User user; // Quan hệ với Users (user_id)
     
     // Constructor mặc định
     public GroupMembers() {
@@ -74,7 +74,7 @@ public class GroupMembers implements Serializable{
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Users)) {
+        if (!(object instanceof User)) {
             return false;
         }
         GroupMembers other = (GroupMembers) object;
@@ -179,14 +179,14 @@ public class GroupMembers implements Serializable{
     /**
      * @return the user
      */
-    public Users getUser() {
+    public User getUser() {
         return user;
     }
 
     /**
      * @param user the user to set
      */
-    public void setUser(Users user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

@@ -52,11 +52,16 @@ public class Post implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
+<<<<<<< HEAD
     @JsonIgnore
-    private Users userId;
+    private User userId;
+=======
+//    @JsonIgnore
+    private User userId;
+>>>>>>> 190049d4ffdd0d97939e6e5d026d939debba68a8
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
-    @JsonIgnore
+//    @JsonIgnore
     private Set<Comment> commentSet;
 
    
@@ -69,7 +74,7 @@ public class Post implements Serializable {
     }
 
    
-    public Post(Integer postId, String content, Date createdAt, Date updatedAt, Boolean isCommentLocked, Boolean isDeleted, Users userId) {
+    public Post(Integer postId, String content, Date createdAt, Date updatedAt, Boolean isCommentLocked, Boolean isDeleted, User userId) {
         this.postId = postId;
         this.content = content;
         this.createdAt = createdAt;
@@ -128,11 +133,11 @@ public class Post implements Serializable {
         this.isDeleted = isDeleted;
     }
 
-    public Users getUserId() {
+    public User getUserId() {
         return userId;
     }
 
-    public void setUserId(Users userId) {
+    public void setUserId(User userId) {
         this.userId = userId;
     }
 

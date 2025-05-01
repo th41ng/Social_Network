@@ -1,6 +1,6 @@
 package com.socialapp.service.impl;
 
-import com.socialapp.pojo.Users;
+import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +13,22 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
-    public Users getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.getUserByUsername(username);
     }
 
     @Override
-    public Users getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
     }
 
     @Override
-    public Users getUserById(int id) {
+    public User getUserById(int id) {
         return userRepository.getUserById(id);
     }
 
     @Override
-    public Users addUser(Users user) {
+    public User addUser(User user) {
         return userRepository.addUser(user);
     }
 
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Users updateUser(Users user) {
+    public User updateUser(User user) {
         return userRepository.updateUser(user);
     }
 
