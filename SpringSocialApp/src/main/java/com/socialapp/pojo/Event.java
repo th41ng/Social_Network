@@ -25,7 +25,7 @@ import java.util.Date;
  * @author DELL G15
  */
 @Entity
-@Table(name = "Event")
+@Table(name = "events")
 @NamedQueries({
     @NamedQuery(name = "Event.findAll", query = "SELECT e FROM Event e"),
     @NamedQuery(name = "Event.findById", query = "SELECT e FROM Event e WHERE e.event_id = :event_id"),

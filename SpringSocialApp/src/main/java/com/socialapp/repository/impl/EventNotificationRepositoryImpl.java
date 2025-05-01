@@ -62,8 +62,8 @@ public List<EventNotification> getNotifications(Map<String, String> params) {
         }
 
         // Ensure isDeleted is false (soft delete filter)
-        predicates.add(b.equal(root.get("isDeleted"), false));
-
+        //predicates.add(b.equal(root.get("isDeleted"), false));
+        
         q.where(predicates.toArray(Predicate[]::new));
     }
 
