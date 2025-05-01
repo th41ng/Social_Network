@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.pojo;
 
 import jakarta.persistence.CascadeType;
@@ -20,13 +16,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-/**
- *
- * @author Admin
- */
 @Entity
 @Table(name = "user_groups")
-public class UserGroups implements Serializable{
+public class UserGroups implements Serializable {
     private static long serialVersionUID = 1L;
     
     @Id
@@ -34,8 +26,8 @@ public class UserGroups implements Serializable{
     @Column(name = "group_id")
     private Integer groupId;
 
-    @Column(name = "admin_id", nullable = false)
-    private Integer adminId;
+    @Column(name = "admin_id", insertable = false, updatable = false, nullable = false)
+    private Integer adminId;  // Không cần insert hoặc update trực tiếp trường này
 
     @Column(name = "group_name", length = 255, nullable = false)
     private String groupName;
@@ -56,14 +48,15 @@ public class UserGroups implements Serializable{
         this.createdAt = createdAt;
     }
 
-    //quan hệ
+    // Quan hệ với User (admin_id)
     @ManyToOne
-    @JoinColumn(name = "admin_id", referencedColumnName = "user_id", nullable = false)
-    private User admin; // Quan hệ với Users (admin_id)
-    
+    @JoinColumn(name = "admin_id", referencedColumnName = "user_id", insertable = false, updatable = false, nullable = false)
+    private User admin;
+
+    // Quan hệ với GroupMembers (group_id)
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GroupMembers> members; // Quan hệ với GroupMembers (group_id)
-    
+    private List<GroupMembers> members;
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -87,108 +80,62 @@ public class UserGroups implements Serializable{
     public String toString() {
         return "com.socialapp.pojo.UserGroups[ groupId=" + groupId + " ]";
     }
-    
-    
-    
-    
-    
-    
-    /**
-     * @return the serialVersionUID
-     */
+
+    // Getter and Setter methods
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    /**
-     * @param aSerialVersionUID the serialVersionUID to set
-     */
     public static void setSerialVersionUID(long aSerialVersionUID) {
         serialVersionUID = aSerialVersionUID;
     }
 
-    /**
-     * @return the groupId
-     */
     public Integer getGroupId() {
         return groupId;
     }
 
-    /**
-     * @param groupId the groupId to set
-     */
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
 
-    /**
-     * @return the adminId
-     */
     public Integer getAdminId() {
         return adminId;
     }
 
-    /**
-     * @param adminId the adminId to set
-     */
     public void setAdminId(Integer adminId) {
         this.adminId = adminId;
     }
 
-    /**
-     * @return the groupName
-     */
     public String getGroupName() {
         return groupName;
     }
 
-    /**
-     * @param groupName the groupName to set
-     */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
 
-    /**
-     * @return the createdAt
-     */
     public Date getCreatedAt() {
         return createdAt;
     }
 
-    /**
-     * @param createdAt the createdAt to set
-     */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    /**
-     * @return the admin
-     */
     public User getAdmin() {
         return admin;
     }
 
-    /**
-     * @param admin the admin to set
-     */
     public void setAdmin(User admin) {
         this.admin = admin;
     }
 
-    /**
-     * @return the members
-     */
     public List<GroupMembers> getMembers() {
         return members;
     }
 
-    /**
-     * @param members the members to set
-     */
     public void setMembers(List<GroupMembers> members) {
         this.members = members;
     }
 }
-    

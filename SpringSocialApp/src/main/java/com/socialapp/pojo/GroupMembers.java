@@ -27,29 +27,30 @@ import java.util.Date;
 public class GroupMembers implements Serializable{
     private static long serialVersionUID = 1L;
     
-    @Id
+     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_member_id")
     private Integer groupMemberId;
 
-    @Column(name = "group_id", nullable = false)
+    // Make sure this is marked with insertable=false, updatable=false
+    @Column(name = "group_id", nullable = false, insertable = false, updatable = false)
     private Integer groupId;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, insertable = false, updatable = false)
     private Integer userId;
 
     @Column(name = "joined_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date joinedAt;
-    
-    //Quan hệ
+
+    // Relationships
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "group_id", nullable = false)
-    private UserGroups group; // Quan hệ với UserGroups (group_id)
+    private UserGroups group;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
-    private User user; // Quan hệ với Users (user_id)
+    private User user;
     
     // Constructor mặc định
     public GroupMembers() {

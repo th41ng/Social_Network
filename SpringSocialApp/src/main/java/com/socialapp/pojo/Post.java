@@ -52,13 +52,10 @@ public class Post implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-<<<<<<< HEAD
+
     @JsonIgnore
     private User userId;
-=======
-//    @JsonIgnore
-    private User userId;
->>>>>>> 190049d4ffdd0d97939e6e5d026d939debba68a8
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
 //    @JsonIgnore

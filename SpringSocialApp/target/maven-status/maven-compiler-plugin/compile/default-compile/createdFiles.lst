@@ -1,5 +1,6 @@
 com\socialapp\repository\impl\EventRepositoryImpl.class
 com\socialapp\springsocialapp\resources\JakartaEE11Resource.class
+com\socialapp\pojo\User.class
 com\socialapp\service\SurveyService.class
 com\socialapp\pojo\UserGroups.class
 com\socialapp\pojo\Event.class
@@ -17,14 +18,10 @@ com\socialapp\service\SurveyResponseService.class
 com\socialapp\repository\impl\GroupMemberRepositoryImpl.class
 com\socialapp\controllers\ApiController.class
 com\socialapp\repository\PostRepository.class
-<<<<<<< HEAD
 com\socialapp\repository\impl\UserGroupRepositoryImpl.class
-=======
 com\socialapp\repository\CategoryRepository.class
->>>>>>> 190049d4ffdd0d97939e6e5d026d939debba68a8
 com\socialapp\springsocialapp\JakartaRestConfiguration.class
 com\socialapp\service\impl\UserGroupServiceImpl.class
-com\socialapp\pojo\Users.class
 com\socialapp\service\impl\SurveyServiceImpl.class
 com\socialapp\pojo\Reaction.class
 com\socialapp\repository\impl\SurveyResponseRepositoryImpl.class
@@ -39,10 +36,7 @@ com\socialapp\configs\HibernateConfigs.class
 com\socialapp\service\CategoryService.class
 com\socialapp\repository\ReactionRepository.class
 com\socialapp\pojo\SurveyOption.class
-<<<<<<< HEAD
 com\socialapp\service\EventNotificationService.class
-=======
->>>>>>> 190049d4ffdd0d97939e6e5d026d939debba68a8
 com\socialapp\service\impl\SurveyResponseServiceImpl.class
 com\socialapp\repository\impl\CategoryRepositoryImpl.class
 com\socialapp\service\impl\EmailServiceImpl.class
