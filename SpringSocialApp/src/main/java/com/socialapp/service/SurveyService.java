@@ -9,5 +9,7 @@ package com.socialapp.service;
  * @author DELL G15
  */
 public interface SurveyService {
+
+    
     
 }

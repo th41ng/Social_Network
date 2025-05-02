@@ -6,8 +6,11 @@ package com.socialapp.controllers;
 
 import com.socialapp.pojo.Comment;
 import com.socialapp.service.CategoryService;
+import com.socialapp.service.EventNotificationService;
+import com.socialapp.service.EventService;
 import com.socialapp.service.PostService;
 import com.socialapp.service.ReactionService;
+import com.socialapp.service.SurveyService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,39 +39,75 @@ public class IndexController {
     @Autowired
     private ReactionService reactionService;
 
+    @Autowired
+    private EventNotificationService EventNotificationService;
+
     @ModelAttribute
     public void commonAttributes(Model model) {
         model.addAttribute("categories", this.categoryService.getCategories());
     }
 
-@RequestMapping("/")
-public String index(@RequestParam Map<String, String> params, Model model) {
-    var posts = this.postService.getPosts(params);
-    Map<Integer, List<Comment>> commentsMap = new HashMap<>();
-    Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
-    Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>(); 
+    @RequestMapping("/")
+    public String index(@RequestParam(value = "categoryId", required = false) Integer categoryId, Model model) {
+        if (categoryId != null) {
+            switch (categoryId) {
+                case 3: // Events
+                    model.addAttribute("events", EventNotificationService.getNotifications(Map.of()));
+                    return "event_management";
 
-    for (var post : posts) {
-        var comments = this.postService.getCommentsByPostId(post.getPostId());
-        commentsMap.put(post.getPostId(), comments);
+                case 2: // Posts
+                    var posts = postService.getPosts(Map.of());
+                    Map<Integer, List<Comment>> commentsMap = new HashMap<>();
+                    Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
+                    Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
 
-        //  Thống kê reaction cho từng comment
-        for (var comment : comments) {
-            commentReactionsMap.put(comment.getCommentId(),
-                this.reactionService.countReactionsByCommentId(comment.getCommentId()));
+                    for (var post : posts) {
+                        var comments = postService.getCommentsByPostId(post.getPostId());
+                        commentsMap.put(post.getPostId(), comments);
+
+                        for (var comment : comments) {
+                            commentReactionsMap.put(comment.getCommentId(),
+                                    reactionService.countReactionsByCommentId(comment.getCommentId()));
+                        }
+
+                        postReactionsMap.put(post.getPostId(),
+                                reactionService.countReactionsByPostId(post.getPostId()));
+                    }
+
+                    model.addAttribute("posts", posts);
+                    model.addAttribute("commentsMap", commentsMap);
+                    model.addAttribute("reactionsMap", postReactionsMap);
+                    model.addAttribute("commentReactionsMap", commentReactionsMap);
+
+                    return "post_management";
+            }
         }
 
-        //  Thống kê reaction cho post
-        postReactionsMap.put(post.getPostId(),
-            this.reactionService.countReactionsByPostId(post.getPostId()));
+        // Mặc định
+        var posts = postService.getPosts(Map.of());
+        Map<Integer, List<Comment>> commentsMap = new HashMap<>();
+        Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
+        Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
+
+        for (var post : posts) {
+            var comments = postService.getCommentsByPostId(post.getPostId());
+            commentsMap.put(post.getPostId(), comments);
+
+            for (var comment : comments) {
+                commentReactionsMap.put(comment.getCommentId(),
+                        reactionService.countReactionsByCommentId(comment.getCommentId()));
+            }
+
+            postReactionsMap.put(post.getPostId(),
+                    reactionService.countReactionsByPostId(post.getPostId()));
+        }
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("commentsMap", commentsMap);
+        model.addAttribute("reactionsMap", postReactionsMap);
+        model.addAttribute("commentReactionsMap", commentReactionsMap);
+
+        return "index";
     }
-
-    model.addAttribute("posts", posts);
-    model.addAttribute("commentsMap", commentsMap);
-    model.addAttribute("reactionsMap", postReactionsMap);
-    model.addAttribute("commentReactionsMap", commentReactionsMap); 
-
-    return "index";
-}
 
 }
