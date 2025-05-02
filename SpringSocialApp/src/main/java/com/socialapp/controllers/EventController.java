@@ -44,6 +44,7 @@ public class EventController {
     @RequestMapping("/Events")
     public String listEvents(@RequestParam Map<String, String> params, Model model) {
         List<EventNotification> event_notification = this.eventNotificationService.getNotifications(params);
+        System.out.println("Notifications fetched: " + event_notification.size()); // Debugging
         model.addAttribute("events", event_notification);
         return "event_management"; // Trả về file Thymeleaf "events.html"
     }
