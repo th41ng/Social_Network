@@ -26,14 +26,53 @@
                         <small class="text-muted" th:text="${#dates.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
                     </p>
 
+                    <!-- Reactions -->
+                    <div th:if="${reactionsMap[post.postId] != null}">
+                        <hr />
+                        <p>Reactions:</p>
+                        <ul class="list-inline">
+                            <li class="list-inline-item" th:each="entry : ${reactionsMap[post.postId].entrySet()}">
+                                <span th:switch="${entry.key}">
+                                    <span th:case="'like'">👍</span>
+                                    <span th:case="'haha'">😂</span>
+                                    <span th:case="'heart'">❤️</span>
+                                    <span th:case="*">❓</span>
+                                </span>
+                                <span th:text="${entry.value}"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+
+
                     <!-- Bình luận -->
                     <div th:if="${commentsMap[post.postId] != null and !commentsMap[post.postId].isEmpty()}">
                         <hr>
                         <h6>Bình luận:</h6>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item" th:each="c : ${commentsMap[post.postId]}" th:text="${c.content}"></li>
+                            <li class="list-group-item" th:each="c : ${commentsMap[post.postId]}">
+                                <strong th:text="${c.userId.fullName} + ':'"></strong>
+                                <span th:text="${c.content}"></span>
+
+                                <!-- Reactions cho comment -->
+                                <div th:if="${commentReactionsMap[c.commentId] != null}">
+                                    <ul class="list-inline mt-2 mb-0">
+                                        <li class="list-inline-item small text-muted" th:each="entry : ${commentReactionsMap[c.commentId].entrySet()}">
+                                            <span th:switch="${entry.key}">
+                                                <span th:case="'like'">👍</span>
+                                                <span th:case="'haha'">😂</span>
+                                                <span th:case="'heart'">❤️</span>
+                                                <span th:case="*">❓</span>
+                                            </span>
+                                            <span th:text="${entry.value}"></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
                         </ul>
                     </div>
+
+
                 </div>
             </div>
         </div>

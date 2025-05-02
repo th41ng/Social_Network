@@ -36,7 +36,11 @@ com\socialapp\configs\HibernateConfigs.class
 com\socialapp\service\CategoryService.class
 com\socialapp\repository\ReactionRepository.class
 com\socialapp\pojo\SurveyOption.class
+<<<<<<< HEAD
 com\socialapp\service\EventNotificationService.class
+=======
+com\socialapp\formatters\CategoryFormatter.class
+>>>>>>> 11486257e25a9deb3700d5e994de49f47330762c
 com\socialapp\service\impl\SurveyResponseServiceImpl.class
 com\socialapp\repository\impl\CategoryRepositoryImpl.class
 com\socialapp\service\impl\EmailServiceImpl.class

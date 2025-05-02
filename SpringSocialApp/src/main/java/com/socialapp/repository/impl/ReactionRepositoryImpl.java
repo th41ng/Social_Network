@@ -12,6 +12,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
@@ -120,6 +121,40 @@ public class ReactionRepositoryImpl implements ReactionRepository {
 
         Query query = s.createQuery(q);
         return query.getResultList();
+    }
+
+    @Override
+    public Map<String, Long> countReactionsByPostId(int postId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT r.reactionType, COUNT(r) FROM Reaction r WHERE r.postId.postId = :postId GROUP BY r.reactionType";
+        List<Object[]> results = s.createQuery(hql).setParameter("postId", postId).getResultList();
+
+        Map<String, Long> resultMap = new java.util.HashMap<>();
+        for (Object[] row : results) {
+            resultMap.put((String) row[0], (Long) row[1]);
+        }
+
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Long> countReactionsByCommentId(int commentId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        String hql = "SELECT r.reactionType, COUNT(r) "
+                + "FROM Reaction r "
+                + "WHERE r.commentId.commentId = :commentId "
+                + "GROUP BY r.reactionType";
+
+        List<Object[]> results = s.createQuery(hql)
+                .setParameter("commentId", commentId)
+                .getResultList();
+
+        Map<String, Long> reactionCounts = new HashMap<>();
+        for (Object[] row : results) {
+            reactionCounts.put((String) row[0], (Long) row[1]);
+        }
+
+        return reactionCounts;
     }
 
 }

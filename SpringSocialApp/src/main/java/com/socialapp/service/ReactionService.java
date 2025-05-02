@@ -6,6 +6,7 @@ package com.socialapp.service;
 
 import com.socialapp.pojo.Reaction;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,4 +21,9 @@ public interface ReactionService {
     List<Reaction> getReactionsByPostId(int postId);
 
     List<Reaction> getReactionsByCommentId(int commentId);
+
+    Map<String, Long> countReactionsByPostId(int postId);
+
+    Map<String, Long> countReactionsByCommentId(int commentId);
+
 }
