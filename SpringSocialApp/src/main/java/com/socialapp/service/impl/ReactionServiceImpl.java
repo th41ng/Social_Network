@@ -8,6 +8,8 @@ import com.socialapp.pojo.Reaction;
 import com.socialapp.repository.ReactionRepository;
 import com.socialapp.service.ReactionService;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
  * @author DELL G15
  */
 @Service
-public class ReactionServiceImpl implements ReactionService{
+public class ReactionServiceImpl implements ReactionService {
 
     @Autowired
     private ReactionRepository reactionRepository;
@@ -40,5 +42,15 @@ public class ReactionServiceImpl implements ReactionService{
     public List<Reaction> getReactionsByCommentId(int commentId) {
         return this.reactionRepository.getReactionsByCommentId(commentId);
     }
-    
+
+    @Override
+    public Map<String, Long> countReactionsByPostId(int postId) {
+        return this.reactionRepository.countReactionsByPostId(postId);
+    }
+
+    @Override
+    public Map<String, Long> countReactionsByCommentId(int commentId) {
+        return this.reactionRepository.countReactionsByCommentId(commentId);
+    }
+
 }

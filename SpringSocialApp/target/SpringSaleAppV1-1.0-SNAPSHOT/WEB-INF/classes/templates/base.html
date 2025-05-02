@@ -19,7 +19,14 @@
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
                     <ul class="navbar-nav">
                         <li class="nav-item" th:each="c : ${categories}">
-                            <a class="nav-link" th:href="@{/${c.name.toLowerCase()}}" th:text="${c.name}"></a>
+                            <a class="nav-link" th:href="@{'/?categoryId=' + ${c.id}}" th:text="${c.name}"></a>
+                        </li>
+                    </ul>
+
+                    <!-- Quản lý bài viết -->
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/posts}">Quản lý bài viết</a>
                         </li>
                     </ul>
                 </div>

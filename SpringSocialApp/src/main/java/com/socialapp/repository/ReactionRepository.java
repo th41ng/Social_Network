@@ -25,4 +25,9 @@ public interface ReactionRepository {
     List<Reaction> getReactionsByPostId(int postId);
 
     List<Reaction> getReactionsByCommentId(int commentId);
+    
+    Map<String, Long> countReactionsByPostId(int postId);
+
+    Map<String, Long> countReactionsByCommentId(int commentId);
+
 }
