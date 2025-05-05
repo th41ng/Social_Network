@@ -17,16 +17,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+=======
+import org.springframework.web.bind.annotation.GetMapping;
+>>>>>>> 31e337c4d7eb02d89f696c8d3ac24483baa1e97d
 
 /**
  *
  * @author DELL G15
  */
-
+//
 @Controller
 @ControllerAdvice
 public class EventController {
@@ -37,9 +41,7 @@ public class EventController {
     @Autowired
     private CategoryService categoryService;
 
-    /**
-     * Thêm thuộc tính chung vào Model
-     */
+   
     @ModelAttribute
     public void commonAttributes(Model model) {
         model.addAttribute("categories", this.categoryService.getCategories());
@@ -89,3 +91,4 @@ public class EventController {
 
 
 }
+

@@ -2,6 +2,7 @@ com\socialapp\repository\impl\EventRepositoryImpl.class
 com\socialapp\springsocialapp\resources\JakartaEE11Resource.class
 com\socialapp\pojo\User.class
 com\socialapp\service\SurveyService.class
+com\socialapp\controllers\PostController.class
 com\socialapp\pojo\UserGroups.class
 com\socialapp\pojo\Event.class
 com\socialapp\controllers\AdminController.class
@@ -12,6 +13,7 @@ com\socialapp\repository\impl\SurveyRepositoryImpl.class
 com\socialapp\service\impl\ReactionServiceImpl.class
 com\socialapp\service\UserGroupService.class
 com\socialapp\repository\UserRepository.class
+com\socialapp\controllers\ApiPostController.class
 com\socialapp\controllers\EventController.class
 com\socialapp\pojo\SurveyQuestion.class
 com\socialapp\service\SurveyResponseService.class
@@ -45,6 +47,7 @@ com\socialapp\pojo\EventNotification.class
 com\socialapp\service\impl\GroupMemberServiceImpl.class
 com\socialapp\service\impl\EventServiceImpl.class
 com\socialapp\service\PostService.class
+com\socialapp\controllers\ApiSurveyController.class
 com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\repository\SurveyRepository.class
 com\socialapp\service\GroupMemberService.class

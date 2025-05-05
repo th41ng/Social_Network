@@ -3,8 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.socialapp.pojo;
+
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
+
 /**
  *
  * @author DELL G15
@@ -39,6 +42,9 @@ public class SurveyQuestion implements Serializable {
 
     @Column(name = "question_order")
     private Integer questionOrder;
+
+    @OneToMany(mappedBy = "questionId", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<SurveyOption> surveyOptions; // Hoặc List
 
     public SurveyQuestion() {
     }
@@ -96,6 +102,11 @@ public class SurveyQuestion implements Serializable {
         this.questionOrder = questionOrder;
     }
 
+    public Set<SurveyOption> getSurveyOptions() {
+     return surveyOptions;
+}
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
