@@ -5,6 +5,7 @@
 package com.socialapp.controllers;
 
 import com.socialapp.pojo.Comment;
+import com.socialapp.pojo.Survey;
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.EventNotificationService;
 import com.socialapp.service.EventService;
@@ -42,6 +43,9 @@ public class IndexController {
     @Autowired
     private EventNotificationService EventNotificationService;
 
+    @Autowired
+    private SurveyService surveyService;
+
     @ModelAttribute
     public void commonAttributes(Model model) {
         model.addAttribute("categories", this.categoryService.getCategories());
@@ -49,14 +53,28 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(@RequestParam(value = "categoryId", required = false) Integer categoryId, Model model) {
+        Map<String, String> params = new HashMap<>();
+        model.asMap().forEach((k, v) -> {
+            if (v instanceof String) {
+                params.put(k, (String) v);
+            }
+        });
+        model.addAttribute("params", params); // Có thể dùng chung
+
         if (categoryId != null) {
             switch (categoryId) {
                 case 3: // Events
-                    model.addAttribute("events", EventNotificationService.getNotifications(Map.of()));
+                    model.addAttribute("events", EventNotificationService.getNotifications(params));
                     return "event_management";
 
+                case 4: // Surveys
+                    List<Survey> surveys = surveyService.getSurveys(params);
+                    model.addAttribute("surveys", surveys);
+                    return "survey_management";
+
                 case 2: // Posts
-                    var posts = postService.getPosts(Map.of());
+                    var posts = postService.getPosts(params);
+
                     Map<Integer, List<Comment>> commentsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
@@ -83,7 +101,7 @@ public class IndexController {
             }
         }
 
-        // Mặc định
+        // Mặc định: hiển thị tất cả post
         var posts = postService.getPosts(Map.of());
         Map<Integer, List<Comment>> commentsMap = new HashMap<>();
         Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
@@ -111,3 +129,4 @@ public class IndexController {
     }
 
 }
+

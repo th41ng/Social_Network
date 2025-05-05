@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý bài viết</title>
+    <head>
+        <title>Quản lý bài viết</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -11,22 +11,19 @@
         <h2>Quản lý bài viết</h2>
 
         <!-- Bộ lọc -->
-        <form class="row g-3 mb-3" method="get" action="/posts">
+        <form class="row g-3 mb-3" method="get" th:action="@{/posts}">
             <div class="col-md-4">
-                <input type="text" class="form-control" name="keyword" placeholder="Tìm theo nội dung" 
-                       th:value="${params['keyword']}">
+                <input type="text" class="form-control" name="content" placeholder="Tìm theo nội dung" 
+                       th:value="${params['content']}">
             </div>
-
             <div class="col-md-3">
                 <input type="date" class="form-control" name="fromDate" th:value="${params['fromDate']}">
             </div>
-
             <div class="col-md-3">
                 <input type="date" class="form-control" name="toDate" th:value="${params['toDate']}">
             </div>
-
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary">Lọc</button>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
             </div>
         </form>
 
@@ -49,10 +46,11 @@
                         <td th:text="${p.userId.fullName}"></td>
                         <td th:text="${#dates.format(p.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
-                            <form th:action="@{'/posts/delete/' + ${p.postId}}" method="post"
-                                  onsubmit="return confirm('Bạn có chắc muốn xoá bài viết này?');">
-                                <button type="submit" class="btn btn-sm btn-danger">Xoá</button>
-                            </form>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    th:attr="onclick=|deletePost('@{/api/posts/{id}(id=${p.postId})}')|">
+                                Xoá
+                            </button>
+
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(posts)}">
@@ -64,5 +62,8 @@
     </main>
 
     <div th:replace="base :: footer"></div>
+
+
+    <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

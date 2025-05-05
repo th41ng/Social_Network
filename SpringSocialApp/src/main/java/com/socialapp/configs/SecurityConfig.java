@@ -8,6 +8,8 @@ package com.socialapp.configs;
  *
  * @author DELL G15
  */
+
 public class SecurityConfig {
-    
+
+
 }

@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.pojo;
+
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -45,11 +43,15 @@ public class Survey implements Serializable {
 
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
+
     private User adminId;
 
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
+
     private Post postId;
+
+   
 
     public Survey() {
     }
@@ -124,6 +126,8 @@ public class Survey implements Serializable {
     public void setPostId(Post postId) {
         this.postId = postId;
     }
+
+
 
     @Override
     public int hashCode() {

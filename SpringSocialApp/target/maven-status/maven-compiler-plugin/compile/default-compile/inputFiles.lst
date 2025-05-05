@@ -5,10 +5,12 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\Sec
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\ThymeleafConfig.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\WebAppContextConfigs.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\AdminController.java
-C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiController.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiPostController.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiSurveyController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\AuthController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\EventController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\IndexController.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\PostController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\SurveyController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\formatters\CategoryFormatter.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\formatters\UserFormatter.java

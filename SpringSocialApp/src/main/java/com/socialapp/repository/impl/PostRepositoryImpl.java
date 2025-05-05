@@ -45,30 +45,47 @@ public class PostRepositoryImpl implements PostRepository {
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
 
+            // Lọc theo nội dung
             String content = params.get("content");
             if (content != null && !content.isEmpty()) {
                 predicates.add(b.like(root.get("content"), String.format("%%%s%%", content)));
             }
 
+            // Lọc theo userId
             String userId = params.get("userId");
             if (userId != null && !userId.isEmpty()) {
                 predicates.add(b.equal(root.get("userId").get("userId"), Integer.parseInt(userId)));
             }
 
-            predicates.add(b.equal(root.get("isDeleted"), false)); 
+            // Lọc theo ngày (fromDate và toDate)
+            String fromDate = params.get("fromDate");
+            if (fromDate != null && !fromDate.isEmpty()) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("createdAt"), java.sql.Timestamp.valueOf(fromDate + " 00:00:00")));
+            }
 
+            String toDate = params.get("toDate");
+            if (toDate != null && !toDate.isEmpty()) {
+                predicates.add(b.lessThanOrEqualTo(root.get("createdAt"), java.sql.Timestamp.valueOf(toDate + " 23:59:59")));
+            }
+
+            // Lọc bài viết chưa xóa
+            predicates.add(b.equal(root.get("isDeleted"), false));
+
+            // Áp dụng các điều kiện lọc
             q.where(predicates.toArray(Predicate[]::new));
 
+            // Sắp xếp theo ngày tạo
             String orderBy = params.get("orderBy");
             if (orderBy != null && !orderBy.isEmpty()) {
-                q.orderBy(b.desc(root.get(orderBy))); 
+                q.orderBy(b.desc(root.get(orderBy)));
             } else {
-                q.orderBy(b.desc(root.get("createdAt"))); 
+                q.orderBy(b.desc(root.get("createdAt")));
             }
         }
 
         Query query = s.createQuery(q);
 
+        // Phân trang
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setMaxResults(PAGE_SIZE);

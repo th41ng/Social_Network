@@ -4,12 +4,22 @@
  */
 package com.socialapp.service;
 
+import com.socialapp.pojo.Survey;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author DELL G15
  */
 public interface SurveyService {
 
-    
-    
+    List<Survey> getSurveys(Map<String, String> params);
+
+    Survey getSurveyById(int id);
+
+    Survey addOrUpdateSurvey(Survey s);
+
+    void deleteSurvey(int id);
+
 }

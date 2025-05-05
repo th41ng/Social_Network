@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  *
  * @author DELL G15
  */
-
+//
 @Controller
 @ControllerAdvice
 public class EventController {
@@ -33,9 +34,7 @@ public class EventController {
     @Autowired
     private CategoryService categoryService;
 
-    /**
-     * Thêm thuộc tính chung vào Model
-     */
+   
     @ModelAttribute
     public void commonAttributes(Model model) {
         model.addAttribute("categories", this.categoryService.getCategories());
@@ -49,3 +48,4 @@ public class EventController {
         return "event_management"; // Trả về file Thymeleaf "events.html"
     }
 }
+
