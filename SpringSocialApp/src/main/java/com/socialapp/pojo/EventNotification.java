@@ -1,6 +1,7 @@
 package com.socialapp.pojo;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,21 +51,22 @@ public class EventNotification implements Serializable {
     private Date sentAt;
 
     // Quan hệ
-    @ManyToOne
-    @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
-    private User admin;
+    @ManyToOne(cascade = CascadeType.ALL)  // Thêm CascadeType.ALL để đảm bảo các đối tượng liên quan được xóa
+@JoinColumn(name = "admin_id", referencedColumnName = "user_id")
+private User admin;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_user_id", referencedColumnName = "user_id")
-    private User receiverUser;
+@ManyToOne(cascade = CascadeType.ALL)  // Thêm CascadeType.ALL cho User
+@JoinColumn(name = "receiver_user_id", referencedColumnName = "user_id")
+private User receiverUser;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id")
-    private UserGroups group;
+@ManyToOne(cascade = CascadeType.ALL)  // Thêm CascadeType.ALL cho UserGroups
+@JoinColumn(name = "group_id", referencedColumnName = "group_id")
+private UserGroups group;
 
-    @OneToOne
-    @JoinColumn(name = "event_id", referencedColumnName = "event_id")
-    private Event event;
+@OneToOne(cascade = CascadeType.ALL)  // Thêm CascadeType.ALL cho Event
+@JoinColumn(name = "event_id", referencedColumnName = "event_id")
+private Event event;
+
 
     // Các getter, setter khác
 

@@ -52,7 +52,7 @@ public class IndexController {
         if (categoryId != null) {
             switch (categoryId) {
                 case 3: // Events
-                    model.addAttribute("events", EventNotificationService.getNotifications(Map.of()));
+                    model.addAttribute("eventNotifications", EventNotificationService.getNotifications(Map.of()));
                     return "event_management";
 
                 case 2: // Posts

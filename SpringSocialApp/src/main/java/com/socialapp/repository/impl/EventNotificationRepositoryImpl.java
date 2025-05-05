@@ -27,7 +27,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
     private LocalSessionFactoryBean factory;
 
     @Override
-public List<EventNotification> getNotifications(Map<String, String> params) {
+    public List<EventNotification> getNotifications(Map<String, String> params) {
     Session s = this.factory.getObject().getCurrentSession();
     CriteriaBuilder b = s.getCriteriaBuilder();
     CriteriaQuery<EventNotification> q = b.createQuery(EventNotification.class);
