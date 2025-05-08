@@ -11,6 +11,8 @@ import com.socialapp.service.EventNotificationService;
 import com.socialapp.service.EventService;
 import com.socialapp.service.PostService;
 import com.socialapp.service.ReactionService;
+import com.socialapp.service.SurveyQuestionService;
+import com.socialapp.service.SurveyResponseService;
 import com.socialapp.service.SurveyService;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +48,12 @@ public class IndexController {
     @Autowired
     private SurveyService surveyService;
 
+    @Autowired
+    private SurveyQuestionService surveyQuestionService;
+
+    @Autowired
+    private SurveyResponseService surveyResponseService;
+
     @ModelAttribute
     public void commonAttributes(Model model) {
         model.addAttribute("categories", this.categoryService.getCategories());
@@ -59,7 +67,7 @@ public class IndexController {
                 params.put(k, (String) v);
             }
         });
-        model.addAttribute("params", params); // Có thể dùng chung
+        model.addAttribute("params", params); //  dùng chung
 
         if (categoryId != null) {
             switch (categoryId) {
@@ -68,13 +76,13 @@ public class IndexController {
                     return "event_management";
 
                 case 4: // Surveys
+                    // Lấy danh sách khảo sát từ service
                     List<Survey> surveys = surveyService.getSurveys(params);
                     model.addAttribute("surveys", surveys);
-                    return "survey_management";
+                    return "survey_management";  // Hiển thị trang quản lý khảo sát
 
                 case 2: // Posts
                     var posts = postService.getPosts(params);
-
                     Map<Integer, List<Comment>> commentsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
@@ -129,4 +137,3 @@ public class IndexController {
     }
 
 }
-

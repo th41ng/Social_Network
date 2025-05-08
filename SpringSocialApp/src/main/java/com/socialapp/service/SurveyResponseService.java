@@ -4,10 +4,20 @@
  */
 package com.socialapp.service;
 
+import com.socialapp.pojo.SurveyResponse;
+import java.util.List;
+
 /**
  *
  * @author DELL G15
  */
 public interface SurveyResponseService {
+
+    List<SurveyResponse> getResponsesBySurveyId(int surveyId);
+
+    SurveyResponse addSurveyResponse(SurveyResponse response);
+
+    void deleteSurveyResponse(int responseId);
     
+    List<SurveyResponse> getResponsesByQuestionId(int questionId);
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Câu Hỏi Mới</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+<div th:replace="base :: header"></div>
+
+<main class="container mt-5">
+    <h2 class="text-center mb-4">Thêm Câu Hỏi cho Khảo Sát: <span th:text="${survey.title}"></span></h2>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}">
+    </div>
+
+    <form th:action="@{/questions/save}" th:object="${question}" method="post">
+        <input type="hidden" name="surveyObjectId" th:value="${survey.surveyId}" />
+
+        <div class="mb-3">
+            <label for="questionText" class="form-label">Nội dung câu hỏi:</label>
+            <input type="text" id="questionText" th:field="*{questionText}" class="form-control" required />
+            <div th:if="${#fields.hasErrors('questionText')}" th:errors="*{questionText}" class="text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+            <label for="isRequired" class="form-label">Bắt buộc trả lời:</label>
+            <input type="checkbox" id="isRequired" th:field="*{isRequired}" class="form-check-input" />
+        </div>
+        
+        <div class="mb-3">
+            <label for="questionOrder" class="form-label">Thứ tự câu hỏi (tùy chọn):</label>
+            <input type="number" id="questionOrder" th:field="*{questionOrder}" class="form-control" />
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Lưu Câu Hỏi</button>
+        <a th:href="@{/questions/{surveyId}(surveyId=${survey.surveyId})}" class="btn btn-secondary">Hủy</a>
+    </form>
+</main>
+
+<div th:replace="base :: footer"></div>
+</body>
+</html>

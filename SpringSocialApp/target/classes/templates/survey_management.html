@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Quản lý khảo sát</title>
+<head>
+    <title>Quản lý khảo sát</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -9,6 +9,9 @@
 
     <main class="container mt-4">
         <h2>Quản lý khảo sát</h2>
+
+        <!-- Nút thêm khảo sát -->
+        <a th:href="@{/surveys/add}" class="btn btn-info mb-3">Thêm khảo sát</a>
 
         <!-- Form tìm kiếm -->
         <form class="row g-3 mb-3" method="get" th:action="@{/surveys}">
@@ -30,6 +33,7 @@
                         <th>Mô tả</th>
                         <th>Đa lựa chọn?</th>
                         <th>Ngày tạo</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,21 +42,28 @@
                         <td th:text="${s.description}"></td>
                         <td th:text="${s.isMultipleChoice ? 'Có' : 'Không'}"></td>
                         <td th:text="${#dates.format(s.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+
                         <td>
+                            <!-- Liên kết đến trang chỉnh sửa khảo sát -->
+                            <a th:href="@{'/surveys/' + ${s.surveyId}}" class="btn btn-success btn-sm">&#128296;️</a>
+                            
+                            <!-- Liên kết đến trang quản lý câu hỏi của khảo sát -->
+                            <a th:href="@{'/questions/' + ${s.surveyId}}" class="btn btn-info btn-sm">Quản lý Câu hỏi</a>
+
+                            <!-- Liên kết đến trang quản lý phản hồi của khảo sát -->
+                            <a th:href="@{'/responses/' + ${s.surveyId}}" class="btn btn-primary btn-sm">Quản lý Phản hồi</a>
+                            
+                            <!-- Nút xóa khảo sát -->
                             <button type="button" class="btn btn-danger btn-sm"
                                     th:onclick="'deleteSurvey(' + '\'' + @{/api/surveys/{id}(id=${s.surveyId})} + '\'' + ')'">
                                 Xoá
                             </button>
-
                         </td>
-
-
                     </tr>
                     <tr th:if="${#lists.isEmpty(surveys)}">
                         <td colspan="5" class="text-center">Không có khảo sát nào.</td>
                     </tr>
                 </tbody>
-
             </table>
         </div>
     </main>
@@ -60,11 +71,6 @@
     <div th:replace="base :: footer"></div>
 
     <script th:src="@{/js/main.js}"></script>
-
-
-
-
-
 
 </body>
 </html>

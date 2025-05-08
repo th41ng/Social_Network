@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thêm / Cập nhật khảo sát</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-5">
+        <h2 class="text-center mb-4">THÊM / CẬP NHẬT KHẢO SÁT</h2>
+
+        <form th:action="@{/surveys/save}" method="post" th:object="${survey}">
+            <input type="hidden" th:field="*{surveyId}"/>
+
+            <div class="mb-3">
+                <label for="title" class="form-label">Tiêu đề:</label>
+                <input type="text" class="form-control" id="title" th:field="*{title}" required/>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Mô tả:</label>
+                <textarea class="form-control" id="description" rows="4" th:field="*{description}"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <input type="checkbox" th:field="*{isMultipleChoice}" />
+
+                <label for="isMultipleChoice">Cho phép chọn nhiều đáp án</label>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <a th:href="@{/surveys}" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </main>
+
+
+    <div th:replace="base :: footer"></div>
+</body>
+</html>
+

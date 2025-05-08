@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 @RestController
 @RequestMapping("/api")
+@CrossOrigin
 public class ApiSurveyController {
     @Autowired
     private SurveyService surveyService;

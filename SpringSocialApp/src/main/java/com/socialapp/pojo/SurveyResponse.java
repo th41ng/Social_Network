@@ -1,15 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.pojo;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-/**
- *
- * @author DELL G15
- */
+
 @Entity
 @Table(name = "survey_responses")
 @NamedQueries({
@@ -47,6 +40,10 @@ public class SurveyResponse implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date responseAt;
 
+    // Thêm cột để lưu câu trả lời tự luận
+    @Column(name = "response_text")
+    private String responseText;
+
     public SurveyResponse() {
     }
 
@@ -54,16 +51,26 @@ public class SurveyResponse implements Serializable {
         this.responseId = responseId;
     }
 
-    public SurveyResponse(Integer responseId, Survey surveyId, User userId, SurveyQuestion questionId, Integer optionId, Date responseAt) {
+    public SurveyResponse(Integer responseId, Survey surveyId, User userId, SurveyQuestion questionId, Integer optionId, Date responseAt, String responseText) {
         this.responseId = responseId;
         this.surveyId = surveyId;
         this.userId = userId;
         this.questionId = questionId;
         this.optionId = optionId;
         this.responseAt = responseAt;
+        this.responseText = responseText; 
     }
 
-    // Getters and Setters
+    
+    public String getResponseText() {
+        return responseText;
+    }
+
+    public void setResponseText(String responseText) {
+        this.responseText = responseText;
+    }
+
+   
     public Integer getResponseId() {
         return responseId;
     }

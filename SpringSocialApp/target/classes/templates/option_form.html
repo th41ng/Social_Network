@@ -1,0 +1,24 @@
+<!-- option_form.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Lựa chọn</title>
+</head>
+<body>
+
+<h2>Thêm Lựa chọn cho câu hỏi: <span th:text="${question.questionText}"></span></h2>
+
+<form th:action="@{/options/save}" method="post" th:object="${option}">
+    <input type="hidden" th:field="*{optionId}"/>
+
+    <div class="form-group">
+        <label for="optionText">Nội dung lựa chọn:</label>
+        <input type="text" class="form-control" th:field="*{optionText}" required/>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+</form>
+
+</body>
+</html>
+

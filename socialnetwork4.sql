@@ -190,7 +190,7 @@ CREATE TABLE `posts` (
   PRIMARY KEY (`post_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +199,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (1,1,'Chào mọi người, tôi vừa tham gia mạng xã hội này!','2025-01-10 10:00:00','2025-01-10 10:00:00',0,0),(2,2,'Hôm nay là một ngày đẹp trời!','2025-01-11 14:00:00','2025-01-11 14:00:00',0,0),(3,3,'Thông báo lớp học bồi dưỡng sắp tới.','2025-01-12 09:00:00','2025-01-12 09:00:00',1,0),(4,4,'Khảo sát về chất lượng đào tạo, mọi người tham gia nhé!','2025-01-13 15:00:00','2025-01-13 15:00:00',0,0),(5,1,'Bài viết này đã bị xóa.','2025-01-14 12:00:00','2025-01-14 12:00:00',0,1);
+INSERT INTO `posts` VALUES (1,1,'Chào mọi người, tôi vừa tham gia mạng xã hội này!','2025-01-10 10:00:00','2025-01-10 10:00:00',0,0),(2,2,'Hôm nay là một ngày đẹp trời!','2025-01-11 14:00:00','2025-01-11 14:00:00',0,0),(3,3,'Thông báo lớp học bồi dưỡng sắp tới.','2025-01-12 09:00:00','2025-01-12 09:00:00',1,0),(4,4,'Khảo sát về chất lượng đào tạo, mọi người tham gia nhé!','2025-01-13 15:00:00','2025-01-13 15:00:00',0,0),(5,1,'Bài viết này đã bị xóa.','2025-01-14 12:00:00','2025-05-05 16:23:39',0,0),(6,1,'hahaa','2025-05-05 15:32:33','2025-05-05 22:33:53',0,0),(7,2,'hihi','2025-05-05 15:32:33','2025-05-05 22:33:53',0,0);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -280,7 +280,7 @@ CREATE TABLE `survey_questions` (
   PRIMARY KEY (`question_id`),
   KEY `survey_id` (`survey_id`),
   CONSTRAINT `survey_questions_ibfk_1` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`survey_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -289,7 +289,7 @@ CREATE TABLE `survey_questions` (
 
 LOCK TABLES `survey_questions` WRITE;
 /*!40000 ALTER TABLE `survey_questions` DISABLE KEYS */;
-INSERT INTO `survey_questions` VALUES (1,1,'Bạn đánh giá chất lượng giảng dạy thế nào?',1,1),(2,1,'Bạn có hài lòng với cơ sở vật chất không?',0,2),(3,2,'Công ty bạn cần tuyển vị trí nào?',1,1),(4,3,'Thu nhập hàng tháng của bạn là bao nhiêu?',1,1),(5,4,'Bạn hiện đang làm việc toàn thời gian hay bán thời gian?',1,1);
+INSERT INTO `survey_questions` VALUES (1,1,'Bạn đánh giá chất lượng giảng dạy thế nào?',1,1),(2,1,'Bạn có hài lòng với cơ sở vật chất không?',0,2),(3,2,'Công ty bạn cần tuyển vị trí nào?',1,1),(4,3,'Thu nhập hàng tháng của bạn là bao nhiêu?',1,1),(5,4,'Bạn hiện đang làm việc toàn thời gian hay bán thời gian?',1,1),(8,9,'1111111',0,NULL);
 /*!40000 ALTER TABLE `survey_questions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -307,6 +307,7 @@ CREATE TABLE `survey_responses` (
   `question_id` int DEFAULT NULL,
   `option_id` int DEFAULT NULL,
   `response_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `response_text` text,
   PRIMARY KEY (`response_id`),
   KEY `survey_id` (`survey_id`),
   KEY `user_id` (`user_id`),
@@ -325,7 +326,7 @@ CREATE TABLE `survey_responses` (
 
 LOCK TABLES `survey_responses` WRITE;
 /*!40000 ALTER TABLE `survey_responses` DISABLE KEYS */;
-INSERT INTO `survey_responses` VALUES (1,1,1,1,1,'2025-01-13 15:15:00'),(2,1,1,2,4,'2025-01-13 15:15:00'),(3,1,2,1,2,'2025-01-13 15:20:00'),(4,2,3,3,6,'2025-01-15 10:10:00'),(5,4,5,5,11,'2025-01-17 09:15:00');
+INSERT INTO `survey_responses` VALUES (1,1,1,1,1,'2025-01-13 15:15:00','hahahaha'),(2,1,1,2,4,'2025-01-13 15:15:00',NULL),(3,1,2,1,2,'2025-01-13 15:20:00',NULL),(4,2,3,3,6,'2025-01-15 10:10:00',NULL),(5,4,5,5,11,'2025-01-17 09:15:00',NULL);
 /*!40000 ALTER TABLE `survey_responses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -349,7 +350,7 @@ CREATE TABLE `surveys` (
   KEY `post_id` (`post_id`),
   CONSTRAINT `surveys_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
   CONSTRAINT `surveys_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,7 +359,7 @@ CREATE TABLE `surveys` (
 
 LOCK TABLES `surveys` WRITE;
 /*!40000 ALTER TABLE `surveys` DISABLE KEYS */;
-INSERT INTO `surveys` VALUES (1,4,4,'Đánh giá chất lượng đào tạo','Vui lòng đánh giá chương trình đào tạo của trường.',0,'2025-01-13 15:00:00'),(2,4,NULL,'Nhu cầu tuyển dụng','Khảo sát nhu cầu tuyển dụng từ cựu sinh viên.',0,'2025-01-15 10:00:00'),(3,4,NULL,'Thu nhập cựu sinh viên','Khảo sát mức thu nhập sau khi ra trường.',1,'2025-01-16 14:00:00'),(4,4,NULL,'Tình hình việc làm','Khảo sát tình hình việc làm hiện tại.',0,'2025-01-17 09:00:00'),(5,4,NULL,'Ý kiến về sự kiện','Đánh giá các sự kiện của trường.',0,'2025-01-18 11:00:00');
+INSERT INTO `surveys` VALUES (1,4,NULL,'Đánh giá chất lượng đào tạo hihi','Vui lòng đánh giá chương trình đào tạo của trường',0,'2025-05-06 17:27:40'),(2,4,NULL,'Nhu cầu tuyển dụng','Khảo sát nhu cầu tuyển dụng từ cựu sinh viên.',0,'2025-01-15 10:00:00'),(3,4,NULL,'Thu nhập cựu sinh viên','Khảo sát mức thu nhập sau khi ra trường.',1,'2025-01-16 14:00:00'),(4,4,NULL,'Tình hình việc làm','Khảo sát tình hình việc làm hiện tại.',0,'2025-01-17 09:00:00'),(5,4,NULL,'Ý kiến về sự kiện','Đánh giá các sự kiện của trường.',0,'2025-01-18 11:00:00'),(7,4,NULL,'gẻgbfgvsdfews','ẻgerfdgfdggdfgfd',0,'2025-05-06 17:27:48'),(9,4,NULL,'chào','kk',0,'2025-05-08 12:04:53');
 /*!40000 ALTER TABLE `surveys` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -435,4 +436,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-01 21:06:43
+-- Dump completed on 2025-05-08 19:26:02
