@@ -6,24 +6,21 @@ package com.socialapp.repository.impl;
 
 import com.socialapp.pojo.SurveyResponse;
 import com.socialapp.repository.SurveyResponseRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-
-import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.TypedQuery; // Sử dụng TypedQuery cho HQL
+
+import java.util.List;
 
 /**
  *
  * @author DELL G15
  */
 @Repository
-@Transactional
+@Transactional // Đảm bảo annotation này được áp dụng ở class hoặc ở phương thức service gọi đến
 public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
 
     @Autowired
@@ -32,12 +29,12 @@ public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
     @Override
     public List<SurveyResponse> getResponsesBySurveyId(int surveyId) {
         Session session = factory.getObject().getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<SurveyResponse> query = builder.createQuery(SurveyResponse.class);
-        Root<SurveyResponse> root = query.from(SurveyResponse.class);
+        jakarta.persistence.criteria.CriteriaBuilder builder = session.getCriteriaBuilder();
+        jakarta.persistence.criteria.CriteriaQuery<SurveyResponse> query = builder.createQuery(SurveyResponse.class);
+        jakarta.persistence.criteria.Root<SurveyResponse> root = query.from(SurveyResponse.class);
         query.select(root);
 
-        Predicate surveyPredicate = builder.equal(root.get("surveyId").get("surveyId"), surveyId);
+        jakarta.persistence.criteria.Predicate surveyPredicate = builder.equal(root.get("surveyId").get("surveyId"), surveyId);
         query.where(surveyPredicate);
 
         return session.createQuery(query).getResultList();
@@ -57,17 +54,24 @@ public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
         if (response != null) {
             session.remove(response);
         } else {
-            throw new IllegalArgumentException("SurveyResponse not found with ID: " + responseId);
+            
+            System.err.println("SurveyResponse not found with ID: " + responseId + " for deletion.");
+           
         }
     }
 
     @Override
     public List<SurveyResponse> getResponsesByQuestionId(int questionId) {
-        Session session = factory.getObject().getCurrentSession();
-        // Truy vấn phản hồi theo questionId
-        return session.createQuery("FROM SurveyResponse sr WHERE sr.questionId.questionId = :questionId", SurveyResponse.class)
-                .setParameter("questionId", questionId) 
-                .getResultList();
-    }
+        Session session = this.factory.getObject().getCurrentSession();
+        // Sử dụng HQL với LEFT JOIN FETCH để tải SurveyQuestion và SurveyOptions của nó
+        // DISTINCT là quan trọng để tránh các bản ghi SurveyResponse bị trùng lặp nếu một SurveyQuestion có nhiều SurveyOptions
+        String hql = "SELECT DISTINCT sr FROM SurveyResponse sr " +
+                     "LEFT JOIN FETCH sr.questionId q " +        
+                     "LEFT JOIN FETCH q.surveyOptions " +         
+                     "WHERE q.questionId = :questionId";       
 
+        TypedQuery<SurveyResponse> query = session.createQuery(hql, SurveyResponse.class);
+        query.setParameter("questionId", questionId);
+        return query.getResultList();
+    }
 }

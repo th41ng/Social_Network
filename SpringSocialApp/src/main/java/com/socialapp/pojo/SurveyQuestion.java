@@ -17,7 +17,7 @@ import java.util.Set;
 @NamedQueries({
     @NamedQuery(name = "SurveyQuestion.findAll", query = "SELECT sq FROM SurveyQuestion sq"),
     @NamedQuery(name = "SurveyQuestion.findById", query = "SELECT sq FROM SurveyQuestion sq WHERE sq.questionId = :questionId"),
-    @NamedQuery(name = "SurveyQuestion.findBySurveyId", query = "SELECT sq FROM SurveyQuestion sq WHERE sq.surveyId = :surveyId")
+//    @NamedQuery(name = "SurveyQuestion.findBySurveyId", query = "SELECT sq FROM SurveyQuestion sq WHERE sq.surveyId = :surveyId")
 })
 public class SurveyQuestion implements Serializable {
 
@@ -31,7 +31,7 @@ public class SurveyQuestion implements Serializable {
 
     @JoinColumn(name = "survey_id", referencedColumnName = "survey_id")
     @ManyToOne(optional = false)
-    private Survey surveyId;
+    private Survey surveyId; 
 
     @Basic(optional = false)
     @Column(name = "question_text")
@@ -42,9 +42,14 @@ public class SurveyQuestion implements Serializable {
 
     @Column(name = "question_order")
     private Integer questionOrder;
+    
+    // TRƯỜNG typeId VÀ ÁNH XẠ
+    @JoinColumn(name = "type_id", referencedColumnName = "type_id")
+    @ManyToOne(optional = false) 
+    private QuestionType typeId; 
 
-    @OneToMany(mappedBy = "questionId", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<SurveyOption> surveyOptions; // Hoặc List
+    @OneToMany(mappedBy = "questionId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Thêm CascadeType.ALL nếu muốn options bị xóa theo question
+    private Set<SurveyOption> surveyOptions; 
 
     public SurveyQuestion() {
     }
@@ -53,12 +58,14 @@ public class SurveyQuestion implements Serializable {
         this.questionId = questionId;
     }
 
-    public SurveyQuestion(Integer questionId, Survey surveyId, String questionText, Boolean isRequired, Integer questionOrder) {
+    
+    public SurveyQuestion(Integer questionId, Survey surveyId, String questionText, Boolean isRequired, Integer questionOrder, QuestionType typeId) {
         this.questionId = questionId;
         this.surveyId = surveyId;
         this.questionText = questionText;
         this.isRequired = isRequired;
         this.questionOrder = questionOrder;
+        this.typeId = typeId; 
     }
 
     // Getters and Setters
@@ -70,11 +77,11 @@ public class SurveyQuestion implements Serializable {
         this.questionId = questionId;
     }
 
-    public Survey getSurveyId() {
+    public Survey getSurveyId() { // Gợi ý: đổi tên thành getSurvey()
         return surveyId;
     }
 
-    public void setSurveyId(Survey surveyId) {
+    public void setSurveyId(Survey surveyId) { // Gợi ý: đổi tên thành setSurvey()
         this.surveyId = surveyId;
     }
 
@@ -103,9 +110,21 @@ public class SurveyQuestion implements Serializable {
     }
 
     public Set<SurveyOption> getSurveyOptions() {
-     return surveyOptions;
-}
+        return surveyOptions;
+    }
     
+    public void setSurveyOptions(Set<SurveyOption> surveyOptions) {
+        this.surveyOptions = surveyOptions;
+    }
+
+    
+    public QuestionType getTypeId() { 
+        return typeId;
+    }
+
+    public void setTypeId(QuestionType typeId) { 
+        this.typeId = typeId;
+    }
     
     @Override
     public int hashCode() {
@@ -120,7 +139,10 @@ public class SurveyQuestion implements Serializable {
             return false;
         }
         SurveyQuestion other = (SurveyQuestion) object;
-        return (this.questionId != null || other.questionId == null) && (this.questionId == null || this.questionId.equals(other.questionId));
+        if ((this.questionId == null && other.questionId != null) || (this.questionId != null && !this.questionId.equals(other.questionId))) {
+            return false;
+        }
+        return true;
     }
 
     @Override

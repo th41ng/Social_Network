@@ -34,9 +34,6 @@ public class Survey implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "is_multiple_choice")
-    private Boolean isMultipleChoice;
-
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -51,8 +48,6 @@ public class Survey implements Serializable {
 
     private Post postId;
 
-   
-
     public Survey() {
     }
 
@@ -64,7 +59,7 @@ public class Survey implements Serializable {
         this.surveyId = surveyId;
         this.title = title;
         this.description = description;
-        this.isMultipleChoice = isMultipleChoice;
+
         this.createdAt = createdAt;
         this.adminId = adminId;
         this.postId = postId;
@@ -95,14 +90,6 @@ public class Survey implements Serializable {
         this.description = description;
     }
 
-    public Boolean getIsMultipleChoice() {
-        return isMultipleChoice;
-    }
-
-    public void setIsMultipleChoice(Boolean isMultipleChoice) {
-        this.isMultipleChoice = isMultipleChoice;
-    }
-
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -126,8 +113,6 @@ public class Survey implements Serializable {
     public void setPostId(Post postId) {
         this.postId = postId;
     }
-
-
 
     @Override
     public int hashCode() {

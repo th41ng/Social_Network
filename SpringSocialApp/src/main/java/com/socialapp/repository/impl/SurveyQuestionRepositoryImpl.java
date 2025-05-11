@@ -25,14 +25,15 @@ public class SurveyQuestionRepositoryImpl implements SurveyQuestionRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
-   @Override
-public List<SurveyQuestion> getQuestionsBySurveyId(int surveyId) {
-    Session session = factory.getObject().getCurrentSession();
-    // Truy vấn câu hỏi theo surveyId
-    return session.createQuery("FROM SurveyQuestion sq WHERE sq.surveyId.surveyId = :surveyId", SurveyQuestion.class)
-            .setParameter("surveyId", surveyId) // Truyền đúng surveyId (Integer)
-            .getResultList();
-}
+    @Override
+    public List<SurveyQuestion> getQuestionsBySurveyId(int surveyId) {
+        Session session = factory.getObject().getCurrentSession();
+        // Truy vấn câu hỏi theo surveyId VÀ SẮP XẾP THEO questionOrder, sau đó là questionId
+        String hql = "FROM SurveyQuestion sq WHERE sq.surveyId.surveyId = :surveyId ORDER BY sq.questionOrder ASC, sq.questionId ASC";
+        return session.createQuery(hql, SurveyQuestion.class)
+                .setParameter("surveyId", surveyId)
+                .getResultList();
+    }
 
 
     @Override

@@ -1,47 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý Phản hồi</title>
-    <th:block th:replace="base :: bootstrap"></th:block>
+    <head>
+        <title>Quản lý Phản hồi</title>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
 </head>
 <body>
 
-<!-- Header sẽ được thay thế bởi base -->
-<div th:replace="base :: header"></div>
+    <div th:replace="~{base :: header}"></div>
 
-<main class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            <h3>Quản lý Phản hồi cho câu hỏi: <span th:text="${question.questionText}"></span></h3>
-        </div>
-        <div class="card-body">
-
-            <!-- Bảng Phản hồi -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Phản hồi</th>
-                            <th scope="col">Ngày trả lời</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="response : ${responses}">
-                            <td th:text="${response.responseText != null ? response.responseText : 'Không có phản hồi tự luận'}"></td>
-                            <td th:text="${#dates.format(response.responseAt, 'dd/MM/yyyy HH:mm')}"></td>
-                        </tr>
-                    </tbody>
-                </table>
+    <main class="container mt-4">
+        <div class="card" th:if="${question != null}">
+            <div class="card-header">
+                <h3>Quản lý Phản hồi cho câu hỏi: <span th:text="${question.questionText}"></span></h3>
+                <p><em>Loại câu hỏi:
+                        <span th:if="${question.typeId != null}" th:switch="${question.typeId.typeId}">
+                            <span th:case="1">Trắc nghiệm - Chọn một</span>
+                            <span th:case="2">Tự luận - Văn bản ngắn</span>
+                            <span th:case="3">Tự luận - Văn bản dài</span>
+                            <span th:case="4">Trắc nghiệm - Chọn nhiều (Checkbox)</span>
+                            <span th:case="*">Không xác định (<span th:text="${question.typeId.typeName}"></span>)</span>
+                        </span>
+                        <span th:if="${question.typeId == null}" class="text-danger">Không có thông tin loại câu hỏi!</span>
+                    </em></p>
             </div>
-            
-            <!-- Nút quay lại -->
-            <a href="#" class="btn btn-secondary mt-3">Quay lại</a>
-        </div>
-    </div>
-</main>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Người trả lời (ID)</th> <th scope="col">Phản hồi</th>
+                                <th scope="col">Ngày trả lời</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${responses == null or #lists.isEmpty(responses)}">
+                                <td colspan="3" class="text-center">Chưa có phản hồi nào cho câu hỏi này.</td>
+                            </tr>
+                            <tr th:each="response : ${responses}" th:if="${response.questionId != null and response.questionId.typeId != null}">
+                                <td th:text="${response.userId != null ? response.userId.fullName + ' (ID: ' + response.userId.id + ')' : 'N/A'}"></td>
+                                <td>
+                                    <div th:if="${response.questionId.typeId.typeId == 1}">
+                                        <span th:each="option : ${response.questionId.surveyOptions}"
+                                              th:if="${option.optionId.equals(response.optionId)}"
+                                              th:text="${option.optionText}">
+                                        </span>
+                                        <span th:if="${response.optionId == null}" class="text-muted"><em>(Không chọn đáp án)</em></span>
+                                    </div>
+                                    <div th:if="${response.questionId.typeId.typeId == 2 or response.questionId.typeId.typeId == 3}">
+                                        <span th:text="${response.responseText != null and !response.responseText.isBlank() ? response.responseText : '(Không có phản hồi tự luận)'}"></span>
+                                    </div>
+                                    <div th:if="${response.questionId.typeId.typeId != 1 and response.questionId.typeId.typeId != 2 and response.questionId.typeId.typeId != 3}" class="text-warning">
+                                        Phản hồi cho loại câu hỏi này chưa được hỗ trợ hiển thị (<span th:text="${response.questionId.typeId.typeName}"></span>).
+                                    </div>
+                                </td>
+                                <td th:text="${response.responseAt != null ? #dates.format(response.responseAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-<!-- Footer sẽ được thay thế bởi base -->
-<div th:replace="base :: footer"></div>
+                <a th:if="${question.surveyId != null}" th:href="@{'/questions/' + ${question.surveyId.surveyId}}" class="btn btn-secondary mt-3">Quay lại danh sách câu hỏi</a>
+                <a th:if="${question.surveyId == null}" th:href="@{/surveys}" class="btn btn-warning mt-3">Quay lại DS Khảo sát (Lỗi Survey ID)</a>
+            </div>
+        </div>
+        <div th:if="${question == null}" class="alert alert-danger mt-4" role="alert">
+            Không tìm thấy thông tin câu hỏi. Vui lòng kiểm tra lại.
+        </div>
+    </main>
+
+    <div th:replace="~{base :: footer}"></div>
 
 </body>
 </html>
