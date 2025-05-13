@@ -4,6 +4,7 @@ com\socialapp\pojo\User.class
 com\socialapp\pojo\UserGroups.class
 com\socialapp\pojo\Event.class
 com\socialapp\repository\SurveyResponseRepository.class
+com\socialapp\controllers\NotificationController.class
 com\socialapp\service\impl\ReactionServiceImpl.class
 com\socialapp\service\UserGroupService.class
 com\socialapp\repository\UserRepository.class
@@ -57,7 +58,6 @@ com\socialapp\configs\SecurityConfig.class
 com\socialapp\repository\CommentRepository.class
 com\socialapp\repository\impl\SurveyRepositoryImpl.class
 com\socialapp\repository\impl\QuestionTypeRepositoryImpl.class
-com\socialapp\controllers\EventController.class
 com\socialapp\pojo\SurveyQuestion.class
 com\socialapp\service\impl\PostApiServiceImpl.class
 com\socialapp\service\SurveyResponseService.class
@@ -88,9 +88,9 @@ com\socialapp\filters\JwtFilter.class
 com\socialapp\service\GroupMemberService.class
 com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\repository\SurveyRepository.class
-com\socialapp\controllers\ApiEventNotificationController.class
 com\socialapp\controllers\ApiUserController.class
 com\socialapp\controllers\ApiCategoryController.class
+com\socialapp\controllers\ApiNotificationController.class
 com\socialapp\repository\EventRepository.class
 com\socialapp\formatters\UserFormatter.class
 com\socialapp\pojo\SurveyResponse.class

@@ -32,4 +32,6 @@ public interface UserService extends UserDetailsService{
     void deleteUser(int id);
     
     User register (Map<String, String>params, MultipartFile avatar);
+    
+    boolean authenticate(String username, String password);
 }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Quản lý thông báo sự kiện</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Quản lý thông báo sự kiện</h2>
+        <a th:href="@{/notification/add}" class="btn btn-info mb-3">Thêm Thông báo</a>
+        <!-- Bộ lọc -->
+        <form class="row g-3 mb-3" method="get" th:action="@{/Notification}">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="title" placeholder="Tìm theo tiêu đề" 
+                       th:value="${params['title']}">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="fromDate" th:value="${params['fromDate']}">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="toDate" th:value="${params['toDate']}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+            </div>
+        </form>
+
+        <!-- Danh sách thông báo sự kiện -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tiêu đề</th>
+                        <th>Nội dung</th>
+                        <th>Người gửi</th>
+                        <th>Người nhận</th>
+                        <th>Nhóm</th>
+                        <th>Ngày gửi</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="notification : ${notification}">
+                        <td th:text="${notification.eventId}"></td>
+                        <td th:text="${notification.title}"></td>
+                        <td th:text="${notification.content}"></td>
+                        <td th:text="${notification.admin.fullName}"></td>
+                        <td>
+                            <span th:if="${notification.receiverUser != null}" th:text="${notification.receiverUser.fullName}"></span>
+                            <span th:if="${notification.receiverUser == null}">Chưa xác định</span>
+                        </td>
+                        <td>
+                            <span th:if="${notification.group != null}" th:text="${notification.group.groupName}"></span>
+                            <span th:if="${notification.group == null}">Không thuộc nhóm nào</span>
+                        </td>
+                        <td th:text="${#dates.format(notification.sentAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <a th:href="@{/notification/{id}(id=${notification.eventId})}" class="btn btn-primary btn-sm">Xem</a>
+                              <button type="button" class="btn btn-danger btn-sm" title="Xoá"
+                                        th:onclick="'deleteNotification(\'' + @{/api/notification/{id}(id=${notification.eventId})} + '\')'">
+                                    Xoá
+                              </button>
+
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(notification)}">
+                        <td colspan="8" class="text-center">Không có thông báo sự kiện nào.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

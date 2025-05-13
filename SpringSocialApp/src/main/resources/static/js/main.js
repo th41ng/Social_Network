@@ -28,6 +28,20 @@ function deletePost(fullUrl) {
     }
 }
 
+function deleteNotification(fullUrl) {
+    console.log("Delete notification URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn xoá notification này không?")) {
+        fetch(fullUrl, {
+            method: "DELETE"
+        })
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("Xoá bài viết thất bại!");
+                });
+    }
+}
 
 /**
  * Hàm ẩn/hiện phần nhập lựa chọn trắc nghiệm dựa trên loại câu hỏi được chọn.

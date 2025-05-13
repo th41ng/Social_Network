@@ -66,6 +66,7 @@ public class EventNotification implements Serializable {
     @JoinColumn(name = "event_id", referencedColumnName = "event_id")
     private Event event;
 
+
     // Các getter, setter khác
 
     public static long getSerialVersionUID() {

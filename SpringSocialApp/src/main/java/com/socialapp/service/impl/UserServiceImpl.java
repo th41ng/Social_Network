@@ -27,13 +27,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired  
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private Cloudinary cloudinary;
-    
-    
-    
+
     @Override
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
@@ -43,9 +41,6 @@ public class UserServiceImpl implements UserService {
     public User getUserById(int id) {
         return userRepository.getUserById(id);
     }
-
-    
-
 
     @Override
     public User updateUser(User user) {
@@ -64,19 +59,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-         User u = this.getUserByUsername(username);
+        User u = this.getUserByUsername(username);
         if (u == null) {
             throw new UsernameNotFoundException("Invalid username!");
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();
         authorities.add(new SimpleGrantedAuthority(u.getRole()));
-        System.out.println("Found user: " + u.getUsername());    
+        System.out.println("Found user: " + u.getUsername());
         return new org.springframework.security.core.userdetails.User(
                 u.getEmail(), u.getPassword(), authorities);
     }
 
-     @Override
+    @Override
     public User register(Map<String, String> params, MultipartFile avatar) {
         User user = new User();
         user.setFullName(params.get("fullname"));
@@ -102,5 +97,8 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.register(user);
     }
 
-    
+    @Override
+    public boolean authenticate(String username, String password) {
+        return this.userRepository.authenticate(username, password);
+    }
 }

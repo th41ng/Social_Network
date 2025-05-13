@@ -52,9 +52,9 @@ public class SecurityConfig {
             Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/", "/index","/posts/**").authenticated()
+                -> requests.requestMatchers("/", "/index","/posts/**","/responses/**","/notifications/**","/surveys/**","/questions/**").authenticated()
                 .requestMatchers("/js/**").permitAll()
-                      
+                      .requestMatchers("/api/login").permitAll()
                 .requestMatchers("/api/user").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 

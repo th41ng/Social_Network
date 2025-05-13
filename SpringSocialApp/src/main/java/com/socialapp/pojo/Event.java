@@ -70,8 +70,10 @@ public class Event implements Serializable {
     //private boolean isDeleted; // Trường xóa mềm
     
     //QUan hệ
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "event", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private EventNotification eventNotification;
+
+
     //Kế thúc
     public Event() {
     }

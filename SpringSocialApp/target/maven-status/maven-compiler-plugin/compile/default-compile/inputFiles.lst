@@ -9,13 +9,13 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\configs\Thymel
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\configs\WebAppContextConfigs.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\AdminController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiCategoryController.java
-E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiEventNotificationController.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiNotificationController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiPostController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiSurveyController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiUserController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\AuthController.java
-E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\EventController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\IndexController.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\NotificationController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\PostController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\SurveyController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\SurveyOptionController.java

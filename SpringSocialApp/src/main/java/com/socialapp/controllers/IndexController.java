@@ -63,9 +63,9 @@ public class IndexController {
 
         if (categoryId != null) {
             switch (categoryId) {
-                case 3: // Events
-                    model.addAttribute("events", EventNotificationService.getNotifications(params));
-                    return "event_management";
+                case 3: // Thông báo
+                    model.addAttribute("notification", EventNotificationService.getNotifications(params));
+                    return "notification_management";
 
                 case 4: // Surveys
                     List<Survey> surveys = surveyService.getSurveys(params);
