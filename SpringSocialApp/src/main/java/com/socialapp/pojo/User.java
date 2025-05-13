@@ -22,7 +22,7 @@ import java.util.Set;
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
 })
 public class User implements Serializable {
 
@@ -33,11 +33,16 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "user_id")
     private Integer id;
-
+    
+    @Column(name = "username")
+    private String username;
+    
     @Basic(optional = false)
     @Column(name = "student_id")
     private String studentId;
-
+    
+   
+    
     @Basic(optional = false)
     @Column(name = "email")
     private String email;
@@ -96,8 +101,9 @@ public class User implements Serializable {
     }
 
     
-    public User(Integer id, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
+    public User(Integer id, String username, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
         this.id = id;
+        this.username=username;
         this.studentId = studentId;
         this.email = email;
         this.password = password;
@@ -285,6 +291,20 @@ public class User implements Serializable {
      */
     public void setGroupMemberships(List<GroupMembers> groupMemberships) {
         this.groupMemberships = groupMemberships;
+    }
+
+    /**
+     * @return the username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * @param username the username to set
+     */
+    public void setUsername(String username) {
+        this.username = username;
     }
 
 }

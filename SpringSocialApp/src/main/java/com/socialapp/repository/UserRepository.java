@@ -15,15 +15,11 @@ public interface UserRepository {
     // Lấy thông tin người dùng theo ID
     User getUserById(int id);
 
-    // Thêm mới một người dùng
-    User addUser(User user);
-
     // Cập nhật thông tin người dùng
     User updateUser(User user);
 
     // Xóa người dùng theo ID
     void deleteUser(int id);
-
-    // Xác thực người dùng theo tên đăng nhập hoặc email và mật khẩu
-    boolean authenticate(String usernameOrEmail, String password);
+    
+    User register(User u);
 }

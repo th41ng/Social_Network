@@ -47,26 +47,9 @@ public class UserRepositoryImpl implements UserRepository {
         return s.get(User.class, id);
     }
 
-    @Override
-    public User addUser(User user) {
-        Session s = this.factory.getObject().getCurrentSession();
-        s.persist(user);
-        return user;
-    }
+   
 
-    @Override
-    public boolean authenticate(String usernameOrEmail, String password) {
-        Session s = this.factory.getObject().getCurrentSession();
-        try {
-            String hql = "FROM Users u WHERE (u.username = :usernameOrEmail OR u.email = :usernameOrEmail) AND u.password = :password";
-            Query q = s.createQuery(hql, User.class);
-            q.setParameter("usernameOrEmail", usernameOrEmail);
-            q.setParameter("password", password);
-            return !q.getResultList().isEmpty();
-        } catch (NoResultException e) {
-            return false;
-        }
-    }
+
 
     @Override
     public User updateUser(User user) {
@@ -82,5 +65,14 @@ public class UserRepositoryImpl implements UserRepository {
         if (user != null) {
             s.delete(user);
         }
+    }
+
+    @Override
+    public User register(User u) {
+       Session s = this.factory.getObject().getCurrentSession();
+       s.persist(u);
+       
+       s.refresh(u);
+       return u;
     }
 }

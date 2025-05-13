@@ -47,4 +47,7 @@ public class WebAppContextConfigs implements WebMvcConfigurer{
         registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
                 
     }
+    
+    
+    
 }

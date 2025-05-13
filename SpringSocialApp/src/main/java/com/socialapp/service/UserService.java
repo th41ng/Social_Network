@@ -5,12 +5,16 @@
 package com.socialapp.service;
 
 import com.socialapp.pojo.User;
+import jakarta.mail.Multipart;
+import java.util.Map;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author DELL G15
  */
-public interface UserService {
+public interface UserService extends UserDetailsService{
 
     // Lấy thông tin người dùng bằng tên đăng nhập
     User getUserByUsername(String username);
@@ -21,15 +25,11 @@ public interface UserService {
     // Lấy thông tin người dùng bằng ID
     User getUserById(int id);
 
-    // Thêm mới một người dùng
-    User addUser(User user);
-
-    // Xác thực người dùng với tên đăng nhập/email và mật khẩu
-    boolean authenticate(String usernameOrEmail, String password);
-
     // Thay đổi thông tin người dùng
     User updateUser(User user);
 
     // Xóa người dùng bằng ID
     void deleteUser(int id);
+    
+    User register (Map<String, String>params, MultipartFile avatar);
 }
