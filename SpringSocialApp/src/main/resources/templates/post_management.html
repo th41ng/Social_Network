@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Quản lý bài viết</title>
+<head>
+    <title>Quản lý bài viết</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -36,6 +36,7 @@
                         <th>Nội dung</th>
                         <th>Người đăng</th>
                         <th>Ngày đăng</th>
+                        <th>Hình ảnh</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -45,24 +46,43 @@
                         <td th:text="${p.content}"></td>
                         <td th:text="${p.userId.fullName}"></td>
                         <td th:text="${#dates.format(p.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    th:attr="onclick=|deletePost('@{/api/posts/{id}(id=${p.postId})}')|">
-                                Xoá
-                            </button>
 
+                        <!-- Hiển thị hình ảnh nếu có -->
+                        <td>
+                            <img th:if="${p.image != null}" th:src="@{${p.image}}" alt="Post Image" width="100" />
+                        </td>
+
+                        <td>
+                            <form th:action="@{/posts/{postId}/delete(postId=${p.postId})}" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
+                            </form>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(posts)}">
-                        <td colspan="5" class="text-center">Không có bài viết nào.</td>
+                        <td colspan="6" class="text-center">Không có bài viết nào.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <!-- Form upload ảnh cho bài viết mới hoặc cập nhật -->
+        <form method="post" th:action="@{/posts/upload}" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="content" class="form-label">Nội dung bài viết</label>
+                <input type="text" class="form-control" th:field="*{content}" />
+            </div>
+
+            <div class="mb-3">
+                <label for="imageFile" class="form-label">Chọn hình ảnh</label>
+                <input type="file" class="form-control" th:field="*{imageFile}" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Tải lên</button>
+        </form>
+
     </main>
 
     <div th:replace="base :: footer"></div>
-
 
     <script th:src="@{/js/main.js}"></script>
 </body>

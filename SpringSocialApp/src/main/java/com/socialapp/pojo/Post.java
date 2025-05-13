@@ -9,6 +9,9 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
+
+
 
 /**
  *
@@ -50,27 +53,31 @@ public class Post implements Serializable {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @Column(name = "image") // Thêm trường image để lưu URL hình ảnh
+    private String image;
+
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
 
-    @JsonIgnore
+//    @JsonIgnore
     private User userId;
 
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
-//    @JsonIgnore
+    // @JsonIgnore
     private Set<Comment> commentSet;
 
-   
+     // Thêm MultipartFile để nhận file ảnh
+    @Transient
+    private MultipartFile imageFile;
+    
+    
     public Post() {
     }
 
-    
     public Post(Integer postId) {
         this.postId = postId;
     }
 
-   
     public Post(Integer postId, String content, Date createdAt, Date updatedAt, Boolean isCommentLocked, Boolean isDeleted, User userId) {
         this.postId = postId;
         this.content = content;
@@ -144,6 +151,23 @@ public class Post implements Serializable {
 
     public void setCommentSet(Set<Comment> commentSet) {
         this.commentSet = commentSet;
+    }
+
+    // Getters và Setters cho image
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+    
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
     }
 
     @Override

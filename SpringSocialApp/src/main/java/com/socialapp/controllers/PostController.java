@@ -1,11 +1,9 @@
 package com.socialapp.controllers;
 
 import com.socialapp.pojo.Comment;
+import com.socialapp.pojo.Post;
 import com.socialapp.service.PostService;
 import com.socialapp.service.ReactionService;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,12 +13,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/posts")
 public class PostController {
 
     @Autowired
     private PostService postService;
+    
+    
 
     @Autowired
     private ReactionService reactionService;
@@ -55,5 +59,10 @@ public class PostController {
         return "post_management";
     }
 
-
+    // Thêm phương thức để xử lý việc xóa bài viết
+    @PostMapping("/{postId}/delete")
+    public String deletePost(@PathVariable("postId") int postId) {
+        postService.deletePost(postId);
+        return "redirect:/posts"; // Chuyển hướng lại trang danh sách bài viết
+    }
 }
