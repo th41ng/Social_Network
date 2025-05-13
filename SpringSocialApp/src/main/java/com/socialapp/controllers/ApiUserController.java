@@ -29,7 +29,7 @@ public class ApiUserController {
     @Autowired
     private UserService userDetailService;
     
-    @PostMapping(path="/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path="/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> register(@RequestParam Map<String, String> params, 
             @RequestParam(value = "avatar") MultipartFile avatar){
         return new ResponseEntity<>(this.userDetailService.register(params, avatar), HttpStatus.CREATED);

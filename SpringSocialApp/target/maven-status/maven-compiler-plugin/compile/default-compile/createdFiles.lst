@@ -44,17 +44,13 @@ com\socialapp\controllers\IndexController.class
 com\socialapp\controllers\AuthController.class
 com\socialapp\repository\UserGroupsRepository.class
 com\socialapp\service\impl\EventNotificationServiceImpl.class
-com\socialapp\dto\CommentDTO.class
 com\socialapp\repository\impl\EventNotificationRepositoryImpl.class
+com\socialapp\dto\CommentDTO.class
 com\socialapp\repository\impl\EventRepositoryImpl.class
 com\socialapp\springsocialapp\resources\JakartaEE11Resource.class
 com\socialapp\service\SurveyService.class
 com\socialapp\controllers\PostController.class
-<<<<<<< HEAD
-=======
 com\socialapp\service\PostApiService.class
-com\socialapp\controllers\AdminController.class
->>>>>>> 091189a56b7dd6bbbb350dbba972059af9ddf743
 com\socialapp\controllers\SurveyQuestionController.class
 com\socialapp\controllers\AdminController.class
 com\socialapp\configs\SecurityConfig.class
@@ -88,20 +84,13 @@ com\socialapp\service\EventNotificationService.class
 com\socialapp\service\impl\EmailServiceImpl.class
 com\socialapp\repository\QuestionTypeRepository.class
 com\socialapp\service\impl\QuestionTypeServiceImpl.class
-<<<<<<< HEAD
+com\socialapp\filters\JwtFilter.class
 com\socialapp\service\GroupMemberService.class
 com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\repository\SurveyRepository.class
 com\socialapp\controllers\ApiEventNotificationController.class
 com\socialapp\controllers\ApiUserController.class
-=======
-com\socialapp\filters\JwtFilter.class
-com\socialapp\repository\impl\UserRepositoryImpl.class
-com\socialapp\repository\SurveyRepository.class
-com\socialapp\service\GroupMemberService.class
 com\socialapp\controllers\ApiCategoryController.class
-com\socialapp\formatters\UserFormatter.class
->>>>>>> 091189a56b7dd6bbbb350dbba972059af9ddf743
 com\socialapp\repository\EventRepository.class
 com\socialapp\formatters\UserFormatter.class
 com\socialapp\pojo\SurveyResponse.class
