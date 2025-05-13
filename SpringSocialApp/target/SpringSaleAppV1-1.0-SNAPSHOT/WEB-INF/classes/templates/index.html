@@ -10,24 +10,38 @@
     <main class="container mt-4">
         <h1>Bài viết mới nhất</h1>
 
+        <!-- Nếu không có bài viết -->
         <div class="row" th:if="${#lists.isEmpty(posts)}">
             <p>Không có bài viết nào.</p>
         </div>
 
+        <!-- Hiển thị bài viết -->
         <div class="row" th:each="post : ${posts}">
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title" th:text="'Bài viết #' + ${post.postId}"></h5>
+
+                    <!-- Nội dung bài viết -->
                     <p class="card-text" th:text="${post.content}"></p>
+
+                    <!-- Người đăng bài viết -->
                     <p class="card-text">
                         <strong>Người đăng:</strong> <span th:text="${post.userId.fullName}"></span>
                     </p>
 
+                    <!-- Thời gian đăng bài -->
                     <p class="card-text">
                         <small class="text-muted" th:text="${#dates.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
                     </p>
 
-                    <!-- Reactions -->
+                    <!-- Hình ảnh bài viết -->
+                    <div th:if="${post.image != null}">
+                        <img th:src="@{${post.image}}" alt="Post Image" class="img-fluid" style="max-width: 500px; width: 100%; height: auto;" />
+                    </div>
+
+
+
+                    <!-- Reactions cho bài viết -->
                     <div th:if="${reactionsMap[post.postId] != null}">
                         <hr />
                         <p>Reactions:</p>
@@ -44,8 +58,6 @@
                         </ul>
                     </div>
 
-
-
                     <!-- Bình luận -->
                     <div th:if="${commentsMap[post.postId] != null and !commentsMap[post.postId].isEmpty()}">
                         <hr>
@@ -55,7 +67,7 @@
                                 <strong th:text="${c.userId.fullName} + ':'"></strong>
                                 <span th:text="${c.content}"></span>
 
-                                <!-- Reactions cho comment -->
+                                <!-- Reactions cho bình luận -->
                                 <div th:if="${commentReactionsMap[c.commentId] != null}">
                                     <ul class="list-inline mt-2 mb-0">
                                         <li class="list-inline-item small text-muted" th:each="entry : ${commentReactionsMap[c.commentId].entrySet()}">
@@ -72,8 +84,6 @@
                             </li>
                         </ul>
                     </div>
-
-
                 </div>
             </div>
         </div>

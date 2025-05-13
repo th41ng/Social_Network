@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.controllers;
 
 import com.socialapp.pojo.Comment;
@@ -25,10 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- *
- * @author DELL G15
- */
 @Controller
 @ControllerAdvice
 public class IndexController {
@@ -67,7 +59,7 @@ public class IndexController {
                 params.put(k, (String) v);
             }
         });
-        model.addAttribute("params", params); //  dùng chung
+        model.addAttribute("params", params); // Dùng chung params để lọc kết quả
 
         if (categoryId != null) {
             switch (categoryId) {
@@ -76,7 +68,6 @@ public class IndexController {
                     return "event_management";
 
                 case 4: // Surveys
-                    // Lấy danh sách khảo sát từ service
                     List<Survey> surveys = surveyService.getSurveys(params);
                     model.addAttribute("surveys", surveys);
                     return "survey_management";  // Hiển thị trang quản lý khảo sát
@@ -135,5 +126,4 @@ public class IndexController {
 
         return "index";
     }
-
 }
