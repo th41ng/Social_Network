@@ -7,7 +7,6 @@ package com.socialapp.repository.impl;
 import com.socialapp.pojo.Comment;
 import com.socialapp.pojo.Post;
 import com.socialapp.repository.PostRepository;
-import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -20,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.hibernate.query.Query;
 
 /**
  *
@@ -154,4 +154,21 @@ public class PostRepositoryImpl implements PostRepository {
         Query query = s.createQuery(q);
         return query.getResultList();
     }
+
+    @Override
+    public long countPosts() {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<Long> query = session.createQuery("SELECT COUNT(p.id) FROM Post p", Long.class);
+        return query.getSingleResult();
+    }
+
+    @Override
+    public int countPostsCreatedToday() {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<Long> query = session.createQuery(
+                "SELECT COUNT(p.id) FROM Post p WHERE DATE(p.createdAt) = CURRENT_DATE", Long.class
+        );
+        return query.getSingleResult().intValue();
+    }
+
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý bài viết</title>
+    <head>
+        <title>Quản lý bài viết</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -11,10 +11,9 @@
         <h2>Quản lý bài viết</h2>
 
         <!-- Bộ lọc -->
-        <form class="row g-3 mb-3" method="get" th:action="@{/posts}">
+        <form class="row g-3 mb-3" method="get" th:action="@{/surveys}">
             <div class="col-md-4">
-                <input type="text" class="form-control" name="content" placeholder="Tìm theo nội dung" 
-                       th:value="${params['content']}">
+                <input type="text" class="form-control" name="kw" placeholder="Tìm theo tiêu đề..." th:value="${params['kw']}">
             </div>
             <div class="col-md-3">
                 <input type="date" class="form-control" name="fromDate" th:value="${params['fromDate']}">
@@ -23,9 +22,10 @@
                 <input type="date" class="form-control" name="toDate" th:value="${params['toDate']}">
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
             </div>
         </form>
+
 
         <!-- Danh sách bài viết -->
         <div class="table-responsive">
@@ -65,20 +65,7 @@
             </table>
         </div>
 
-        <!-- Form upload ảnh cho bài viết mới hoặc cập nhật -->
-        <form method="post" th:action="@{/posts/upload}" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="content" class="form-label">Nội dung bài viết</label>
-                <input type="text" class="form-control" th:field="*{content}" />
-            </div>
 
-            <div class="mb-3">
-                <label for="imageFile" class="form-label">Chọn hình ảnh</label>
-                <input type="file" class="form-control" th:field="*{imageFile}" />
-            </div>
-
-            <button type="submit" class="btn btn-success">Tải lên</button>
-        </form>
 
     </main>
 

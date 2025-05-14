@@ -3,7 +3,8 @@ package com.socialapp.repository.impl;
 import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.Query;
+import org.hibernate.query.Query;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -19,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
     private LocalSessionFactoryBean factory;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    
+
     @Override
     public User getUserByUsername(String username) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -81,4 +82,22 @@ public class UserRepositoryImpl implements UserRepository {
 
         return this.passwordEncoder.matches(password, u.getPassword());
     }
+
+    @Override
+    public long countUsers() {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query query = session.createQuery("SELECT COUNT(u.id) FROM User u");
+        Long count = (Long) query.getSingleResult();  // Sử dụng getSingleResult thay vì uniqueResult
+        return count;
+    }
+
+    @Override
+    public int countUsersRegisteredToday() {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<Long> query = session.createQuery(
+                "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class
+        );
+        return query.getSingleResult().intValue();
+    }
+
 }

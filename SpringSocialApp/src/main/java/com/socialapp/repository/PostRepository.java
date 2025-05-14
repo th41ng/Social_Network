@@ -26,4 +26,9 @@ public interface PostRepository {
     void deletePost(int id);
 
     List<Comment> getCommentsByPostId(int postId);
+    
+     long countPosts();
+     
+     int countPostsCreatedToday();
+
 }

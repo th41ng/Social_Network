@@ -12,20 +12,29 @@
 
         <a th:href="@{/surveys/add}" class="btn btn-info mb-3">Thêm khảo sát</a>
 
+        <!-- Form lọc khảo sát -->
         <form class="row g-3 mb-3" method="get" th:action="@{/surveys}">
-            <div class="col-md-10">
+            <div class="col-md-4">
                 <input type="text" class="form-control" name="kw" placeholder="Tìm theo tiêu đề..."
                        th:value="${params['kw']}">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="fromDate" th:value="${params['fromDate']}">
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" name="toDate" th:value="${params['toDate']}">
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
             </div>
         </form>
 
+        <!-- Bảng khảo sát -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
                     <tr>
+                        <th>ID</th>
                         <th>Tiêu đề</th>
                         <th>Mô tả</th>
                         <th>Ngày tạo</th>
@@ -34,16 +43,14 @@
                 </thead>
                 <tbody>
                     <tr th:each="s : ${surveys}">
+                        <td th:text="${s.surveyId}"></td>
                         <td th:text="${s.title}"></td>
                         <td th:text="${s.description}"></td>
                         <td th:text="${#dates.format(s.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
                             <a th:href="@{'/surveys/' + ${s.surveyId}}" class="btn btn-success btn-sm" title="Chỉnh sửa">&#128296;️</a>
-                            
                             <a th:href="@{'/questions/' + ${s.surveyId}}" class="btn btn-info btn-sm" title="Quản lý Câu hỏi">Quản lý Câu hỏi</a>
-
                             <a th:href="@{'/responses/' + ${s.surveyId}}" class="btn btn-primary btn-sm" title="Quản lý Phản hồi">Quản lý Phản hồi</a>
-                            
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
                                     th:onclick="'deleteSurvey(\'' + @{/api/surveys/{id}(id=${s.surveyId})} + '\')'">
                                 Xoá
@@ -51,7 +58,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(surveys)}">
-                        <td colspan="4" class="text-center">Không có khảo sát nào.</td>
+                        <td colspan="5" class="text-center">Không có khảo sát nào.</td>
                     </tr>
                 </tbody>
             </table>
@@ -61,6 +68,5 @@
     <div th:replace="~{base :: footer}"></div>
 
     <script th:src="@{/js/main.js}"></script>
-
 </body>
 </html>

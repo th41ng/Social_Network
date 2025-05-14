@@ -5,6 +5,7 @@ import com.socialapp.pojo.Survey;
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.EventNotificationService;
 import com.socialapp.service.EventService;
+import com.socialapp.service.PlatformStatsService;
 import com.socialapp.service.PostService;
 import com.socialapp.service.ReactionService;
 import com.socialapp.service.SurveyQuestionService;
@@ -45,6 +46,9 @@ public class IndexController {
 
     @Autowired
     private SurveyResponseService surveyResponseService;
+
+    @Autowired
+    private PlatformStatsService platformStatsService;
 
     @ModelAttribute
     public void commonAttributes(Model model) {
@@ -97,6 +101,12 @@ public class IndexController {
                     model.addAttribute("commentReactionsMap", commentReactionsMap);
 
                     return "post_management";
+
+                case 6: // Thống kê nền tảng
+                    platformStatsService.generateDailySummary(); // Đảm bảo có dữ liệu mỗi ngày
+                    model.addAttribute("stats", platformStatsService.getAllSummaries());
+                    return "stats_management";
+
             }
         }
 
