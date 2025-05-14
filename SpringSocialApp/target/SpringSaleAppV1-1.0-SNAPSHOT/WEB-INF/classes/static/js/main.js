@@ -137,27 +137,17 @@ function addOption() {
     optionsContainer.appendChild(newOptionInput);
 }
 
-function verifyStudent(userId) {
-    if (confirm("Bạn có chắc chắn muốn xác thực người dùng này?")) {
-        fetch(`/api/verify/${userId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            }
+function verifyStudent(fullUrl) {
+    console.log("URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn xác thực không?")) {
+        fetch(fullUrl, {
+            method: "PUT"
         })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            alert(data.message || "Xác thực thành công!");
-            location.reload();
-        })
-        .catch(err => {
-            console.error("Xác thực thất bại:", err);
-            alert("Đã xảy ra lỗi khi xác thực người dùng!");
-        });
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("Xác thực thất bại!");
+                });
     }
 }

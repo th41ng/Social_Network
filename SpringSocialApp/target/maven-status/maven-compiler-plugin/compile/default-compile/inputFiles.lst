@@ -16,6 +16,7 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\Ap
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\AuthController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\IndexController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\NotificationController.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\PlatformStatsController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\PostController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\SurveyController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\SurveyOptionController.java
@@ -30,12 +31,15 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\formatters\Cat
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\formatters\UserFormatter.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\Category.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\Comment.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\DailyPlatformSummary.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\Event.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\EventNotification.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\GroupMembers.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\PeriodicSummaryStats.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\Post.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\QuestionType.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\Reaction.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\StatisticsScheduler.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\Survey.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\SurveyOption.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\pojo\SurveyQuestion.java
@@ -52,6 +56,7 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\imp
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\EventNotificationRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\EventRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\GroupMemberRepositoryImpl.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\PlatformStatsRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\PostRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\QuestionTypeRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\ReactionRepositoryImpl.java
@@ -61,6 +66,7 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\imp
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\SurveyResponseRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\UserGroupRepositoryImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\impl\UserRepositoryImpl.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\PlatformStatsRepository.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\PostRepository.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\QuestionTypeRepository.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\ReactionRepository.java
@@ -70,6 +76,7 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\Sur
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\SurveyResponseRepository.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\UserGroupsRepository.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\repository\UserRepository.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\schedule\StatisticsScheduler.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\CategoryService.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\CommentService.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\EmailService.java
@@ -82,6 +89,7 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\E
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\EventNotificationServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\EventServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\GroupMemberServiceImpl.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\PlatformStatsServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\PostApiServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\PostServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\QuestionTypeServiceImpl.java
@@ -92,6 +100,7 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\S
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\SurveyServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\UserGroupServiceImpl.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\impl\UserServiceImpl.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\PlatformStatsService.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\PostApiService.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\PostService.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\service\QuestionTypeService.java

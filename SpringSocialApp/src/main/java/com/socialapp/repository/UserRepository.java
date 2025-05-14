@@ -9,7 +9,10 @@ import java.util.Map;
  * Giao diện cho các thao tác với người dùng
  */
 public interface UserRepository {
+
+    
     List<User> getAllUsers(Map<String, String> params);
+
     
     // Lấy thông tin người dùng theo tên đăng nhập
     User getUserByUsername(String username);
@@ -25,11 +28,16 @@ public interface UserRepository {
     
     // Xóa người dùng theo ID
     void deleteUser(int id);
-    
+
     User register(User u);
+
     
     boolean verifyStudent(int userId);
     
     boolean authenticate(String username, String password);
     
+    long countUsers();
+    
+    int countUsersRegisteredToday();
+
 }

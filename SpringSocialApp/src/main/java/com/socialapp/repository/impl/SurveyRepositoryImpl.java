@@ -37,22 +37,49 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         Session s = factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Survey> q = b.createQuery(Survey.class);
-        Root root = q.from(Survey.class);
+        Root<Survey> root = q.from(Survey.class);
         q.select(root);
 
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
 
+            // Tìm theo từ khóa tiêu đề
             String kw = params.get("kw");
             if (kw != null && !kw.isEmpty()) {
                 predicates.add(b.like(root.get("title"), "%" + kw + "%"));
             }
 
+            // Lọc theo adminId
+            String adminId = params.get("adminId");
+            if (adminId != null && !adminId.isEmpty()) {
+                predicates.add(b.equal(root.get("adminId").get("userId"), Integer.parseInt(adminId)));
+            }
+
+            // Lọc theo ngày tạo
+            String fromDate = params.get("fromDate");
+            if (fromDate != null && !fromDate.isEmpty()) {
+                predicates.add(b.greaterThanOrEqualTo(root.get("createdAt"), java.sql.Timestamp.valueOf(fromDate + " 00:00:00")));
+            }
+
+            String toDate = params.get("toDate");
+            if (toDate != null && !toDate.isEmpty()) {
+                predicates.add(b.lessThanOrEqualTo(root.get("createdAt"), java.sql.Timestamp.valueOf(toDate + " 23:59:59")));
+            }
+
             q.where(predicates.toArray(Predicate[]::new));
+
+            // Sắp xếp
+            String orderBy = params.get("orderBy");
+            if (orderBy != null && !orderBy.isEmpty()) {
+                q.orderBy(b.desc(root.get(orderBy)));
+            } else {
+                q.orderBy(b.desc(root.get("createdAt")));
+            }
         }
 
         var query = s.createQuery(q);
 
+        // Phân trang
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setMaxResults(PAGE_SIZE);
@@ -89,5 +116,4 @@ public class SurveyRepositoryImpl implements SurveyRepository {
             throw new IllegalArgumentException("Survey not found with ID: " + id);
         }
     }
-
 }

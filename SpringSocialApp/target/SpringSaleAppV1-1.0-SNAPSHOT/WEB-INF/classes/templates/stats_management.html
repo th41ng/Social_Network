@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản lý thống kê</title>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
+</head>
+<body>
+<div th:replace="~{base :: header}"></div>
+
+<main class="container mt-4">
+    <h2>Thống kê nền tảng hàng ngày</h2>
+
+    <!-- Bảng thống kê -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+            <tr>
+                <th>Ngày</th>
+                <th>Tổng người dùng</th>
+                <th>Tổng bài viết</th>
+                <!-- Nếu có thêm trường thì bổ sung -->
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${stats}">
+                <td th:text="${#dates.format(s.summaryDate, 'dd/MM/yyyy')}"></td>
+                <td th:text="${s.totalUsers}"></td>
+                <td th:text="${s.totalPosts}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(stats)}">
+                <td colspan="3" class="text-center">Chưa có thống kê nào.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div th:replace="~{base :: footer}"></div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

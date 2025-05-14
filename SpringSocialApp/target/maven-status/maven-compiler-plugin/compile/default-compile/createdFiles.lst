@@ -1,3 +1,4 @@
+com\socialapp\pojo\PeriodicSummaryStats.class
 com\socialapp\configs\SecurityWebApplicationInitializer.class
 com\socialapp\controllers\SurveyResponseController.class
 com\socialapp\pojo\User.class
@@ -16,14 +17,17 @@ com\socialapp\pojo\Reaction.class
 com\socialapp\configs\EmailConfig.class
 com\socialapp\repository\impl\ReactionRepositoryImpl.class
 com\socialapp\repository\impl\SurveyOptionRepositoryImpl.class
+com\socialapp\pojo\StatisticsScheduler.class
 com\socialapp\pojo\GroupMembers.class
 com\socialapp\service\ReactionService.class
 com\socialapp\configs\JacksonConfig.class
 com\socialapp\controllers\SurveyOptionController.class
 com\socialapp\service\CategoryService.class
+com\socialapp\controllers\PlatformStatsController.class
 com\socialapp\service\impl\SurveyResponseServiceImpl.class
 com\socialapp\formatters\CategoryFormatter.class
 com\socialapp\repository\impl\CategoryRepositoryImpl.class
+com\socialapp\schedule\StatisticsScheduler.class
 com\socialapp\pojo\EventNotification.class
 com\socialapp\service\impl\GroupMemberServiceImpl.class
 com\socialapp\service\impl\EventServiceImpl.class
@@ -37,6 +41,7 @@ com\socialapp\controllers\SurveyController.class
 com\socialapp\utils\JwtUtils.class
 com\socialapp\repository\EventNotificationRepository.class
 com\socialapp\configs\WebAppContextConfigs.class
+com\socialapp\repository\PlatformStatsRepository.class
 com\socialapp\pojo\Category.class
 com\socialapp\service\EmailService.class
 com\socialapp\repository\GroupMembersRepository.class
@@ -44,6 +49,7 @@ com\socialapp\service\impl\PostServiceImpl.class
 com\socialapp\controllers\IndexController.class
 com\socialapp\controllers\AuthController.class
 com\socialapp\repository\UserGroupsRepository.class
+com\socialapp\repository\impl\PlatformStatsRepositoryImpl.class
 com\socialapp\service\impl\EventNotificationServiceImpl.class
 com\socialapp\repository\impl\EventNotificationRepositoryImpl.class
 com\socialapp\dto\CommentDTO.class
@@ -60,13 +66,16 @@ com\socialapp\repository\impl\SurveyRepositoryImpl.class
 com\socialapp\repository\impl\QuestionTypeRepositoryImpl.class
 com\socialapp\pojo\SurveyQuestion.class
 com\socialapp\service\impl\PostApiServiceImpl.class
+com\socialapp\service\impl\PlatformStatsServiceImpl.class
 com\socialapp\service\SurveyResponseService.class
+com\socialapp\pojo\PeriodicSummaryStats$PeriodType.class
 com\socialapp\service\impl\SurveyOptionServiceImpl.class
 com\socialapp\repository\impl\GroupMemberRepositoryImpl.class
 com\socialapp\repository\PostRepository.class
 com\socialapp\repository\impl\UserGroupRepositoryImpl.class
 com\socialapp\repository\CategoryRepository.class
 com\socialapp\springsocialapp\JakartaRestConfiguration.class
+com\socialapp\service\PlatformStatsService.class
 com\socialapp\service\impl\SurveyServiceImpl.class
 com\socialapp\repository\impl\SurveyResponseRepositoryImpl.class
 com\socialapp\configs\DispatcherServletInit.class
@@ -76,6 +85,7 @@ com\socialapp\service\SurveyOptionService.class
 com\socialapp\repository\SurveyQuestionRepository.class
 com\socialapp\pojo\Comment.class
 com\socialapp\pojo\QuestionType.class
+com\socialapp\pojo\DailyPlatformSummary.class
 com\socialapp\configs\HibernateConfigs.class
 com\socialapp\repository\ReactionRepository.class
 com\socialapp\repository\impl\SurveyQuestionRepositoryImpl.class
