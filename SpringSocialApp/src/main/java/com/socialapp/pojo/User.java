@@ -33,16 +33,14 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "user_id")
     private Integer id;
-    
+
     @Column(name = "username")
     private String username;
-    
+
     @Basic(optional = false)
     @Column(name = "student_id")
     private String studentId;
-    
-   
-    
+
     @Basic(optional = false)
     @Column(name = "email")
     private String email;
@@ -78,32 +76,34 @@ public class User implements Serializable {
     @Column(name = "is_locked")
     private Boolean isLocked;
 
-    @OneToMany(mappedBy = "userId")
+    // Quan hệ với Comment
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Comment> commentSet;
 
-    @OneToMany(mappedBy = "userId")
+    // Quan hệ với Post
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Post> postSet;
-    
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserGroups> managedGroups; // Quan hệ với UserGroups (admin_id)
 
+    // Quan hệ với UserGroups (admin)
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserGroups> managedGroups;
+
+    // Quan hệ với GroupMembers (user)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GroupMembers> groupMemberships; // Quan hệ với GroupMembers (user_id)
-    
+    private List<GroupMembers> groupMemberships;
+
     public User() {
     }
 
-   
     public User(Integer id) {
         this.id = id;
     }
 
-    
     public User(Integer id, String username, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
         this.id = id;
-        this.username=username;
+        this.username = username;
         this.studentId = studentId;
         this.email = email;
         this.password = password;
@@ -117,7 +117,8 @@ public class User implements Serializable {
         this.isLocked = isLocked;
     }
 
-    // Getters and Setters
+    // Getter and Setter methods
+
     public Integer getId() {
         return id;
     }
@@ -230,6 +231,22 @@ public class User implements Serializable {
         this.postSet = postSet;
     }
 
+    public List<UserGroups> getManagedGroups() {
+        return managedGroups;
+    }
+
+    public void setManagedGroups(List<UserGroups> managedGroups) {
+        this.managedGroups = managedGroups;
+    }
+
+    public List<GroupMembers> getGroupMemberships() {
+        return groupMemberships;
+    }
+
+    public void setGroupMemberships(List<GroupMembers> groupMemberships) {
+        this.groupMemberships = groupMemberships;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -251,46 +268,12 @@ public class User implements Serializable {
         return "com.socialapp.pojo.User[ id=" + id + " ]";
     }
 
-    /**
-     * @return the serialVersionUID
-     */
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    /**
-     * @param aSerialVersionUID the serialVersionUID to set
-     */
     public static void setSerialVersionUID(long aSerialVersionUID) {
         serialVersionUID = aSerialVersionUID;
-    }
-
-    /**
-     * @return the managedGroups
-     */
-    public List<UserGroups> getManagedGroups() {
-        return managedGroups;
-    }
-
-    /**
-     * @param managedGroups the managedGroups to set
-     */
-    public void setManagedGroups(List<UserGroups> managedGroups) {
-        this.managedGroups = managedGroups;
-    }
-
-    /**
-     * @return the groupMemberships
-     */
-    public List<GroupMembers> getGroupMemberships() {
-        return groupMemberships;
-    }
-
-    /**
-     * @param groupMemberships the groupMemberships to set
-     */
-    public void setGroupMemberships(List<GroupMembers> groupMemberships) {
-        this.groupMemberships = groupMemberships;
     }
 
     /**
@@ -306,5 +289,4 @@ public class User implements Serializable {
     public void setUsername(String username) {
         this.username = username;
     }
-
 }

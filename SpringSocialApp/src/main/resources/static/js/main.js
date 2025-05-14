@@ -38,10 +38,26 @@ function deleteNotification(fullUrl) {
                     if (res.ok)
                         location.reload();
                     else
-                        alert("Xoá bài viết thất bại!");
+                        alert("Xoá thông báo thất bại!");
                 });
     }
 }
+function deleteUser(fullUrl) {
+    console.log("Delete user URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn xoá user này không?")) {
+        fetch(fullUrl, {
+            method: "DELETE"
+        })
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("Xoá user thất bại!");
+                });
+    }
+}
+
+
 
 /**
  * Hàm ẩn/hiện phần nhập lựa chọn trắc nghiệm dựa trên loại câu hỏi được chọn.
@@ -119,4 +135,29 @@ function addOption() {
     }
 
     optionsContainer.appendChild(newOptionInput);
+}
+
+function verifyStudent(userId) {
+    if (confirm("Bạn có chắc chắn muốn xác thực người dùng này?")) {
+        fetch(`/api/verify/${userId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            alert(data.message || "Xác thực thành công!");
+            location.reload();
+        })
+        .catch(err => {
+            console.error("Xác thực thất bại:", err);
+            alert("Đã xảy ra lỗi khi xác thực người dùng!");
+        });
+    }
 }

@@ -6,6 +6,7 @@ package com.socialapp.service;
 
 import com.socialapp.pojo.User;
 import jakarta.mail.Multipart;
+import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @author DELL G15
  */
 public interface UserService extends UserDetailsService{
-
+    
+    List<User> getAllUsers(Map<String, String> params);
+    
     // Lấy thông tin người dùng bằng tên đăng nhập
     User getUserByUsername(String username);
 
@@ -34,4 +37,6 @@ public interface UserService extends UserDetailsService{
     User register (Map<String, String>params, MultipartFile avatar);
     
     boolean authenticate(String username, String password);
+    
+    boolean verifyStudent(int userId);
 }

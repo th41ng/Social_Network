@@ -8,6 +8,7 @@ import com.socialapp.service.UserService;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -101,4 +102,15 @@ public class UserServiceImpl implements UserService {
     public boolean authenticate(String username, String password) {
         return this.userRepository.authenticate(username, password);
     }
+
+    @Override
+    public List<User> getAllUsers(Map<String, String> params) {
+        return this.userRepository.getAllUsers(params);
+    }
+
+    @Override
+    public boolean verifyStudent(int userId) {
+        return this.userRepository.verifyStudent(userId);
+    }
+
 }

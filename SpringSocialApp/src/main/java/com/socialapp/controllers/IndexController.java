@@ -10,6 +10,7 @@ import com.socialapp.service.ReactionService;
 import com.socialapp.service.SurveyQuestionService;
 import com.socialapp.service.SurveyResponseService;
 import com.socialapp.service.SurveyService;
+import com.socialapp.service.UserService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class IndexController {
 
     @Autowired
     private SurveyService surveyService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private SurveyQuestionService surveyQuestionService;
@@ -63,6 +67,9 @@ public class IndexController {
 
         if (categoryId != null) {
             switch (categoryId) {
+                case 5: //User
+                    model.addAttribute("users", userService.getAllUsers(params));
+                    return "user_management";
                 case 3: // Thông báo
                     model.addAttribute("notification", EventNotificationService.getNotifications(params));
                     return "notification_management";

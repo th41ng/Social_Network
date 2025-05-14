@@ -51,19 +51,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
             Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable()).authorizeHttpRequests(requests
-                -> requests.requestMatchers("/", "/index","/posts/**","/responses/**","/notifications/**","/surveys/**","/questions/**").authenticated()
-                .requestMatchers("/js/**").permitAll()
-                      .requestMatchers("/api/login").permitAll()
-                .requestMatchers("/api/user").permitAll()
-                .requestMatchers("/api/**").authenticated()
-                
-                        )
-                .formLogin(form -> form.loginPage("/login")
+                .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
+                .requestMatchers("/api/login", "/api/user").permitAll() // Cho phép những đường dẫn này không cần chứng thực
+                .requestMatchers(HttpMethod.PATCH, "/api/verify/**").permitAll() 
+                .requestMatchers("/js/**", "/css/**", "/images/**", "/assets/**").permitAll() // Các tài nguyên tĩnh như JS, CSS, ảnh, v.v.
+                .anyRequest().authenticated()
+        )
+                .formLogin(form -> form.loginPage("/Users/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());//.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .failureUrl("/Users/login?error=true").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/Users/login").permitAll());//.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -98,12 +96,12 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(true); // Nếu dùng cookie/session
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
         return source;
     }
-        
+
 }
