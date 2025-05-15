@@ -1,7 +1,9 @@
 package com.socialapp.repository.impl;
 
+import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
+import com.socialapp.service.EmailService;
 import jakarta.persistence.NoResultException;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,8 @@ public class UserRepositoryImpl implements UserRepository {
     private LocalSessionFactoryBean factory;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public User getUserByUsername(String username) {
@@ -116,18 +120,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean verifyStudent(int userId) {
-        Session session = this.factory.getObject().getCurrentSession();
-        User user = session.get(User.class, userId);
-        if (user != null) {
-            user.setIsVerified(true);
-            session.update(user);
-            return true;
-        }
-        return false;
-    }
-    
-     @Override
     public long countUsers() {
         Session session = this.factory.getObject().getCurrentSession();
         Query query = session.createQuery("SELECT COUNT(u.id) FROM User u");
@@ -142,5 +134,23 @@ public class UserRepositoryImpl implements UserRepository {
                 "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class
         );
         return query.getSingleResult().intValue();
+    }
+
+    @Override
+    public void verifyStudent(int userId) {
+        Session s = this.factory.getObject().getCurrentSession();
+        User user = this.getUserById(userId);
+        if (user != null) {
+            user.setIsVerified(true);
+            s.merge(user);
+            // Gửi email thông báo xác nhận
+            emailService.sendEmailtoStudent(
+                    user.getEmail(),
+                    "Tài khoản của bạn đã được xác nhận",
+                    "Xin chào " + user.getFullName() + ",\n\n"
+                    + "Tài khoản của bạn đã được xác nhận thành công. Bây giờ bạn có thể truy cập vào hệ thống.\n\n"
+                    + "Trân trọng,\nĐội ngũ hỗ trợ."
+            );
+        }
     }
 }

@@ -3,6 +3,7 @@ import Header from "./components/layouts/Header";
 import Footer from "./components/layouts/Footer";
 import Home from "./components/Home";
 import Register from "./components/Register";
+import Login from "./components/Login";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container } from "react-bootstrap";
 
@@ -20,7 +21,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/register" element={<Register />} />
-             
+              <Route path="/login" element={<Login />} />
             </Routes>
           </Container>
 

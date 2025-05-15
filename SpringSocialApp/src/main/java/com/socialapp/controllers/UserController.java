@@ -55,5 +55,10 @@ public class UserController {
     
    
 
-    
+    // Thêm phương thức để xử lý việc xác nhận 0 thành 1
+    @PostMapping("/{userId}/verify")
+    public String verifyUser(@PathVariable("userId") int userId) {
+        userService.verifyStudent(userId);
+        return "redirect:/?categoryId=5"; // Chuyển hướng lại trang html
+    }
 }

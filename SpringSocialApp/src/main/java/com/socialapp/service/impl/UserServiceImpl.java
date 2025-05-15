@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
         user.setStudentId(params.get("studentId"));
         user.setUsername(params.get("username"));
         user.setPassword(this.passwordEncoder.encode(params.get("password")));
-        user.setRole("ROLE_ALUMNI");
+        user.setRole(params.get("role"));
         user.setCreatedAt(new Date());
         user.setLastPasswordChange(new Date());
         user.setIsVerified(false);
@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean verifyStudent(int userId) {
-        return this.userRepository.verifyStudent(userId);
+    public void verifyStudent(int userId) {
+         this.userRepository.verifyStudent(userId);
     }
 
 }

@@ -105,7 +105,7 @@ public class SurveyRepositoryImpl implements SurveyRepository {
         }
         return s;
     }
-
+    
     @Override
     public void deleteSurvey(int id) {
         Session session = factory.getObject().getCurrentSession();

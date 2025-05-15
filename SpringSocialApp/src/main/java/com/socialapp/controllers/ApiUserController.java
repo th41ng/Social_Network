@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +38,8 @@ public class ApiUserController {
         }
     }
 
+    
+    
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) {
         try {
@@ -46,6 +49,26 @@ public class ApiUserController {
             }
 
             if (this.userDetailService.authenticate(u.getUsername(), u.getPassword())) {
+                User userDetailService = this.userDetailService.getUserByUsername(u.getUsername());
+
+                // Kiểm tra vai trò ROLE_ALUMNI và trạng thái xác thực
+                if (userDetailService.getRole().contains("ROLE_ALUMNI") && !userDetailService.getIsVerified()) {
+                    logger.warn("Người dùng ROLE_ALUMNI chưa được xác thực: {}", u.getUsername());
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Tài khoản chưa được xác thực");
+                }
+
+                // Kiểm tra vai trò ROLE_LECTURER và thời gian đổi mật khẩu lần cuối
+                if (userDetailService.getRole().contains("ROLE_LECTURER")) {
+                    long hoursSinceCreation
+                            = (new Date().getTime() - userDetailService.getCreatedAt().getTime()) / (1000 * 60 * 60);
+                    if (hoursSinceCreation > 24 && userDetailService.getLastPasswordChange() == null) {
+                        logger.warn("Người dùng ROLE_LECTURER chưa đổi mật khẩu trong vòng 24 giờ sau khi tạo tài khoản: {}",
+                                u.getUsername());
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn cần đổi mật khẩu trước khi đăng nhập");
+                    }
+                }
+
+                // Nếu tất cả kiểm tra hợp lệ, tạo token
                 String token = JwtUtils.generateToken(u.getUsername());
                 logger.info("Đăng nhập thành công: {}", u.getUsername());
                 return ResponseEntity.ok().body(Collections.singletonMap("token", token));
@@ -59,6 +82,8 @@ public class ApiUserController {
         }
     }
 
+    
+    
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") int userId) {
         try {
@@ -72,21 +97,25 @@ public class ApiUserController {
         }
     }
 
-    @PutMapping("/verify/{userId}")
-    public ResponseEntity<?> verifyStudent(@PathVariable int userId) {
-        try {
-            boolean isVerified = this.userDetailService.verifyStudent(userId);
-            if (isVerified) {
-                logger.info("Xác thực thành công cho người dùng ID: {}", userId);
-                return ResponseEntity.ok().body(Collections.singletonMap("message", "Xác thực thành công"));
-            } else {
-                logger.warn("Không tìm thấy người dùng với ID: {}", userId);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại");
-            }
-        } catch (Exception e) {
-            logger.error("Đã xảy ra lỗi khi xác thực người dùng ID {}: {}", userId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xác thực");
-        }
-    }
-
 }
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody User u) {
+//        try {
+//            if (u.getUsername() == null || u.getPassword() == null) {
+//                logger.warn("Thông tin đăng nhập không đầy đủ.");
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thiếu username hoặc password");
+//            }
+//
+//            if (this.userDetailService.authenticate(u.getUsername(), u.getPassword())) {
+//                String token = JwtUtils.generateToken(u.getUsername());
+//                logger.info("Đăng nhập thành công: {}", u.getUsername());
+//                return ResponseEntity.ok().body(Collections.singletonMap("token", token));
+//            } else {
+//                logger.warn("Đăng nhập thất bại cho username: {}", u.getUsername());
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
+//            }
+//        } catch (Exception e) {
+//            logger.error("Đã xảy ra lỗi khi xử lý đăng nhập: {}", e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xử lý đăng nhập");
+//        }
+//    }

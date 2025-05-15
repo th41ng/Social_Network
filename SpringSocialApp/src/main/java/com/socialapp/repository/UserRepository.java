@@ -32,7 +32,7 @@ public interface UserRepository {
     User register(User u);
 
     
-    boolean verifyStudent(int userId);
+    void verifyStudent(int userId);
     
     boolean authenticate(String username, String password);
     

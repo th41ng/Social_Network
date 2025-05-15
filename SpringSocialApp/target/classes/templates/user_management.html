@@ -61,11 +61,9 @@
                                 Xoá
                             </button>                 
                             <!-- Hiển thị nút Xác thực hoặc Hủy xác thực dựa trên trạng thái isVerified -->
-                            <button type="button" class="btn btn-primary"
-                                    th:if="${user.role == 'ROLE_ALUMNI' && !user.isVerified}"
-                                    th:onclick="verifyStudent([[${user.id}]])">
-                                Xác thực
-                            </button>
+                            <form th:action="@{/Users/{userId}/verify(userId=${user.id})}" method="post">
+                                <button type="submit" class="btn btn-primary" th:if="${user.role == 'ROLE_ALUMNI' && !user.isVerified}">Xác thực</button>
+                            </form>
 
 
 

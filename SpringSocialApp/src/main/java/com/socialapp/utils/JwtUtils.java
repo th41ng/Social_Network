@@ -14,10 +14,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java.util.Date;
 
-/**
- *
- * @author huu-thanhduong
- */
+
 public class JwtUtils {
     // SECRET nên được lưu bằng biến môi trường,
     private static final String SECRET = "12345678901234567890123456789012"; // 32 ký tự (AES key)

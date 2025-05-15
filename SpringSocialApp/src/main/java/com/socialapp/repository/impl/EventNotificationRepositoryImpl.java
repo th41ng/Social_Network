@@ -27,58 +27,56 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
     private LocalSessionFactoryBean factory;
 
     @Override
-public List<EventNotification> getNotifications(Map<String, String> params) {
-    Session s = this.factory.getObject().getCurrentSession();
-    CriteriaBuilder b = s.getCriteriaBuilder();
-    CriteriaQuery<EventNotification> q = b.createQuery(EventNotification.class);
-    Root<EventNotification> root = q.from(EventNotification.class);
-    q.select(root);
+    public List<EventNotification> getNotifications(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<EventNotification> q = b.createQuery(EventNotification.class);
+        Root<EventNotification> root = q.from(EventNotification.class);
+        q.select(root);
 
-    if (params != null) {
-        List<Predicate> predicates = new ArrayList<>();
+        if (params != null) {
+            List<Predicate> predicates = new ArrayList<>();
 
-        // Filter by adminId
-        String adminId = params.get("adminId");
-        if (adminId != null && !adminId.isEmpty()) {
-            predicates.add(b.equal(root.get("adminId"), Integer.parseInt(adminId)));
+            // Filter by adminId
+            String adminId = params.get("adminId");
+            if (adminId != null && !adminId.isEmpty()) {
+                predicates.add(b.equal(root.get("adminId"), Integer.parseInt(adminId)));
+            }
+
+            // Filter by eventId
+            String eventId = params.get("eventId");
+            if (eventId != null && !eventId.isEmpty()) {
+                predicates.add(b.equal(root.get("eventId"), Integer.parseInt(eventId)));
+            }
+
+            // Filter by receiverUserId
+            String receiverUserId = params.get("receiverUserId");
+            if (receiverUserId != null && !receiverUserId.isEmpty()) {
+                predicates.add(b.equal(root.get("receiverUserId"), Integer.parseInt(receiverUserId)));
+            }
+
+            // Filter by groupId
+            String groupId = params.get("groupId");
+            if (groupId != null && !groupId.isEmpty()) {
+                predicates.add(b.equal(root.get("groupId"), Integer.parseInt(groupId)));
+            }
+
+            // Ensure isDeleted is false (soft delete filter)
+            //predicates.add(b.equal(root.get("isDeleted"), false));
+            q.where(predicates.toArray(Predicate[]::new));
         }
 
-        // Filter by eventId
-        String eventId = params.get("eventId");
-        if (eventId != null && !eventId.isEmpty()) {
-            predicates.add(b.equal(root.get("eventId"), Integer.parseInt(eventId)));
+        Query query = s.createQuery(q);
+
+        // Pagination
+        if (params != null && params.containsKey("page")) {
+            int page = Integer.parseInt(params.get("page"));
+            query.setMaxResults(PAGE_SIZE);
+            query.setFirstResult((page - 1) * PAGE_SIZE);
         }
 
-        // Filter by receiverUserId
-        String receiverUserId = params.get("receiverUserId");
-        if (receiverUserId != null && !receiverUserId.isEmpty()) {
-            predicates.add(b.equal(root.get("receiverUserId"), Integer.parseInt(receiverUserId)));
-        }
-
-        // Filter by groupId
-        String groupId = params.get("groupId");
-        if (groupId != null && !groupId.isEmpty()) {
-            predicates.add(b.equal(root.get("groupId"), Integer.parseInt(groupId)));
-        }
-
-        // Ensure isDeleted is false (soft delete filter)
-        //predicates.add(b.equal(root.get("isDeleted"), false));
-        
-        q.where(predicates.toArray(Predicate[]::new));
+        return query.getResultList();
     }
-
-    Query query = s.createQuery(q);
-
-    // Pagination
-    if (params != null && params.containsKey("page")) {
-        int page = Integer.parseInt(params.get("page"));
-        query.setMaxResults(PAGE_SIZE);
-        query.setFirstResult((page - 1) * PAGE_SIZE);
-    }
-
-    return query.getResultList();
-}
-
 
     @Override
     public EventNotification getNotificationById(int id) {
@@ -88,11 +86,11 @@ public List<EventNotification> getNotifications(Map<String, String> params) {
 
     @Override
     public EventNotification addOrUpdateNotification(EventNotification notification) {
-        Session s = this.factory.getObject().getCurrentSession();
+        Session session = this.factory.getObject().getCurrentSession();
         if (notification.getNotificationId() == null) {
-            s.persist(notification);  // Insert new notification
+            session.persist(notification);  // Insert đối tượng mới
         } else {
-            s.merge(notification);  // Update existing notification
+            session.merge(notification);  // Update đối tượng hiện tại
         }
         return notification;
     }
@@ -107,7 +105,7 @@ public List<EventNotification> getNotifications(Map<String, String> params) {
             //s.merge(notification);
             //Xóa cứng
             s.delete(notification);  // Xóa cứng bản ghi
-            
+
         }
     }
 }

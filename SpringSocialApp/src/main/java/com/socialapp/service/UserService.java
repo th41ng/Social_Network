@@ -38,5 +38,5 @@ public interface UserService extends UserDetailsService{
     
     boolean authenticate(String username, String password);
     
-    boolean verifyStudent(int userId);
+    void verifyStudent(int userId);
 }
