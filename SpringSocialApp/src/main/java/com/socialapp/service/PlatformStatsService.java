@@ -5,6 +5,7 @@
 package com.socialapp.service;
 
 import com.socialapp.pojo.DailyPlatformSummary;
+import com.socialapp.pojo.PeriodicSummaryStats;
 import java.util.List;
 
 /**
@@ -16,4 +17,8 @@ public interface PlatformStatsService {
     void generateDailySummary();
 
     List<DailyPlatformSummary> getAllSummaries();
+    
+     void generatePeriodicSummaries();
+    
+     List<PeriodicSummaryStats> getAllPeriodicSummaries();
 }

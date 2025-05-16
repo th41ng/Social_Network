@@ -33,5 +33,10 @@ public class SurveyOptionServiceImpl implements SurveyOptionService {
         return surveyOptionRepository.getSurveyOptionById(optionId);
     }
     
+      @Override
+    public SurveyOption updateSurveyOption(SurveyOption option) {
+        return surveyOptionRepository.updateSurveyOption(option);  // Sửa lựa chọn
+    }
+    
     
 }

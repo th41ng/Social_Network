@@ -1,20 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.socialapp.repository;
 
 import com.socialapp.pojo.SurveyOption;
 
-/**
- *
- * @author DELL G15
- */
 public interface SurveyOptionRepository {
 
+    // Thêm lựa chọn mới vào cơ sở dữ liệu
     SurveyOption addSurveyOption(SurveyOption option);
 
+    // Cập nhật lựa chọn trắc nghiệm
+    SurveyOption updateSurveyOption(SurveyOption option);
+
+    // Xóa lựa chọn theo ID
     void deleteSurveyOption(int optionId);
 
+    // Lấy lựa chọn theo ID
     SurveyOption getSurveyOptionById(int optionId);
 }

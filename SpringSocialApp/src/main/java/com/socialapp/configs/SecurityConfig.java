@@ -53,7 +53,10 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
                 .requestMatchers("/api/login", "/api/user").permitAll() // Cho phép những đường dẫn này không cần chứng thực
-                .requestMatchers(HttpMethod.PATCH, "/api/verify/**").permitAll() 
+//                .requestMatchers(HttpMethod.DELETE, "/api/posts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories").permitAll() // <--- ADD THIS LINE
+                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll() // <
+                .requestMatchers(HttpMethod.PATCH, "/api/verify/**").permitAll()
                 .requestMatchers("/js/**", "/css/**", "/images/**", "/assets/**").permitAll() // Các tài nguyên tĩnh như JS, CSS, ảnh, v.v.
                 .anyRequest().authenticated()
         )

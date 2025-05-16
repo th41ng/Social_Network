@@ -2,63 +2,66 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title th:text="${question.questionId == null ? 'Thêm Câu Hỏi Mới' : 'Cập nhật Câu Hỏi'}"></title>
-    <th:block th:replace="~{base :: bootstrap}"></th:block>
-</head>
-<body>
-    <div th:replace="~{base :: header}"></div>
+        <th:block th:replace="~{base :: bootstrap}"></th:block>
+    </head>
+    <body>
+        <div th:replace="~{base :: header}"></div>
 
-    <main class="container mt-4">
-        <h2 class="mb-4" th:text="${question.questionId == null ? 'Thêm Câu Hỏi cho Khảo Sát: ' + survey.title : 'Cập nhật Câu Hỏi cho Khảo Sát: ' + survey.title}"></h2>
+        <main class="container mt-4">
+            <h2 class="mb-4" th:text="${question.questionId == null ? 'Thêm Câu Hỏi cho Khảo Sát: ' + survey.title : 'Cập nhật Câu Hỏi cho Khảo Sát: ' + survey.title}"></h2>
 
-        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+            <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
 
-        <form th:action="@{/questions/save}" th:object="${question}" method="post">
-            <input type="hidden" name="surveyObjectId" th:value="${survey.surveyId}" />
-            <input type="hidden" th:field="*{questionId}" />
+            <form th:action="@{/questions/save}" th:object="${question}" method="post">
+                <input type="hidden" name="surveyObjectId" th:value="${survey.surveyId}" />
+                <input type="hidden" th:field="*{questionId}" />
 
-            <div class="mb-3">
-                <label for="questionText" class="form-label">Nội dung câu hỏi:</label>
-                <textarea class="form-control" id="questionText" th:field="*{questionText}" rows="3" required></textarea>
-                <div class="text-danger" th:if="${#fields.hasErrors('questionText')}" th:errors="*{questionText}"></div>
-            </div>
-
-            <div class="mb-3">
-                <label for="selectedTypeId" class="form-label">Loại câu hỏi:</label>
-                <select class="form-select" id="selectedTypeId" name="selectedTypeId" required>
-                    <option value="">-- Chọn loại câu hỏi --</option>
-                    <th:block th:each="qType : ${questionTypes}">
-                        <option th:value="${qType.typeId}"
-                                th:text="${qType.typeName}"
-                                th:selected="${question.typeId != null && question.typeId.typeId == qType.typeId}"></option>
-                    </th:block>
-                </select>
-            </div>
-
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="isRequired" th:field="*{isRequired}">
-                <label class="form-check-label" for="isRequired">Bắt buộc trả lời</label>
-            </div>
-
-            <div class="mb-3">
-                <label for="questionOrder" class="form-label">Thứ tự câu hỏi (tùy chọn):</label>
-                <input type="number" class="form-control" id="questionOrder" th:field="*{questionOrder}" min="0">
-            </div>
-
-            <div class="mb-3" id="multipleChoiceOptionsSection">
-                <label class="form-label">Các lựa chọn trắc nghiệm:</label>
-                <div id="options">
-                     <input type="text" class="form-control mb-2" name="options" placeholder="Nhập lựa chọn" />
+                <div class="mb-3">
+                    <label for="questionText" class="form-label">Nội dung câu hỏi:</label>
+                    <textarea class="form-control" id="questionText" th:field="*{questionText}" rows="3" required></textarea>
+                    <div class="text-danger" th:if="${#fields.hasErrors('questionText')}" th:errors="*{questionText}"></div>
                 </div>
-                <button type="button" class="btn btn-secondary mt-2" onclick="addOption()">Thêm lựa chọn</button>
-            </div>
 
-            <button type="submit" class="btn btn-primary">Lưu Câu Hỏi</button>
-            <a th:href="@{'/questions/' + ${survey.surveyId}}" class="btn btn-secondary">Hủy</a>
-        </form>
-    </main>
+                <div class="mb-3">
+                    <label for="selectedTypeId" class="form-label">Loại câu hỏi:</label>
+                    <select class="form-select" id="selectedTypeId" name="selectedTypeId" required> <option value="">-- Chọn loại câu hỏi --</option>
+                        <th:block th:each="qType : ${questionTypes}">
+                            <option th:value="${qType.typeId}"
+                                    th:text="${qType.typeName}"
+                                    th:selected="${question.typeId != null && question.typeId.typeId == qType.typeId}"></option>
+                        </th:block>
+                    </select>
+                    <div class="text-danger" th:if="${#fields.hasErrors('typeId')}" th:errors="*{typeId}"></div>
+                </div>
 
-    <div th:replace="~{base :: footer}"></div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="isRequired" th:field="*{isRequired}">
+                    <label class="form-check-label" for="isRequired">Bắt buộc trả lời</label>
+                </div>
 
-    <script th:src="@{/js/main.js}"></script>
-</body>
+                <div class="mb-3">
+                    <label for="questionOrder" class="form-label">Thứ tự câu hỏi (tùy chọn):</label>
+                    <input type="number" class="form-control" id="questionOrder" th:field="*{questionOrder}" min="0">
+                </div>
+
+                <div class="mb-3" id="multipleChoiceOptionsSection" style="display: none;"> <label class="form-label">Các lựa chọn trắc nghiệm:</label>
+                    <div id="optionsContainer">
+                        <div th:each="opt, iterStat : *{surveyOptions}" class="option-entry mb-2 d-flex align-items-center">
+                            <input type="hidden" th:name="|surveyOptions[${iterStat.index}].optionId|" th:value="${opt.optionId}" />
+                            <input type="text" class="form-control" th:name="|surveyOptions[${iterStat.index}].optionText|" th:value="${opt.optionText}" placeholder="Nhập lựa chọn" />
+                            <button type="button" class="btn btn-danger btn-sm ms-2" onclick="removeOptionEntry(this)">Xóa</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-2" onclick="addOption()">Thêm lựa chọn</button>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Lưu Câu Hỏi</button>
+                <a th:href="@{'/questions/' + ${survey.surveyId}}" class="btn btn-secondary">Hủy</a>
+            </form>
+        </main>
+
+        <div th:replace="~{base :: footer}"></div>
+        <script th:src="@{/js/main.js}"></script>
+    </body>
 </html>

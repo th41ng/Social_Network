@@ -2,42 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Quản Lý Câu Hỏi</title>
-        <th:block th:replace="base :: bootstrap"></th:block>
-    </head>
-    <body>
-        <div th:replace="base :: header"></div>
+        <th:block th:replace="~{base :: bootstrap}"></th:block>
+        </head>
+<body>
+    <div th:replace="~{base :: header}"></div>
 
-        <main class="container mt-5">
-            <h2 class="text-center mb-4">Quản Lý Câu Hỏi cho Khảo Sát: <span th:text="${survey.title}"></span></h2>
+    <main class="container mt-5">
+        <h2 class="text-center mb-4">
+            Quản Lý Câu Hỏi cho Khảo Sát: <span th:text="${survey.title}"></span>
+        </h2>
 
-            <!-- Nút thêm câu hỏi -->
-            <a th:href="@{/questions/add/{surveyId}(surveyId=${survey.surveyId})}" class="btn btn-success mb-3">Thêm Câu Hỏi</a>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
 
-            <!-- Danh sách câu hỏi -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Câu Hỏi</th>
-                            <th>Thao Tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="question : ${questions}">
-                            <td th:text="${question.questionText}"></td>
-                            <td>
-                                <a th:href="@{/questions/delete/{questionId}(questionId=${question.questionId})}" class="btn btn-danger btn-sm">Xóa</a>
-                                <a th:href="@{/responses/{questionId}(questionId=${question.questionId})}" class="btn btn-primary btn-sm">Quản lý Phản Hồi</a>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(questions)}">
-                            <td colspan="2" class="text-center">Không có câu hỏi nào.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+        <a th:href="@{/questions/add/{surveyId}(surveyId=${survey.surveyId})}" class="btn btn-success mb-3">Thêm Câu Hỏi</a>
 
-        <div th:replace="base :: footer"></div>
-    </body>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Câu Hỏi</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="question : ${questions}">
+                        <td>
+                            <strong th:text="${question.questionText}"></strong>
+                            <p>Loại: <span th:text="${question.typeId.typeName}"></span></p> <p th:if="${question.surveyOptions != null}">Số lượng lựa chọn: <span th:text="${#lists.size(question.surveyOptions)}"></span></p>
+                            <ul th:if="${question.surveyOptions != null && !#lists.isEmpty(question.surveyOptions)}" class="mt-2 mb-0 ps-3">
+                                <li th:each="opt : ${question.surveyOptions}" th:text="${opt.optionText}"></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <a th:href="@{/questions/edit/{questionId}(questionId=${question.questionId})}"
+                               class="btn btn-warning btn-sm">Sửa</a>
+
+                            <a href="#"
+                               th:attr="onclick=|return deleteSurveyQuestion('@{/questions/delete/{questionId}(questionId=${question.questionId})}', ${survey.surveyId})|"
+                               class="btn btn-danger btn-sm">Xóa</a>
+                            <a th:href="@{/responses/{questionId}(questionId=${question.questionId})}"
+                               class="btn btn-primary btn-sm">Quản lý Phản Hồi</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(questions)}">
+                        <td colspan="2" class="text-center">Không có câu hỏi nào.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div th:replace="~{base :: footer}"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
 </html>

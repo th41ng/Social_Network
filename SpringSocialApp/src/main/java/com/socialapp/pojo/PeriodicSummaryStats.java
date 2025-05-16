@@ -4,6 +4,7 @@
  */
 package com.socialapp.pojo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,135 +23,98 @@ import java.time.LocalDateTime;
 public class PeriodicSummaryStats {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "summary_id")
     private int summaryId;
 
+    @Column(name = "summary_year")     
     private int summaryYear;
+
+    @Column(name = "summary_quarter")  
     private Integer summaryQuarter;
+
+    @Column(name = "summary_month")     
     private Integer summaryMonth;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "period_type")       
     private PeriodType periodType;
 
+    @Column(name = "new_posts_count")   
     private int newPostsCount;
+
+    @Column(name = "new_users_count")  
     private int newUsersCount;
 
+    @Column(name = "calculated_at")
     private LocalDateTime calculatedAt;
 
-    // Enum for period type
+    
     public enum PeriodType {
         yearly, quarterly, monthly
     }
 
-    /**
-     * @return the summaryId
-     */
+   
     public int getSummaryId() {
         return summaryId;
     }
 
-    /**
-     * @param summaryId the summaryId to set
-     */
     public void setSummaryId(int summaryId) {
         this.summaryId = summaryId;
     }
 
-    /**
-     * @return the summaryYear
-     */
     public int getSummaryYear() {
         return summaryYear;
     }
 
-    /**
-     * @param summaryYear the summaryYear to set
-     */
     public void setSummaryYear(int summaryYear) {
         this.summaryYear = summaryYear;
     }
 
-    /**
-     * @return the summaryQuarter
-     */
     public Integer getSummaryQuarter() {
         return summaryQuarter;
     }
 
-    /**
-     * @param summaryQuarter the summaryQuarter to set
-     */
     public void setSummaryQuarter(Integer summaryQuarter) {
         this.summaryQuarter = summaryQuarter;
     }
 
-    /**
-     * @return the summaryMonth
-     */
     public Integer getSummaryMonth() {
         return summaryMonth;
     }
 
-    /**
-     * @param summaryMonth the summaryMonth to set
-     */
     public void setSummaryMonth(Integer summaryMonth) {
         this.summaryMonth = summaryMonth;
     }
 
-    /**
-     * @return the periodType
-     */
     public PeriodType getPeriodType() {
         return periodType;
     }
 
-    /**
-     * @param periodType the periodType to set
-     */
     public void setPeriodType(PeriodType periodType) {
         this.periodType = periodType;
     }
 
-    /**
-     * @return the newPostsCount
-     */
     public int getNewPostsCount() {
         return newPostsCount;
     }
 
-    /**
-     * @param newPostsCount the newPostsCount to set
-     */
     public void setNewPostsCount(int newPostsCount) {
         this.newPostsCount = newPostsCount;
     }
 
-    /**
-     * @return the newUsersCount
-     */
     public int getNewUsersCount() {
         return newUsersCount;
     }
 
-    /**
-     * @param newUsersCount the newUsersCount to set
-     */
     public void setNewUsersCount(int newUsersCount) {
         this.newUsersCount = newUsersCount;
     }
 
-    /**
-     * @return the calculatedAt
-     */
     public LocalDateTime getCalculatedAt() {
         return calculatedAt;
     }
 
-    /**
-     * @param calculatedAt the calculatedAt to set
-     */
     public void setCalculatedAt(LocalDateTime calculatedAt) {
         this.calculatedAt = calculatedAt;
     }
-
 }

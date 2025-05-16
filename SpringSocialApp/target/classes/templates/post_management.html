@@ -53,10 +53,15 @@
                         </td>
 
                         <td>
-                            <form th:action="@{/posts/{postId}/delete(postId=${p.postId})}" method="post">
-                                <button type="submit" class="btn btn-danger btn-sm">Xoá</button>
-                            </form>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm"
+                                    th:onclick="'deletePost(\'' + @{/api/posts/{id}(id=${p.postId})} + '\')'">
+                                Xoá
+                            </button>
+
+                            </button>
                         </td>
+
                     </tr>
                     <tr th:if="${#lists.isEmpty(posts)}">
                         <td colspan="6" class="text-center">Không có bài viết nào.</td>

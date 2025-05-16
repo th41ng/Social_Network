@@ -16,6 +16,8 @@ public interface SurveyQuestionService {
     List<SurveyQuestion> getQuestionsBySurveyId(int surveyId);
 
     SurveyQuestion addSurveyQuestion(SurveyQuestion question);
+    
+    SurveyQuestion updateSurveyQuestion(SurveyQuestion question);  // Phương thức sửa câu hỏi
 
     void deleteSurveyQuestion(int questionId);
 
