@@ -1,6 +1,7 @@
 package com.socialapp.controllers;
 
 import com.socialapp.pojo.Comment;
+import com.socialapp.pojo.PeriodicSummaryStats;
 import com.socialapp.pojo.Survey;
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.EventNotificationService;
@@ -41,7 +42,7 @@ public class IndexController {
 
     @Autowired
     private SurveyService surveyService;
-    
+
     @Autowired
     private UserService userService;
 
@@ -112,6 +113,10 @@ public class IndexController {
                 case 6: // Thống kê nền tảng
                     platformStatsService.generateDailySummary(); // Đảm bảo có dữ liệu mỗi ngày
                     model.addAttribute("stats", platformStatsService.getAllSummaries());
+
+                    List<PeriodicSummaryStats> periodicStats = platformStatsService.getAllPeriodicSummaries();
+                    model.addAttribute("periodicStats", periodicStats);
+
                     return "stats_management";
 
             }

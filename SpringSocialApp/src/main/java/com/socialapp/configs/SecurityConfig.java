@@ -52,7 +52,15 @@ public class SecurityConfig {
             Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
+<<<<<<< HEAD
                 .requestMatchers("/api/login", "/api/user", "/api/categories").permitAll()
+=======
+                .requestMatchers("/api/login", "/api/user").permitAll() // Cho phép những đường dẫn này không cần chứng thực
+//                .requestMatchers(HttpMethod.DELETE, "/api/posts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories").permitAll() // <--- ADD THIS LINE
+                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll() // <
+                .requestMatchers(HttpMethod.PATCH, "/api/verify/**").permitAll()
+>>>>>>> cd1acbf338a3f7c728be80e2ca5ddb090664099f
                 .requestMatchers("/js/**", "/css/**", "/images/**", "/assets/**").permitAll() // Các tài nguyên tĩnh như JS, CSS, ảnh, v.v.
                 .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated()

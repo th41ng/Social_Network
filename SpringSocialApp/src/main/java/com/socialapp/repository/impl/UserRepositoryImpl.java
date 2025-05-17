@@ -8,7 +8,6 @@ import jakarta.persistence.NoResultException;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.query.Query;
-
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -22,18 +21,23 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private LocalSessionFactoryBean factory;
+
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
     @Autowired
     private EmailService emailService;
 
+    private Session getCurrentSession() {
+        return this.factory.getObject().getCurrentSession();
+    }
+
     @Override
     public User getUserByUsername(String username) {
-        Session s = this.factory.getObject().getCurrentSession();
+        Session s = getCurrentSession();
         try {
-            Query q = s.createNamedQuery("User.findByUsername", User.class);
+            Query<User> q = s.createNamedQuery("User.findByUsername", User.class);
             q.setParameter("username", username);
-            return (User) q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -41,11 +45,11 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserByEmail(String email) {
-        Session s = this.factory.getObject().getCurrentSession();
+        Session s = getCurrentSession();
         try {
-            Query q = s.createNamedQuery("User.findByEmail", User.class);
+            Query<User> q = s.createNamedQuery("User.findByEmail", User.class);
             q.setParameter("email", email);
-            return (User) q.getSingleResult();
+            return q.getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -53,20 +57,19 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserById(int id) {
-        Session s = this.factory.getObject().getCurrentSession();
-        return s.get(User.class, id);
+        return getCurrentSession().get(User.class, id);
     }
 
     @Override
     public User updateUser(User user) {
-        Session s = this.factory.getObject().getCurrentSession();
+        Session s = getCurrentSession();
         s.update(user);
         return user;
     }
 
     @Override
     public void deleteUser(int id) {
-        Session s = this.factory.getObject().getCurrentSession();
+        Session s = getCurrentSession();
         User user = s.get(User.class, id);
         if (user != null) {
             s.delete(user);
@@ -75,9 +78,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User register(User u) {
-        Session s = this.factory.getObject().getCurrentSession();
+        Session s = getCurrentSession();
         s.persist(u);
-
         s.refresh(u);
         return u;
     }
@@ -85,29 +87,24 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean authenticate(String username, String password) {
         User u = this.getUserByUsername(username);
-
+        if (u == null) return false;
         return this.passwordEncoder.matches(password, u.getPassword());
     }
 
     @Override
     public List<User> getAllUsers(Map<String, String> params) {
-        Session session = this.factory.getObject().getCurrentSession();
-        Query query = session.getNamedQuery("User.findAll");  // Sử dụng NamedQuery để lấy tất cả người dùng
+        Session session = getCurrentSession();
+        Query<User> query = session.getNamedQuery("User.findAll");
 
-        // Nếu có các tham số lọc, bạn có thể thêm điều kiện vào query
         if (params != null && !params.isEmpty()) {
-            StringBuilder queryBuilder = new StringBuilder("SELECT u FROM User u WHERE 1=1");
-
-            params.forEach((key, value) -> {
-                if (key.equals("username")) {
-                    queryBuilder.append(" AND u.username LIKE :username");
-                } else if (key.equals("email")) {
-                    queryBuilder.append(" AND u.email LIKE :email");
-                }
-            });
-
-            // Tạo lại query dựa trên các tham số lọc
-            query = session.createQuery(queryBuilder.toString(), User.class);
+            StringBuilder hql = new StringBuilder("SELECT u FROM User u WHERE 1=1");
+            if (params.containsKey("username")) {
+                hql.append(" AND u.username LIKE :username");
+            }
+            if (params.containsKey("email")) {
+                hql.append(" AND u.email LIKE :email");
+            }
+            query = session.createQuery(hql.toString(), User.class);
             if (params.containsKey("username")) {
                 query.setParameter("username", "%" + params.get("username") + "%");
             }
@@ -116,24 +113,43 @@ public class UserRepositoryImpl implements UserRepository {
             }
         }
 
-        return query.getResultList();  // Trả về kết quả danh sách người dùng
+        return query.getResultList();
     }
 
     @Override
+<<<<<<< HEAD
+=======
+    public boolean verifyStudent(int userId) {
+        Session session = getCurrentSession();
+        User user = session.get(User.class, userId);
+        if (user != null) {
+            user.setIsVerified(true);
+            session.update(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+>>>>>>> cd1acbf338a3f7c728be80e2ca5ddb090664099f
     public long countUsers() {
-        Session session = this.factory.getObject().getCurrentSession();
-        Query query = session.createQuery("SELECT COUNT(u.id) FROM User u");
-        Long count = (Long) query.getSingleResult();  // Sử dụng getSingleResult thay vì uniqueResult
-        return count;
+        Session session = getCurrentSession();
+        Query<Long> query = session.createQuery("SELECT COUNT(u.id) FROM User u", Long.class);
+        Long count = query.getSingleResult();
+        return count != null ? count : 0;
     }
 
     @Override
     public int countUsersRegisteredToday() {
-        Session session = this.factory.getObject().getCurrentSession();
+        Session session = getCurrentSession();
+
+        // HQL sử dụng hàm DATE() hoặc có thể thay đổi tùy DB (MySQL, PostgreSQL...) 
+        // Đảm bảo trường createdAt kiểu java.util.Date hoặc java.sql.Timestamp
         Query<Long> query = session.createQuery(
-                "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class
-        );
-        return query.getSingleResult().intValue();
+            "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class);
+
+        Long count = query.getSingleResult();
+        return count != null ? count.intValue() : 0;
     }
 
     @Override

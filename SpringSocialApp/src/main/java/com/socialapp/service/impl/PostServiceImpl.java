@@ -53,4 +53,9 @@ public class PostServiceImpl implements PostService {
         return this.postRepository.getCommentsByPostId(postId);
     }
 
+    @Override
+    public int countPostsCreatedToday() {
+        return this.postRepository.countPostsCreatedToday();
+    }
+
 }

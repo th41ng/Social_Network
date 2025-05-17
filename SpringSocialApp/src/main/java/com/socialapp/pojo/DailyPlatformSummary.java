@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.pojo;
 
 import jakarta.persistence.Column;
@@ -10,18 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
-/**
- *
- * @author DELL G15
- */
 @Entity
 @Table(name = "daily_platform_summary")
 public class DailyPlatformSummary {
@@ -31,7 +17,7 @@ public class DailyPlatformSummary {
     private Long id;
 
     @Column(name = "summary_date")
-    private Date summaryDate;
+    private LocalDateTime summaryDate;
 
     @Column(name = "total_users")
     private Long totalUsers;
@@ -46,104 +32,62 @@ public class DailyPlatformSummary {
     private int newPostsCreatedToday;
 
     @Column(name = "last_calculated_at")
-    private Date lastCalculatedAt;
+    private LocalDateTime lastCalculatedAt;
 
-    /**
-     * @return the id
-     */
+    // Getters và Setters
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * @return the summaryDate
-     */
-    public Date getSummaryDate() {
+    public LocalDateTime getSummaryDate() {
         return summaryDate;
     }
 
-    /**
-     * @param summaryDate the summaryDate to set
-     */
-    public void setSummaryDate(Date summaryDate) {
+    public void setSummaryDate(LocalDateTime summaryDate) {
         this.summaryDate = summaryDate;
     }
 
-    /**
-     * @return the totalUsers
-     */
     public long getTotalUsers() {
-        return totalUsers;
+        return (this.totalUsers != null) ? this.totalUsers.longValue() : 0L; // Trả về 0 nếu null
     }
 
-    /**
-     * @param totalUsers the totalUsers to set
-     */
-    public void setTotalUsers(long totalUsers) {
+    public void setTotalUsers(Long totalUsers) {
         this.totalUsers = totalUsers;
     }
 
-    /**
-     * @return the totalPosts
-     */
-    public long getTotalPosts() {
+    public Long getTotalPosts() {
         return totalPosts;
     }
 
-    /**
-     * @param totalPosts the totalPosts to set
-     */
-    public void setTotalPosts(long totalPosts) {
+    public void setTotalPosts(Long totalPosts) {
         this.totalPosts = totalPosts;
     }
 
-    /**
-     * @return the newUsersRegisteredToday
-     */
     public int getNewUsersRegisteredToday() {
         return newUsersRegisteredToday;
     }
 
-    /**
-     * @param newUsersRegisteredToday the newUsersRegisteredToday to set
-     */
     public void setNewUsersRegisteredToday(int newUsersRegisteredToday) {
         this.newUsersRegisteredToday = newUsersRegisteredToday;
     }
 
-    /**
-     * @return the newPostsCreatedToday
-     */
     public int getNewPostsCreatedToday() {
         return newPostsCreatedToday;
     }
 
-    /**
-     * @param newPostsCreatedToday the newPostsCreatedToday to set
-     */
     public void setNewPostsCreatedToday(int newPostsCreatedToday) {
         this.newPostsCreatedToday = newPostsCreatedToday;
     }
 
-    /**
-     * @return the lastCalculatedAt
-     */
-    public Date getLastCalculatedAt() {
+    public LocalDateTime getLastCalculatedAt() {
         return lastCalculatedAt;
     }
 
-    /**
-     * @param lastCalculatedAt the lastCalculatedAt to set
-     */
-    public void setLastCalculatedAt(Date lastCalculatedAt) {
+    public void setLastCalculatedAt(LocalDateTime lastCalculatedAt) {
         this.lastCalculatedAt = lastCalculatedAt;
     }
-
 }

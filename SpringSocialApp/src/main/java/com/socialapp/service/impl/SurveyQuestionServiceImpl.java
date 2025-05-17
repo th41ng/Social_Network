@@ -39,6 +39,11 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Override
     public SurveyQuestion getSurveyQuestionById(int questionId) {
-        return surveyQuestionRepository.getSurveyQuestionById(questionId);  
+        return surveyQuestionRepository.getSurveyQuestionById(questionId);
+    }
+
+    @Override
+    public SurveyQuestion updateSurveyQuestion(SurveyQuestion question) {
+        return surveyQuestionRepository.updateSurveyQuestion(question);  // Sửa câu hỏi
     }
 }

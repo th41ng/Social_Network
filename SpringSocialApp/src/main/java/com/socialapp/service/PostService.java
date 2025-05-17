@@ -26,4 +26,7 @@ public interface PostService {
     List<Post> getPostsByUserId(int userId);
 
     List<Comment> getCommentsByPostId(int postId);
+    
+    int countPostsCreatedToday();
+
 }

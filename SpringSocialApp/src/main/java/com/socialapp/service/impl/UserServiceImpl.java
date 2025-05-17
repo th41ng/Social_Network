@@ -113,4 +113,9 @@ public class UserServiceImpl implements UserService {
          this.userRepository.verifyStudent(userId);
     }
 
+    @Override
+    public int countUsersRegisteredToday() {
+        return this.userRepository.countUsersRegisteredToday();
+    }
+
 }

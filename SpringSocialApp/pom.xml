@@ -91,11 +91,21 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.15.2</version> <!-- Hoặc phiên bản mới nhất -->
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
             <version>6.2.5</version> <!-- Thay phiên bản phù hợp với Spring của bạn -->
         </dependency>
+=======
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>3.4.5</version>
+        </dependency>
+        
+>>>>>>> cd1acbf338a3f7c728be80e2ca5ddb090664099f
 
   
     </dependencies>

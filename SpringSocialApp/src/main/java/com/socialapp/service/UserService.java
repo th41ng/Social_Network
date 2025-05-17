@@ -38,5 +38,12 @@ public interface UserService extends UserDetailsService{
     
     boolean authenticate(String username, String password);
     
+<<<<<<< HEAD
     void verifyStudent(int userId);
+=======
+    boolean verifyStudent(int userId);
+    
+    int countUsersRegisteredToday();
+
+>>>>>>> cd1acbf338a3f7c728be80e2ca5ddb090664099f
 }
