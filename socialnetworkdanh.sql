@@ -36,7 +36,7 @@ CREATE TABLE `category` (
 
 LOCK TABLES `category` WRITE;
 /*!40000 ALTER TABLE `category` DISABLE KEYS */;
-INSERT INTO `category` VALUES (1,'Trang chủ','Về trang chủ'),(2,'Posts','Các bài viết'),(3,'Events','Sự kiện'),(4,'Surveys','Khảo sát'),(5,'Users','Người dùng'),(6,'Statistics','Thống kê nền tảng');
+INSERT INTO `category` VALUES (1,'Trang chủ','Về trang chủ'),(2,'Posts','Các bài viết'),(3,'Notifications','Thông báo'),(4,'Surveys','Khảo sát'),(5,'Users','Người dùng'),(6,'Statistics','Thống kê nền tảng');
 /*!40000 ALTER TABLE `category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +89,7 @@ CREATE TABLE `daily_platform_summary` (
   `total_posts` int DEFAULT NULL,
   `total_users` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Thống kê tổng quan hàng ngày của nền tảng';
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Thống kê tổng quan hàng ngày của nền tảng';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +98,7 @@ CREATE TABLE `daily_platform_summary` (
 
 LOCK TABLES `daily_platform_summary` WRITE;
 /*!40000 ALTER TABLE `daily_platform_summary` DISABLE KEYS */;
-INSERT INTO `daily_platform_summary` VALUES ('2024-03-01 00:00:00',10,25,'2025-05-15 12:42:36',1,NULL,NULL),('2024-03-02 00:00:00',12,30,'2025-05-15 12:42:36',2,NULL,NULL),('2024-03-03 00:00:00',8,22,'2025-05-13 21:46:11',3,NULL,NULL),('2024-04-15 00:00:00',15,40,'2025-05-13 21:46:11',4,NULL,NULL),('2024-04-16 00:00:00',11,35,'2025-05-13 21:46:11',5,NULL,NULL),('2024-05-10 00:00:00',20,50,'2025-05-13 21:46:11',6,NULL,NULL),('2024-05-11 00:00:00',18,45,'2025-05-13 21:46:11',7,NULL,NULL),('2024-05-12 00:00:00',22,55,'2025-05-13 21:46:11',8,NULL,NULL),('2025-05-10 00:00:00',25,60,'2025-05-13 21:46:11',9,NULL,NULL),('2025-05-11 00:00:00',30,70,'2025-05-13 21:46:11',10,NULL,NULL),('2025-05-12 00:00:00',28,65,'2025-05-13 21:46:11',11,NULL,NULL),('2025-05-14 00:00:00',0,0,'2025-05-14 20:19:58',21,7,8),('2025-05-15 17:41:16',4,3,'2025-05-15 17:41:16',58,10,12),('2025-05-15 00:00:00',4,5,'2025-05-15 22:15:53',59,12,12),('2024-12-31 00:00:00',50,100,'2025-01-01 00:05:00',60,100,50),('2025-01-10 00:00:00',0,1,'2025-01-10 00:05:00',61,101,50),('2025-01-11 00:00:00',0,1,'2025-01-11 00:05:00',62,102,50),('2025-01-12 00:00:00',0,1,'2025-01-12 00:05:00',63,103,50),('2025-01-13 00:00:00',0,1,'2025-01-13 00:05:00',64,104,50),('2025-01-14 00:00:00',0,1,'2025-01-14 00:05:00',65,105,50),('2025-03-31 00:00:00',0,0,'2025-04-01 00:05:00',66,105,50),('2025-04-30 00:00:00',0,0,'2025-05-01 00:05:00',67,105,50),('2025-05-05 00:00:00',0,2,'2025-05-05 00:05:00',68,107,50),('2025-05-12 00:00:00',8,0,'2025-05-12 00:05:00',69,107,58),('2025-05-13 00:00:00',0,0,'2025-05-13 00:05:00',70,107,58),('2025-05-14 00:00:00',0,0,'2025-05-14 00:05:00',71,107,58),('2025-05-16 00:00:00',1,0,'2025-05-16 14:11:38',72,12,13);
+INSERT INTO `daily_platform_summary` VALUES ('2025-01-10 00:00:00',0,1,'2025-05-16 15:00:00',73,1,0),('2025-01-11 00:00:00',0,1,'2025-05-16 15:00:00',74,2,0),('2025-01-12 00:00:00',0,1,'2025-05-16 15:00:00',75,3,0),('2025-01-13 00:00:00',0,1,'2025-05-16 15:00:00',76,4,0),('2025-01-14 00:00:00',0,1,'2025-05-16 15:00:00',77,5,0),('2025-05-05 00:00:00',0,2,'2025-05-16 15:00:00',78,7,0),('2025-05-12 00:00:00',8,0,'2025-05-16 15:00:00',79,7,8),('2025-05-15 00:00:00',4,5,'2025-05-16 15:00:00',80,12,12),('2025-05-16 00:00:00',1,0,'2025-05-16 15:41:28',81,12,13),('2025-05-17 00:00:00',0,0,'2025-05-17 17:15:53',82,12,13);
 /*!40000 ALTER TABLE `daily_platform_summary` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -219,7 +219,7 @@ CREATE TABLE `periodic_summary_stats` (
   `calculated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Thời điểm tính toán cuối cùng',
   PRIMARY KEY (`summary_id`),
   UNIQUE KEY `idx_period_unique` (`summary_year`,`summary_quarter`,`summary_month`,`period_type`) COMMENT 'Đảm bảo mỗi chu kỳ chỉ có một bản ghi thống kê'
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Bảng thống kê số lượng người dùng và bài viết theo tháng, quý, năm';
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Bảng thống kê số lượng người dùng và bài viết theo tháng, quý, năm';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -228,7 +228,7 @@ CREATE TABLE `periodic_summary_stats` (
 
 LOCK TABLES `periodic_summary_stats` WRITE;
 /*!40000 ALTER TABLE `periodic_summary_stats` DISABLE KEYS */;
-INSERT INTO `periodic_summary_stats` VALUES (1,2024,NULL,1,'monthly',850,320,'2025-05-13 21:46:11'),(2,2024,NULL,2,'monthly',920,350,'2025-05-13 21:46:11'),(3,2024,NULL,3,'monthly',780,290,'2025-05-13 21:46:11'),(4,2024,NULL,4,'monthly',1050,400,'2025-05-13 21:46:11'),(5,2025,NULL,1,'monthly',1100,420,'2025-05-13 21:46:11'),(6,2025,NULL,2,'monthly',1150,450,'2025-05-13 21:46:11'),(7,2025,NULL,3,'monthly',1200,480,'2025-05-13 21:46:11'),(8,2025,NULL,4,'monthly',1300,500,'2025-05-13 21:46:11'),(9,2024,1,NULL,'quarterly',2550,960,'2025-05-13 21:46:11'),(10,2024,2,NULL,'quarterly',3000,1100,'2025-05-13 21:46:11'),(11,2025,1,NULL,'quarterly',3450,1350,'2025-05-13 21:46:11'),(12,2024,NULL,NULL,'yearly',11500,4500,'2025-05-13 21:46:11'),(13,2024,NULL,NULL,'yearly',100,50,'2025-01-01 00:10:00'),(14,2025,1,NULL,'quarterly',5,0,'2025-04-01 00:10:00'),(15,2025,NULL,4,'monthly',10,3,'2025-05-01 00:10:00');
+INSERT INTO `periodic_summary_stats` VALUES (16,2025,NULL,1,'monthly',5,0,'2025-05-16 15:00:00'),(17,2025,NULL,5,'monthly',8,13,'2025-05-16 15:00:00'),(18,2025,1,NULL,'quarterly',5,0,'2025-05-16 15:00:00'),(19,2025,2,NULL,'quarterly',8,13,'2025-05-16 15:00:00'),(20,2025,NULL,NULL,'yearly',13,13,'2025-05-16 15:00:00');
 /*!40000 ALTER TABLE `periodic_summary_stats` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,7 +251,7 @@ CREATE TABLE `posts` (
   PRIMARY KEY (`post_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +260,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (1,1,'Chào mọi người, tôi vừa tham gia mạng xã hội này!','2025-01-10 10:00:00','2025-05-14 15:56:04',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(2,2,'Hôm nay là một ngày đẹp trời!','2025-01-11 14:00:00','2025-05-15 17:09:45',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(3,3,'Thông báo lớp học bồi dưỡng sắp tới.','2025-01-12 09:00:00','2025-01-12 09:00:00',1,0,NULL),(4,4,'Khảo sát về chất lượng đào tạo, mọi người tham gia nhé!','2025-01-13 15:00:00','2025-05-15 15:27:44',0,0,NULL),(5,1,'Bài viết này đã bị xóa.','2025-01-14 12:00:00','2025-05-15 15:27:44',0,0,NULL),(6,1,'hahaa','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(7,2,'hihi','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(8,1,'kkkkkkkkkkkkkk','2025-05-15 13:01:26',NULL,0,0,NULL),(9,4,'alo alo','2025-05-15 14:09:04','2025-05-15 17:09:45',0,0,NULL),(10,3,'aaaa','2025-05-15 14:36:07','2025-05-15 17:09:45',0,0,NULL),(11,3,'fsdsdffsd','2025-05-15 22:14:14',NULL,0,0,NULL),(12,3,'sdfsdf','2025-05-15 22:15:25',NULL,0,0,NULL);
+INSERT INTO `posts` VALUES (1,1,'Chào mọi người, tôi vừa tham gia mạng xã hội này!','2025-01-10 10:00:00','2025-05-14 15:56:04',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(2,2,'Hôm nay là một ngày đẹp trời!','2025-01-11 14:00:00','2025-05-15 17:09:45',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(3,3,'Thông báo lớp học bồi dưỡng sắp tới.','2025-01-12 09:00:00','2025-01-12 09:00:00',1,0,NULL),(4,4,'Khảo sát về chất lượng đào tạo, mọi người tham gia nhé!','2025-01-13 15:00:00','2025-05-15 15:27:44',0,0,NULL),(5,1,'Bài viết này đã bị xóa.','2025-01-14 12:00:00','2025-05-15 15:27:44',0,0,NULL),(6,1,'hahaa','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(7,2,'hihi','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(8,1,'kkkkkkkkkkkkkk','2025-05-15 13:01:26',NULL,0,0,NULL),(9,4,'alo alo','2025-05-15 14:09:04','2025-05-15 17:09:45',0,0,NULL),(10,3,'aaaa','2025-05-15 14:36:07','2025-05-15 17:09:45',0,0,NULL),(11,3,'fsdsdffsd','2025-05-15 22:14:14',NULL,0,0,NULL),(12,3,'sdfsdf','2025-05-15 22:15:25',NULL,0,0,NULL),(13,1,'sfsf','2025-05-16 14:21:23',NULL,0,1,NULL),(14,2,'co len','2025-05-16 15:38:56',NULL,0,1,NULL);
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -336,7 +336,7 @@ CREATE TABLE `survey_options` (
   PRIMARY KEY (`option_id`),
   KEY `question_id` (`question_id`),
   CONSTRAINT `survey_options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `survey_questions` (`question_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -345,7 +345,7 @@ CREATE TABLE `survey_options` (
 
 LOCK TABLES `survey_options` WRITE;
 /*!40000 ALTER TABLE `survey_options` DISABLE KEYS */;
-INSERT INTO `survey_options` VALUES (1,1,'aaa'),(2,2,'aaa'),(4,1,'aa'),(5,2,'a'),(7,1,'a'),(30,24,'1'),(31,25,'âaa'),(46,4,'htmll'),(48,27,'rrrrr'),(49,27,'t');
+INSERT INTO `survey_options` VALUES (1,1,'aaa'),(2,2,'aaa'),(4,1,'aa'),(5,2,'a'),(7,1,'a'),(30,24,'1'),(31,25,'âaa'),(46,4,'htmll');
 /*!40000 ALTER TABLE `survey_options` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -368,7 +368,7 @@ CREATE TABLE `survey_questions` (
   KEY `survey_questions_ibfk_2` (`type_id`),
   CONSTRAINT `survey_questions_ibfk_1` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`survey_id`) ON DELETE CASCADE,
   CONSTRAINT `survey_questions_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `question_types` (`type_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -377,7 +377,7 @@ CREATE TABLE `survey_questions` (
 
 LOCK TABLES `survey_questions` WRITE;
 /*!40000 ALTER TABLE `survey_questions` DISABLE KEYS */;
-INSERT INTO `survey_questions` VALUES (1,1,'Mức độ hài lòng của bạn về nội dung môn học trong học kỳ qua?',1,3,1),(2,1,'Phương pháp giảng dạy của giảng viên có phù hợp và dễ hiểu không?',1,2,1),(3,1,'Bạn có góp ý cụ thể nào để cải thiện chất lượng giảng dạy không?',0,1,2),(4,2,'Theo bạn, ngôn ngữ lập trình nào sẽ có nhu cầu cao trong 2 năm tới?',1,1,1),(5,2,'Bạn mong muốn nhà trường tổ chức thêm các workshop về chủ đề công nghệ nào?',1,2,2),(6,2,'Bạn có thường xuyên sử dụng các nguồn tài liệu trực tuyến để tự học không?',0,3,1),(7,3,'Bạn đánh giá thế nào về sự đa dạng của các đầu sách chuyên ngành tại thư viện?',1,1,1),(8,3,'Không gian học tập tại thư viện có yên tĩnh và thoải mái không???????????',1,2,1),(9,3,'Bạn có đề xuất gì để thư viện cải thiện nguồn tài liệu số (e-books, database online) không?',0,3,2),(22,6,'nhan xet',0,NULL,2),(23,6,'1 + 1 = ?',0,NULL,1),(24,6,'fsf',0,NULL,1),(25,6,'sdfsd',0,NULL,1),(27,2,'alo',0,NULL,1),(28,5,'sutt',0,NULL,2);
+INSERT INTO `survey_questions` VALUES (1,1,'Mức độ hài lòng của bạn về nội dung môn học trong học kỳ qua?',1,3,1),(2,1,'Phương pháp giảng dạy của giảng viên có phù hợp và dễ hiểu không?',1,2,1),(3,1,'Bạn có góp ý cụ thể nào để cải thiện chất lượng giảng dạy không?',0,1,2),(4,2,'Theo bạn, ngôn ngữ lập trình nào sẽ có nhu cầu cao trong 2 năm tới?',1,1,1),(5,2,'Bạn mong muốn nhà trường tổ chức thêm các workshop về chủ đề công nghệ nào?',1,2,2),(6,2,'Bạn có thường xuyên sử dụng các nguồn tài liệu trực tuyến để tự học không?',0,3,1),(7,3,'Bạn đánh giá thế nào về sự đa dạng của các đầu sách chuyên ngành tại thư viện?',1,1,1),(8,3,'Không gian học tập tại thư viện có yên tĩnh và thoải mái không???????????',1,2,1),(9,3,'Bạn có đề xuất gì để thư viện cải thiện nguồn tài liệu số (e-books, database online) không?',0,3,2),(22,6,'nhan xet',0,NULL,2),(23,6,'1 + 1 = ?',0,NULL,1),(24,6,'fsf',0,NULL,1),(25,6,'sdfsd',0,NULL,1),(27,2,'alo',0,NULL,2),(28,5,'sutt',0,NULL,2),(29,2,'1 + 1 = ?',0,NULL,2);
 /*!40000 ALTER TABLE `survey_questions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,4 +525,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-16 14:13:47
+-- Dump completed on 2025-05-17 17:22:55

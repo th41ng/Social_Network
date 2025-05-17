@@ -202,83 +202,6 @@ function deleteUser(fullUrl) {
 
 
 
-/**
- * Hàm ẩn/hiện phần nhập lựa chọn trắc nghiệm dựa trên loại câu hỏi được chọn.
- 
- */
-//function toggleMultipleChoiceOptions() {
-//    const questionTypeSelect = document.getElementById('selectedTypeId');
-//    const multipleChoiceSection = document.getElementById('multipleChoiceOptionsSection');
-//
-//    if (!questionTypeSelect || !multipleChoiceSection) {
-//        console.warn("Không tìm thấy các phần tử cần thiết để ẩn/hiện lựa chọn trắc nghiệm.");
-//        return;
-//    }
-//
-//
-//    const MULTIPLE_CHOICE_TYPE_ID_VALUE = "1";
-//
-//    const allOptionInputs = multipleChoiceSection.querySelectorAll('#options input[name="options"]');
-//
-//    if (questionTypeSelect.value === MULTIPLE_CHOICE_TYPE_ID_VALUE) {
-//        multipleChoiceSection.style.display = 'block'; // Hiện phần lựa chọn
-//
-//        if (allOptionInputs.length > 0) {
-//            allOptionInputs[0].required = true;
-//        }
-//
-//    } else {
-//        multipleChoiceSection.style.display = 'none'; // Ẩn phần lựa chọn
-//        // Nếu không phải trắc nghiệm, tất cả các ô lựa chọn không còn bắt buộc nữa.
-//        allOptionInputs.forEach(input => {
-//            input.required = false;
-//        });
-//    }
-//}
-
-//
-//document.addEventListener('DOMContentLoaded', function () {
-//
-//
-//    const questionTypeSelect = document.getElementById('selectedTypeId');
-//    if (questionTypeSelect) {
-//        // Gọi hàm một lần khi tải trang để thiết lập trạng thái ban đầu (quan trọng khi sửa câu hỏi)
-//        toggleMultipleChoiceOptions();
-//
-//        // Thêm sự kiện 'change' cho dropdown loại câu hỏi
-//        questionTypeSelect.addEventListener('change', toggleMultipleChoiceOptions);
-//    }
-//
-//
-//});
-
-//
-//function addOption() {
-//    const optionsContainer = document.getElementById("options");
-//
-//    if (!optionsContainer) {
-//        console.error("Lỗi: Không tìm thấy vùng chứa các lựa chọn (phần tử với id='options').");
-//        alert("Đã xảy ra lỗi khi cố gắng thêm lựa chọn. Vui lòng thử làm mới trang.");
-//        return;
-//    }
-//
-//    const newOptionInput = document.createElement('input');
-//    newOptionInput.type = 'text';
-//    newOptionInput.className = 'form-control mb-2';
-//    newOptionInput.name = 'options';
-//    newOptionInput.placeholder = 'Nhập lựa chọn';
-//
-//
-//    const questionTypeSelect = document.getElementById('selectedTypeId');
-//    const MULTIPLE_CHOICE_TYPE_ID_VALUE = "1";
-//    if (questionTypeSelect && questionTypeSelect.value === MULTIPLE_CHOICE_TYPE_ID_VALUE) {
-//        newOptionInput.required = true;
-//    } else {
-//        newOptionInput.required = false;
-//    }
-//
-//    optionsContainer.appendChild(newOptionInput);
-//}
 
 function verifyStudent(fullUrl) {
     console.log("URL:", fullUrl);
@@ -333,3 +256,88 @@ function deleteSurveyQuestion(deleteUrl, surveyIdForRedirect) {
     }
     return false; // Ngăn chặn hành vi mặc định của thẻ <a> nếu dùng với href="#"
 }
+
+/**
+ * Lọc bảng thống kê chu kỳ dựa trên loại chu kỳ được chọn.
+ * @param {string} periodTypeToShow - Loại chu kỳ để hiển thị ('all', 'monthly', 'quarterly', 'yearly').
+ * @param {HTMLElement} clickedButton - Nút đã được nhấp (để cập nhật class 'active').
+ */
+function filterPeriodicStats(periodTypeToShow, clickedButton) {
+    const table = document.getElementById('periodicStatsTable');
+    if (!table)
+        return; // Không làm gì nếu không có bảng
+
+    const tbody = table.getElementsByTagName('tbody')[0];
+    const rows = tbody.getElementsByTagName('tr');
+    const noStatsRow = document.getElementById('noPeriodicStatsRow'); // Dòng thông báo khi không có dữ liệu sau lọc
+    const initialNoStatsRow = tbody.querySelector('tr[th\\:if*="isEmpty(periodicStats)"]'); // Dòng thông báo ban đầu
+    let visibleRowCount = 0;
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        // Bỏ qua dòng thông báo "không có dữ liệu" đặc biệt
+        if (row.id === 'noPeriodicStatsRow' || (initialNoStatsRow && row === initialNoStatsRow)) {
+            continue;
+        }
+
+        const rowPeriodType = row.getAttribute('data-period-type');
+        if (periodTypeToShow === 'all' || rowPeriodType === periodTypeToShow) {
+            row.style.display = ''; // Hiện dòng
+            visibleRowCount++;
+        } else {
+            row.style.display = 'none'; // Ẩn dòng
+        }
+    }
+
+    // Cập nhật trạng thái active cho các nút
+    const buttons = document.querySelectorAll('.btn-group[aria-label="Lọc thống kê chu kỳ"] .btn');
+    buttons.forEach(button => {
+        button.classList.remove('active', 'btn-primary');
+        button.classList.add('btn-secondary');
+    });
+    if (clickedButton) {
+        clickedButton.classList.add('active', 'btn-primary');
+        clickedButton.classList.remove('btn-secondary');
+    }
+
+
+    // Hiện/ẩn dòng "Không có thống kê" tùy chỉnh
+    if (noStatsRow) {
+        if (visibleRowCount === 0 && !(initialNoStatsRow && initialNoStatsRow.style.display !== 'none')) {
+            let message = "Không có dữ liệu phù hợp với bộ lọc.";
+            if (periodTypeToShow === 'monthly')
+                message = "Không có thống kê theo tháng nào.";
+            else if (periodTypeToShow === 'quarterly')
+                message = "Không có thống kê theo quý nào.";
+            else if (periodTypeToShow === 'yearly')
+                message = "Không có thống kê theo năm nào.";
+
+            noStatsRow.cells[0].textContent = message;
+            noStatsRow.style.display = '';
+        } else {
+            noStatsRow.style.display = 'none';
+        }
+    }
+    // Ẩn dòng thông báo ban đầu nếu có dòng dữ liệu được hiển thị
+    if (initialNoStatsRow) {
+        if (visibleRowCount > 0) {
+            initialNoStatsRow.style.display = 'none';
+        } else if (periodTypeToShow === 'all' && visibleRowCount === 0) { // Nếu lọc all mà vẫn 0 thì hiện lại
+            initialNoStatsRow.style.display = '';
+        }
+    }
+}
+
+// Sửa đổi/Thêm vào cuối hàm DOMContentLoaded của bạn
+document.addEventListener('DOMContentLoaded', function () {
+    initializeQuestionForm(); // Hàm cũ của bạn cho form câu hỏi
+
+    // Thêm logic cho trang thống kê
+    if (document.getElementById('periodicStatsTable')) {
+        // Tìm nút "Tất cả" và kích hoạt bộ lọc ban đầu
+        const allButton = document.querySelector('.btn-group[aria-label="Lọc thống kê chu kỳ"] button');
+        if (allButton) {
+            filterPeriodicStats('all', allButton);
+        }
+    }
+});

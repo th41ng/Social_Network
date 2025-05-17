@@ -3,13 +3,18 @@
 <head>
     <title>Quản lý thống kê</title>
     <th:block th:replace="~{base :: bootstrap}"></th:block>
+    <style>
+        /* CSS để làm nổi bật nút active (tùy chọn) */
+        .btn-group > .btn.active {
+            z-index: 1; /* Đảm bảo nút active nổi lên trên */
+        }
+    </style>
 </head>
 <body>
     <div th:replace="~{base :: header}"></div>
 
     <main class="container mt-4">
         <h2>Thống kê nền tảng hàng ngày</h2>
-
         <div class="table-responsive mb-5">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
@@ -38,8 +43,15 @@
 
         <h2>Thống kê theo chu kỳ</h2>
 
+        <div class="mb-3 btn-group" role="group" aria-label="Lọc thống kê chu kỳ">
+            <button type="button" class="btn btn-primary active" onclick="filterPeriodicStats('all', this)">Tất cả</button>
+            <button type="button" class="btn btn-secondary" onclick="filterPeriodicStats('monthly', this)">Theo Tháng</button>
+            <button type="button" class="btn btn-secondary" onclick="filterPeriodicStats('quarterly', this)">Theo Quý</button>
+            <button type="button" class="btn btn-secondary" onclick="filterPeriodicStats('yearly', this)">Theo Năm</button>
+        </div>
+
         <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover" id="periodicStatsTable">
                 <thead class="table-light">
                     <tr>
                         <th>Chu kỳ</th>
@@ -50,7 +62,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="p : ${periodicStats}">
+                    <tr th:each="p : ${periodicStats}" th:attr="data-period-type=${p.periodType.toString().toLowerCase()}">
                         <td>
                             <span th:if="${p.periodType == T(com.socialapp.pojo.PeriodicSummaryStats.PeriodType).monthly}"
                                   th:text="${p.summaryMonth + '/' + p.summaryYear}"></span>
@@ -64,9 +76,11 @@
                         <td th:text="${p.newPostsCount}"></td>
                         <td th:text="${p.calculatedAt != null ? #temporals.format(p.calculatedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></td>
                     </tr>
-                    <tr th:if="${periodicStats == null or #lists.isEmpty(periodicStats)}">
-                        <td colspan="5" class="text-center">Chưa có thống kê theo chu kỳ nào.</td>
+                    <tr id="noPeriodicStatsRow" style="display: none;"> <td colspan="5" class="text-center"></td>
                     </tr>
+                    <tr th:if="${periodicStats == null or #lists.isEmpty(periodicStats)}">
+                         <td colspan="5" class="text-center">Chưa có thống kê theo chu kỳ nào.</td>
+                     </tr>
                 </tbody>
             </table>
         </div>
