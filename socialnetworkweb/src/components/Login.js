@@ -34,7 +34,7 @@ const Login = () => {
 
             let res = await Apis.post(endpoints['login'], { ...user });
             cookie.save('token', res.data.token);
-
+            console.log(res.data.token);
             // Comment đoạn code lấy profile để tắt tạm
             /*
             let u = await authApis().get(endpoints['profile']);

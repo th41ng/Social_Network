@@ -116,22 +116,8 @@ public class UserRepositoryImpl implements UserRepository {
         return query.getResultList();
     }
 
-    @Override
-<<<<<<< HEAD
-=======
-    public boolean verifyStudent(int userId) {
-        Session session = getCurrentSession();
-        User user = session.get(User.class, userId);
-        if (user != null) {
-            user.setIsVerified(true);
-            session.update(user);
-            return true;
-        }
-        return false;
-    }
 
     @Override
->>>>>>> cd1acbf338a3f7c728be80e2ca5ddb090664099f
     public long countUsers() {
         Session session = getCurrentSession();
         Query<Long> query = session.createQuery("SELECT COUNT(u.id) FROM User u", Long.class);
