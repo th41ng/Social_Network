@@ -1,12 +1,14 @@
 package com.socialapp.repository.impl;
 
 import com.socialapp.pojo.Event;
+import com.socialapp.pojo.EventNotification;
 import com.socialapp.repository.EventRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -26,36 +28,78 @@ public class EventRepositoryImpl implements EventRepository {
     @Autowired
     private LocalSessionFactoryBean factory;
 
+        @Override
+        public List<Event> getEvents(Map<String, String> params) {
+            Session s = this.factory.getObject().getCurrentSession();
+            CriteriaBuilder b = s.getCriteriaBuilder();
+            CriteriaQuery<Event> q = b.createQuery(Event.class);
+            Root<Event> root = q.from(Event.class);
+            q.select(root);
+
+            if (params != null) {
+                List<Predicate> predicates = new ArrayList<>();
+
+                // Filter by event title
+                String title = params.get("title");
+                if (title != null && !title.isEmpty()) {
+                    predicates.add(b.like(root.get("title"), String.format("%%%s%%", title)));
+                }
+
+                // Filter by event date (or other criteria)
+                String eventDate = params.get("eventDate");
+                if (eventDate != null && !eventDate.isEmpty()) {
+                    predicates.add(b.equal(root.get("eventDate"), eventDate));
+                }
+
+                // Add other filters as necessary
+                q.where(predicates.toArray(Predicate[]::new));
+            }
+
+            Query query = s.createQuery(q);
+
+            // Pagination
+            if (params != null && params.containsKey("page")) {
+                int page = Integer.parseInt(params.get("page"));
+                query.setMaxResults(PAGE_SIZE);
+                query.setFirstResult((page - 1) * PAGE_SIZE);
+            }
+
+            return query.getResultList();
+        }
     @Override
-    public List<Event> getEvents(Map<String, String> params) {
+    public List<Event> getAvailableEvents(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
         CriteriaBuilder b = s.getCriteriaBuilder();
         CriteriaQuery<Event> q = b.createQuery(Event.class);
         Root<Event> root = q.from(Event.class);
         q.select(root);
 
-        if (params != null) {
-            List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> predicates = new ArrayList<>();
 
-            // Filter by event title
+        // Subquery kiểm tra sự kiện chưa có trong event_notifications
+        Subquery<Long> subQuery = q.subquery(Long.class);
+        Root<EventNotification> subRoot = subQuery.from(EventNotification.class);
+        subQuery.select(b.count(subRoot)).where(b.equal(subRoot.get("event").get("event_id"), root.get("event_id")));
+        predicates.add(b.equal(subQuery, 0L));
+
+        // Thêm điều kiện lọc (nếu cần)
+        if (params != null) {
             String title = params.get("title");
             if (title != null && !title.isEmpty()) {
-                predicates.add(b.like(root.get("title"), String.format("%%%s%%", title)));
+                predicates.add(b.like(root.get("title"), "%" + title + "%"));
             }
 
-            // Filter by event date (or other criteria)
             String eventDate = params.get("eventDate");
             if (eventDate != null && !eventDate.isEmpty()) {
-                predicates.add(b.equal(root.get("eventDate"), eventDate));
+                predicates.add(b.equal(root.get("start_date"), eventDate));
             }
-
-            // Add other filters as necessary
-            q.where(predicates.toArray(Predicate[]::new));
         }
+
+        q.where(predicates.toArray(new Predicate[0]));
 
         Query query = s.createQuery(q);
 
-        // Pagination
+        // Phân trang (nếu cần)
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setMaxResults(PAGE_SIZE);
@@ -74,7 +118,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public Event addOrUpdateEvent(Event event) {
         Session s = this.factory.getObject().getCurrentSession();
-        if (event.getEvent_id()== null) {
+        if (event.getEvent_id() == null) {
             s.persist(event); // Insert if it's a new event
         } else {
             s.merge(event); // Update if the event already exists

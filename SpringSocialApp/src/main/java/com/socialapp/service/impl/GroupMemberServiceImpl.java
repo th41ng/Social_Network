@@ -39,10 +39,15 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     public void deleteMember(int memberId) {
         groupMembersRepository.deleteMember(memberId);
     }
+//
+//    @Override
+//    public void deleteMemberByGroupAndUserId(int groupId, int userId) {
+//        groupMembersRepository.deleteMemberByGroupAndUserId(groupId, userId);
+//    }
 
     @Override
-    public void deleteMemberByGroupAndUserId(int groupId, int userId) {
-        groupMembersRepository.deleteMemberByGroupAndUserId(groupId, userId);
+    public List<GroupMembers> getMembersByGroupId(int groupId) {
+        return this.groupMembersRepository.getMembersByGroupId(groupId);
     }
-  
+
 }

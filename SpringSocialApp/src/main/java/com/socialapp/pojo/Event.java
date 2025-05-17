@@ -11,6 +11,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
@@ -36,7 +38,7 @@ import java.util.Date;
 })
 public class Event implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,11 +70,13 @@ public class Event implements Serializable {
 
     //@Column(name = "is_deleted")
     //private boolean isDeleted; // Trường xóa mềm
-    
     //QUan hệ
     @OneToOne(mappedBy = "event", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private EventNotification eventNotification;
 
+    @ManyToOne
+    @JoinColumn(name = "admin_id", referencedColumnName = "user_id", insertable = false, updatable = false, nullable = false)
+    private User admin;
 
     //Kế thúc
     public Event() {
@@ -81,19 +85,16 @@ public class Event implements Serializable {
     public Event(Integer event_id) {
         this.event_id = event_id;
     }
-    
-    public Event(Integer event_id, Integer admin_id, String title, String description, Date start_date, Date end_date, String location) {
-    this.event_id = event_id;
-    this.admin_id = admin_id;
-    this.title = title;
-    this.description = description;
-    this.start_date = start_date;
-    this.end_date = end_date;
-    this.location = location;
-}
 
-    
-    
+    public Event(Integer event_id, Integer admin_id, String title, String description, Date start_date, Date end_date, String location) {
+        this.event_id = event_id;
+        this.admin_id = admin_id;
+        this.title = title;
+        this.description = description;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.location = location;
+    }
 
     public Integer getEvent_id() {
         return event_id;
@@ -187,5 +188,33 @@ public class Event implements Serializable {
      */
     public void setEventNotification(EventNotification eventNotification) {
         this.eventNotification = eventNotification;
+    }
+
+    /**
+     * @return the serialVersionUID
+     */
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    /**
+     * @param aSerialVersionUID the serialVersionUID to set
+     */
+    public static void setSerialVersionUID(long aSerialVersionUID) {
+        serialVersionUID = aSerialVersionUID;
+    }
+
+    /**
+     * @return the admin
+     */
+    public User getAdmin() {
+        return admin;
+    }
+
+    /**
+     * @param admin the admin to set
+     */
+    public void setAdmin(User admin) {
+        this.admin = admin;
     }
 }

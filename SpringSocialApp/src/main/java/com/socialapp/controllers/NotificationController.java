@@ -28,6 +28,9 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 /**
  *
  * @author DELL G15
@@ -54,6 +57,7 @@ public class NotificationController {
         model.addAttribute("categories", this.categoryService.getCategories());
     }
 
+    @GetMapping("/listNotification")
     public String listNotification(@RequestParam Map<String, String> params, Model model) {
         List<EventNotification> event_notification = this.eventNotificationService.getNotifications(params);
         System.out.println("Notifications fetched: " + event_notification.size());
@@ -63,8 +67,20 @@ public class NotificationController {
 
     @GetMapping("/add")
     public String showAddNotificationForm(@RequestParam Map<String, String> params, Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = auth.getName();  // Lấy username hiện tại
+        User currentUser = userService.getUserByUsername(username);
+        if (currentUser == null) {
+            System.out.println("User không tồn tại!");
+        } else {
+            System.out.println("User id: " + currentUser.getId());
+            System.out.println("User username: " + currentUser.getUsername());
+        }
+        int adminId = currentUser.getId();
+
         // Lấy danh sách sự kiện từ database
-        List<Event> events = eventService.getEvents(params);
+        List<Event> events = eventService.getAvailableEvents(params);
 
         // Lấy danh sách nhóm từ database
         List<UserGroups> groups = userGroupService.getAllGroups(params);
@@ -76,6 +92,7 @@ public class NotificationController {
         model.addAttribute("events", events);
         model.addAttribute("groups", groups);
         model.addAttribute("recievedUser", recievedUser);
+        model.addAttribute("adminId", adminId); // Thêm adminId tự động
 
         return "add_update_notification";
     }
@@ -83,19 +100,50 @@ public class NotificationController {
     @PostMapping("/add")
     public String processAddNotification(
             @ModelAttribute("notification") EventNotification notification,
+            @RequestParam("adminId") Integer adminId,
+            @RequestParam("eventId") Integer eventId,
+            @RequestParam("receiverUserId") Integer receiverUserId,
+            @RequestParam("groupId") Integer groupId,
             Model model) {
         try {
+            // Lấy admin từ adminId
+            User admin = userService.getUserById(adminId);
+            if (admin == null) {
+                throw new IllegalArgumentException("Admin không hợp lệ.");
+            }
+            notification.setAdmin(admin);
+
+            // Lấy event từ eventId
+            Event event = eventService.getEventById(eventId);
+            if (event == null) {
+                throw new IllegalArgumentException("Sự kiện không hợp lệ.");
+            }
+            notification.setEvent(event);
+
+            // Lấy receiverUser từ receiverUserId
+            User receiverUser = userService.getUserById(receiverUserId);
+            if (receiverUser == null) {
+                throw new IllegalArgumentException("Người nhận không hợp lệ.");
+            }
+            notification.setReceiverUser(receiverUser);
+
+            // Lấy group từ groupId
+            UserGroups group = userGroupService.getGroupById(groupId);
+            if (group == null) {
+                throw new IllegalArgumentException("Nhóm không hợp lệ.");
+            }
+            notification.setGroup(group);
+
             // Thiết lập thời gian gửi
             notification.setSentAt(new Date());
 
-            // Lưu thông báo thông qua service
-            this.eventNotificationService.addOrUpdateNotification(notification);
+            // Lưu thông báo
+            eventNotificationService.addOrUpdateNotification(notification);
 
-            // Chuyển hướng về trang danh sách thông báo
-            return "redirect:/Notification";
+            return "redirect:/?categoryId=3";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra khi thêm thông báo: " + e.getMessage());
-            return "add_update_notification"; // Trả về form nếu có lỗi
+            return "add_update_notification"; // Trả về form nếu lỗi
         }
     }
 

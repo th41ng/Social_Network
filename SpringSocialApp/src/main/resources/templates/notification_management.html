@@ -10,18 +10,16 @@
     <main class="container mt-4">
         <h2>Quản lý thông báo sự kiện</h2>
         <a th:href="@{/Notification/add}" class="btn btn-info mb-3">Thêm Thông báo</a>
+        <a th:href="@{/Event/listEvent}" class="btn btn-info mb-3">Quản lý sự kiện</a>
+        <a th:href="@{/Group/listGroup}" class="btn btn-info mb-3">Quản lý nhóm</a>
+
         <!-- Bộ lọc -->
-        <form class="row g-3 mb-3" method="get" th:action="@{/Notification}">
+        <form class="row g-3 mb-3" method="get" th:action="@{/?categoryId=3/listNotification}">
             <div class="col-md-4">
                 <input type="text" class="form-control" name="title" placeholder="Tìm theo tiêu đề" 
                        th:value="${params['title']}">
             </div>
-            <div class="col-md-3">
-                <input type="date" class="form-control" name="fromDate" th:value="${params['fromDate']}">
-            </div>
-            <div class="col-md-3">
-                <input type="date" class="form-control" name="toDate" th:value="${params['toDate']}">
-            </div>
+            
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
             </div>
@@ -44,7 +42,7 @@
                 </thead>
                 <tbody>
                     <tr th:each="notification : ${notification}">
-                        <td th:text="${notification.eventId}"></td>
+                        <td th:text="${notification.notificationId}"></td>
                         <td th:text="${notification.title}"></td>
                         <td th:text="${notification.content}"></td>
                         <td th:text="${notification.admin.fullName}"></td>
@@ -58,11 +56,11 @@
                         </td>
                         <td th:text="${#dates.format(notification.sentAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
-                            <a th:href="@{/notification/{id}(id=${notification.eventId})}" class="btn btn-primary btn-sm">Xem</a>
-                              <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                        th:onclick="'deleteNotification(\'' + @{/api/notification/{id}(id=${notification.eventId})} + '\')'">
-                                    Xoá
-                              </button>
+                            <a th:href="@{/notification/{id}(id=${notification.notificationId})}" class="btn btn-primary btn-sm">Xem</a>
+                            <button type="button" class="btn btn-danger btn-sm" title="Xoá"
+                                    th:onclick="'deleteNotification(\'' + @{/api/deleteNotification/{id}(id=${notification.notificationId})} + '\')'">
+                                Xoá
+                            </button>
 
                         </td>
                     </tr>

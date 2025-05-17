@@ -35,5 +35,10 @@ public class EventServiceImpl implements EventService {
         eventRepository.deleteEvent(id);
     }
 
+    @Override
+    public List<Event> getAvailableEvents(Map<String, String> params) {
+        return eventRepository.getAvailableEvents(params);
+    }
+
     
 }

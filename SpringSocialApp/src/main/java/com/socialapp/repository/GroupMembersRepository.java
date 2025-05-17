@@ -13,10 +13,19 @@ import java.util.Map;
  * @author Admin
  */
 public interface GroupMembersRepository {
+
     List<GroupMembers> getAllMembers(Map<String, String> params);
+
     GroupMembers getMemberById(int memberId);
+
     GroupMembers getMemberByGroupAndUserId(int groupId, int userId);
+
     GroupMembers addOrUpdateMember(GroupMembers groupMember);
+
     void deleteMember(int memberId);
-    void deleteMemberByGroupAndUserId(int groupId, int userId);
+//
+//    void deleteMemberByGroupAndUserId(int groupId, int userId);
+
+    List<GroupMembers> getMembersByGroupId(int groupId);
+
 }

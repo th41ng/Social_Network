@@ -32,7 +32,7 @@ public class ApiNotificationController {
      * @param id ID của sự kiện cần xoá
      * @return ResponseEntity chỉ ra kết quả của hoạt động
      */
-    @DeleteMapping("/notification/{notificationId}")
+    @DeleteMapping("/deleteNotification/{notificationId}")
     public ResponseEntity<Void> deleteNotification(@PathVariable("notificationId") int id) {
         try {
             logger.info("Đang cố gắng xoá sự kiện với ID: {}", id);

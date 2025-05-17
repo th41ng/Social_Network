@@ -20,42 +20,18 @@ import org.slf4j.LoggerFactory;
 @Transactional
 public class GroupMemberRepositoryImpl implements GroupMembersRepository {
 
-    private static final int PAGE_SIZE = 10;
-    private static final Logger logger = LoggerFactory.getLogger(GroupMemberRepositoryImpl.class);
-
     @Autowired
     private SessionFactory sessionFactory;
 
     @Override
     public List<GroupMembers> getAllMembers(Map<String, String> params) {
         Session session = this.sessionFactory.getCurrentSession();
-        String hql = "FROM GroupMembers gm WHERE 1=1";
+        Query query = session.createNamedQuery("GroupMembers.findAll", GroupMembers.class);
 
-        if (params != null) {
-            if (params.containsKey("groupId")) {
-                hql += " AND gm.group.id = :groupId";
-            }
-            if (params.containsKey("userId")) {
-                hql += " AND gm.user.id = :userId";
-            }
-        }
-
-        Query query = session.createQuery(hql, GroupMembers.class);
-
-        if (params != null) {
-            if (params.containsKey("groupId")) {
-                query.setParameter("groupId", Integer.parseInt(params.get("groupId")));
-            }
-            if (params.containsKey("userId")) {
-                query.setParameter("userId", Integer.parseInt(params.get("userId")));
-            }
-        }
-
-        // Pagination
-        if (params != null && params.containsKey("page")) {
+        if (params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
-            query.setMaxResults(PAGE_SIZE);
-            query.setFirstResult((page - 1) * PAGE_SIZE);
+            query.setMaxResults(10); // Số bản ghi mỗi trang
+            query.setFirstResult((page - 1) * 10);
         }
 
         return query.getResultList();
@@ -63,53 +39,49 @@ public class GroupMemberRepositoryImpl implements GroupMembersRepository {
 
     @Override
     public GroupMembers getMemberById(int memberId) {
-        Session session = this.sessionFactory.getCurrentSession();
-        return session.get(GroupMembers.class, memberId);
+        return sessionFactory.getCurrentSession().get(GroupMembers.class, memberId);
     }
 
     @Override
     public GroupMembers getMemberByGroupAndUserId(int groupId, int userId) {
         Session session = this.sessionFactory.getCurrentSession();
-        String hql = "FROM GroupMembers gm WHERE gm.group.id = :groupId AND gm.user.id = :userId";
-        Query query = session.createQuery(hql, GroupMembers.class);
+        Query query = session.createNamedQuery("GroupMembers.findByGroupAndUserId", GroupMembers.class);
         query.setParameter("groupId", groupId);
         query.setParameter("userId", userId);
-
-        List<GroupMembers> results = query.getResultList();
-        if (results.isEmpty()) {
-            return null;
-        }
-        return results.get(0);
+        return (GroupMembers) query.getResultList().stream().findFirst().orElse(null);
     }
 
     @Override
     public GroupMembers addOrUpdateMember(GroupMembers groupMember) {
-        Session session = this.sessionFactory.getCurrentSession();
-        try {
-            session.saveOrUpdate(groupMember);
-            return groupMember;
-        } catch (Exception e) {
-            logger.error("Error adding or updating member: {}", e.getMessage(), e);
-            return null;
-        }
+        sessionFactory.getCurrentSession().saveOrUpdate(groupMember);
+        return groupMember;
     }
 
     @Override
     public void deleteMember(int memberId) {
-        Session session = this.sessionFactory.getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         GroupMembers member = session.get(GroupMembers.class, memberId);
         if (member != null) {
             session.delete(member);
         }
     }
+//
+//    @Override
+//    public void deleteMemberByGroupAndUserId(int groupId, int userId) {
+//        Session session = sessionFactory.getCurrentSession();
+//        Query query = session.createNamedQuery("GroupMembers.deleteByGroupAndUserId");
+//        query.setParameter("groupId", groupId);
+//        query.setParameter("userId", userId);
+//        query.executeUpdate();
+//    }
 
     @Override
-    public void deleteMemberByGroupAndUserId(int groupId, int userId) {
+    public List<GroupMembers> getMembersByGroupId(int groupId) {
         Session session = this.sessionFactory.getCurrentSession();
-        String hql = "DELETE FROM GroupMembers gm WHERE gm.group.id = :groupId AND gm.user.id = :userId";
-        Query query = session.createQuery(hql);
+        String hql = "FROM GroupMembers gm WHERE gm.group.groupId = :groupId";
+        Query query = session.createQuery(hql, GroupMembers.class);
         query.setParameter("groupId", groupId);
-        query.setParameter("userId", userId);
-        query.executeUpdate();
+        return query.getResultList();
     }
+
 }

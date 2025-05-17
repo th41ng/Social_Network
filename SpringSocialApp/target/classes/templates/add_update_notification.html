@@ -41,9 +41,7 @@
             </div>
             <div class="mb-3">
                 <label for="adminId" class="form-label">Người gửi</label>
-                <select class="form-control" id="adminId" name="adminId" required>
-                    <option th:each="admin : ${admins}" th:value="${admin.id}" th:text="${admin.fullName}"></option>
-                </select>
+                <input class="form-control" id="adminId" name="adminId" th:value="${adminId}" readonly />
             </div>
             <button type="submit" class="btn btn-primary">Thêm Thông Báo</button>
         </form>

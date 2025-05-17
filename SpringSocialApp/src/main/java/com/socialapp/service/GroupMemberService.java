@@ -28,9 +28,10 @@ public interface GroupMemberService {
 
     // Xóa thành viên theo ID
     void deleteMember(int memberId);
+//
+//    // Xóa thành viên khỏi nhóm dựa trên ID nhóm và ID người dùng
+//    void deleteMemberByGroupAndUserId(int groupId, int userId);
 
-    // Xóa thành viên khỏi nhóm dựa trên ID nhóm và ID người dùng
-    void deleteMemberByGroupAndUserId(int groupId, int userId);
+    List<GroupMembers> getMembersByGroupId(int groupId);
 
-   
 }

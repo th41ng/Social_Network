@@ -29,6 +29,7 @@ com\socialapp\formatters\CategoryFormatter.class
 com\socialapp\repository\impl\CategoryRepositoryImpl.class
 com\socialapp\schedule\StatisticsScheduler.class
 com\socialapp\pojo\EventNotification.class
+com\socialapp\controllers\GroupController.class
 com\socialapp\service\impl\GroupMemberServiceImpl.class
 com\socialapp\service\impl\EventServiceImpl.class
 com\socialapp\repository\SurveyOptionRepository.class
@@ -64,6 +65,7 @@ com\socialapp\configs\SecurityConfig.class
 com\socialapp\repository\CommentRepository.class
 com\socialapp\repository\impl\SurveyRepositoryImpl.class
 com\socialapp\repository\impl\QuestionTypeRepositoryImpl.class
+com\socialapp\controllers\EventController.class
 com\socialapp\service\impl\PostApiServiceImpl.class
 com\socialapp\service\impl\PlatformStatsServiceImpl.class
 com\socialapp\pojo\SurveyQuestion.class
@@ -85,6 +87,7 @@ com\socialapp\configs\DispatcherServletInit.class
 com\socialapp\repository\SurveyQuestionRepository.class
 com\socialapp\pojo\Comment.class
 com\socialapp\pojo\QuestionType.class
+com\socialapp\controllers\ApiEventController.class
 com\socialapp\pojo\DailyPlatformSummary.class
 com\socialapp\configs\HibernateConfigs.class
 com\socialapp\repository\ReactionRepository.class
@@ -92,15 +95,18 @@ com\socialapp\repository\impl\SurveyQuestionRepositoryImpl.class
 com\socialapp\service\EventNotificationService.class
 com\socialapp\pojo\SurveyOption.class
 com\socialapp\service\impl\EmailServiceImpl.class
+com\socialapp\controllers\MemberController.class
 com\socialapp\repository\QuestionTypeRepository.class
 com\socialapp\service\impl\QuestionTypeServiceImpl.class
 com\socialapp\filters\JwtFilter.class
 com\socialapp\service\GroupMemberService.class
-com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\repository\SurveyRepository.class
+com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\controllers\ApiUserController.class
 com\socialapp\controllers\ApiCategoryController.class
+com\socialapp\controllers\ApiGroupController.class
 com\socialapp\controllers\ApiNotificationController.class
+com\socialapp\controllers\ApiMemberController.class
 com\socialapp\repository\EventRepository.class
 com\socialapp\formatters\UserFormatter.class
 com\socialapp\pojo\SurveyResponse.class

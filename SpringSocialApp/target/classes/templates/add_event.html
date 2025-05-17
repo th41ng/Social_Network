@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Sự Kiện</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Thêm Sự Kiện</h2>
+
+        <!-- Hiển thị lỗi nếu có -->
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form th:action="@{/Event/add}" method="post" th:object="${event}">
+            <!-- Ẩn adminId -->
+            <input  name="adminId" th:value="${adminId}" />
+
+            <div class="mb-3">
+                <label for="title" class="form-label">Tiêu Đề Sự Kiện</label>
+                <input type="text" id="title" name="title" class="form-control" th:field="*{title}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Mô Tả</label>
+                <textarea id="description" name="description" class="form-control" th:field="*{description}"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="start_date" class="form-label">Ngày Bắt Đầu</label>
+                <input type="datetime-local" id="start_date" name="start_date" class="form-control" th:field="*{start_date}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="end_date" class="form-label">Ngày Kết Thúc</label>
+                <input type="datetime-local" id="end_date" name="end_date" class="form-control" th:field="*{end_date}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="location" class="form-label">Địa Điểm</label>
+                <input type="text" id="location" name="location" class="form-control" th:field="*{location}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Thêm Sự Kiện</button>
+        </form>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

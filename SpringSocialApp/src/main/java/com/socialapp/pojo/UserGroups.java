@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -18,16 +20,24 @@ import java.util.List;
 
 @Entity
 @Table(name = "user_groups")
+@NamedQueries({
+    @NamedQuery(name = "UserGroups.findAll", query = "SELECT g FROM UserGroups g"),
+    @NamedQuery(name = "UserGroups.findById", query = "SELECT g FROM UserGroups g WHERE g.groupId = :groupId"),
+    @NamedQuery(name = "UserGroups.findByName", query = "SELECT g FROM UserGroups g WHERE g.groupName LIKE :groupName"),
+    @NamedQuery(name = "UserGroups.findByAdminId", query = "SELECT g FROM UserGroups g WHERE g.adminId = :adminId"),
+    @NamedQuery(name = "UserGroups.deleteById", query = "DELETE FROM UserGroups g WHERE g.groupId = :groupId")
+})
 public class UserGroups implements Serializable {
+
     private static long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_id")
     private Integer groupId;
 
-    @Column(name = "admin_id", insertable = false, updatable = false, nullable = false)
-    private Integer adminId;  // Không cần insert hoặc update trực tiếp trường này
+    @Column(name = "admin_id", nullable = false)
+    private Integer adminId;
 
     @Column(name = "group_name", length = 255, nullable = false)
     private String groupName;
@@ -82,7 +92,6 @@ public class UserGroups implements Serializable {
     }
 
     // Getter and Setter methods
-
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }

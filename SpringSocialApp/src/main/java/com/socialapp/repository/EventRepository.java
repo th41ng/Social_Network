@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public interface EventRepository {
     List<Event> getEvents(Map<String, String> params);
+    List<Event> getAvailableEvents(Map<String, String> params);
     Event getEventById(int id);
     Event addOrUpdateEvent(Event event);
     void deleteEvent(int id);

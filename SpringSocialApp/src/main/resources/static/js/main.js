@@ -42,6 +42,54 @@ function deleteNotification(fullUrl) {
                 });
     }
 }
+
+
+function deleteEvent(fullUrl) {
+    console.log("Delete event URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn xoá event này không?")) {
+        fetch(fullUrl, {
+            method: "DELETE"
+        })
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("Xoá event thất bại!");
+                });
+    }
+}
+function deleteMember(fullUrl) {
+    console.log("Delete member URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn xoá member này không?")) {
+        fetch(fullUrl, {
+            method: "DELETE"
+        })
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("Xoá member thất bại!");
+                });
+    }
+}
+
+
+function deleteGroup(fullUrl) {
+    console.log("Delete group URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn xoá group này không?")) {
+        fetch(fullUrl, {
+            method: "DELETE"
+        })
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("Xoá group thất bại!");
+                });
+    }
+}
+
+
 function deleteUser(fullUrl) {
     console.log("Delete user URL:", fullUrl);
     if (confirm("Bạn có chắc chắn muốn xoá user này không?")) {

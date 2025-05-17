@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thêm Nhóm Mới</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Thêm Nhóm Mới</h2>
+
+        <!-- Hiển thị lỗi nếu có -->
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
+
+        <form th:action="@{/Group/add}" method="post" th:object="${newGroup}">
+            <!-- Ẩn adminId -->
+            <input type="hidden" name="adminId" th:value="${adminId}" />
+
+            <div class="mb-3">
+                <label for="groupName" class="form-label">Tên Nhóm</label>
+                <input type="text" id="groupName" name="groupName" class="form-control" th:field="*{groupName}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Thêm Nhóm</button>
+        </form>
+    </main>
+
+
+    <div th:replace="base :: footer"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

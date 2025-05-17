@@ -28,21 +28,13 @@ public class UserGroupRepositoryImpl implements UserGroupsRepository {
     @Override
     public List<UserGroups> getAllGroups(Map<String, String> params) {
         Session session = this.sessionFactory.getCurrentSession();
-        String hql = "FROM UserGroups g WHERE 1=1";
+        Query query = session.createNamedQuery("UserGroups.findAll", UserGroups.class);
 
-        if (params != null) {
-            if (params.containsKey("name")) {
-                hql += " AND g.name LIKE :name";
-            }
+        if (params != null && params.containsKey("groupName")) {
+            query = session.createNamedQuery("UserGroups.findByName", UserGroups.class);
+            query.setParameter("groupName", "%" + params.get("groupName") + "%");
         }
 
-        Query query = session.createQuery(hql, UserGroups.class);
-
-        if (params != null && params.containsKey("name")) {
-            query.setParameter("name", "%" + params.get("name") + "%");
-        }
-
-        // Pagination
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setMaxResults(PAGE_SIZE);
@@ -55,27 +47,23 @@ public class UserGroupRepositoryImpl implements UserGroupsRepository {
     @Override
     public UserGroups getGroupById(int groupId) {
         Session session = this.sessionFactory.getCurrentSession();
-        return session.get(UserGroups.class, groupId);
+        Query query = session.createNamedQuery("UserGroups.findById", UserGroups.class);
+        query.setParameter("groupId", groupId);
+        return (UserGroups) query.getSingleResult();
     }
 
     @Override
     public UserGroups addOrUpdateGroup(UserGroups group) {
         Session session = this.sessionFactory.getCurrentSession();
-        try {
-            session.saveOrUpdate(group); // Thêm mới hoặc cập nhật
-            return group;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        session.saveOrUpdate(group);
+        return group;
     }
 
     @Override
     public void deleteGroup(int groupId) {
         Session session = this.sessionFactory.getCurrentSession();
-        UserGroups group = session.get(UserGroups.class, groupId);
-        if (group != null) {
-            session.delete(group); // Xóa cứng
-        }
+        Query query = session.createNamedQuery("UserGroups.deleteById");
+        query.setParameter("groupId", groupId);
+        query.executeUpdate();
     }
 }

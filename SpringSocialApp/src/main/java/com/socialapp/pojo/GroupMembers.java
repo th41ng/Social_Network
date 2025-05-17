@@ -12,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -23,7 +25,15 @@ import java.util.Date;
  * @author DELL G15
  */
 @Entity
-@Table(name = "group_members")
+@Table(name = "group_members")  
+@NamedQueries({
+    @NamedQuery(name = "GroupMembers.findAll", query = "SELECT gm FROM GroupMembers gm"),
+    @NamedQuery(name = "GroupMembers.findByGroupId", query = "SELECT gm FROM GroupMembers gm WHERE gm.group.groupId = :groupId"),
+    @NamedQuery(name = "GroupMembers.findByUserId", query = "SELECT gm FROM GroupMembers gm WHERE gm.user.id = :id"),
+    @NamedQuery(name = "GroupMembers.findByGroupAndUserId", query = "SELECT gm FROM GroupMembers gm WHERE gm.group.groupId = :groupId AND gm.user.id = :id"),
+    @NamedQuery(name = "GroupMembers.deleteByGroupAndUserId", query = "DELETE FROM GroupMembers gm WHERE gm.group.groupId = :groupId AND gm.user.id = :id")
+})
+       
 public class GroupMembers implements Serializable{
     private static long serialVersionUID = 1L;
     
