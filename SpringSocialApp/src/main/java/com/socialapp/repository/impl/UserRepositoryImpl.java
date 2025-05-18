@@ -1,10 +1,13 @@
 package com.socialapp.repository.impl;
 
+import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
+import com.socialapp.pojo.UserGroups;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.EmailService;
 import jakarta.persistence.NoResultException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.query.Query;
@@ -67,15 +70,21 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
+    
     @Override
     public void deleteUser(int id) {
-        Session s = getCurrentSession();
-        User user = s.get(User.class, id);
+        Session s = this.factory.getObject().getCurrentSession();
+        User user = this.getUserById(id);
         if (user != null) {
-            s.delete(user);
+            // Soft delete by setting the isDeleted flag to true
+            //notification.setIsDeleted(true);
+            //s.merge(notification);
+            //Xóa cứng
+            s.delete(user);  // Xóa cứng bản ghi
+
         }
     }
-
+    
     @Override
     public User register(User u) {
         Session s = getCurrentSession();
@@ -87,7 +96,9 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean authenticate(String username, String password) {
         User u = this.getUserByUsername(username);
-        if (u == null) return false;
+        if (u == null) {
+            return false;
+        }
         return this.passwordEncoder.matches(password, u.getPassword());
     }
 
@@ -116,7 +127,6 @@ public class UserRepositoryImpl implements UserRepository {
         return query.getResultList();
     }
 
-
     @Override
     public long countUsers() {
         Session session = getCurrentSession();
@@ -132,7 +142,7 @@ public class UserRepositoryImpl implements UserRepository {
         // HQL sử dụng hàm DATE() hoặc có thể thay đổi tùy DB (MySQL, PostgreSQL...) 
         // Đảm bảo trường createdAt kiểu java.util.Date hoặc java.sql.Timestamp
         Query<Long> query = session.createQuery(
-            "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class);
+                "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class);
 
         Long count = query.getSingleResult();
         return count != null ? count.intValue() : 0;
@@ -155,4 +165,33 @@ public class UserRepositoryImpl implements UserRepository {
             );
         }
     }
+
+    @Override
+    public User addUser(User user) {
+        Session session = this.getCurrentSession();
+
+        // Kiểm tra username hoặc email đã tồn tại chưa
+        if (getUserByUsername(user.getUsername()) != null) {
+            throw new IllegalArgumentException("Username đã tồn tại");
+        }
+        if (getUserByEmail(user.getEmail()) != null) {
+            throw new IllegalArgumentException("Email đã tồn tại");
+        }
+
+        // Mã hóa mật khẩu nếu chưa được mã hóa
+        if (!passwordEncoder.matches("dummyCheck", user.getPassword())) { // Dummy để kiểm tra
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        // Gán các giá trị mặc định
+        user.setIsVerified(false); // Mặc định chưa xác minh
+        user.setIsLocked(false);   // Mặc định không bị khóa
+        Date now = new Date();
+        user.setCreatedAt(now);       // Ngày tạo là hiện tại
+        user.setLastPasswordChange(now); // Lần đổi mật khẩu gần nhất
+
+        session.saveOrUpdate(user);
+        return user;
+    }
+
 }

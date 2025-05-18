@@ -1,7 +1,10 @@
 package com.socialapp.controllers;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.socialapp.pojo.User;
 import com.socialapp.service.UserService;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,13 +16,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/Users")
 public class UserController {
+
     private static final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
     @Autowired
     private UserService userService;
+    @Autowired
+    private Cloudinary cloudinary;
 
     // Hiển thị trang đăng nhập
     @GetMapping("/login")
@@ -32,28 +39,24 @@ public class UserController {
     public String listUsers(@RequestParam Map<String, String> params, Model model) {
         List<User> users = this.userService.getAllUsers(params);
         model.addAttribute("users", users);
-        model.addAttribute("params", params); 
-        return "user_management"; 
+        model.addAttribute("params", params);
+        return "user_management";
     }
-
-
 
     // Sửa thông tin người dùng
     @GetMapping("/editUser/{id}")
     public String editUserForm(@PathVariable("id") int id, Model model) {
         User user = userService.getUserById(id);
-        model.addAttribute("user", user); 
-        return "user_edit"; 
+        model.addAttribute("user", user);
+        return "user_edit";
     }
 
     @PostMapping("/editUser/{id}")
     public String updateUser(@PathVariable("id") int id, @ModelAttribute User user) {
         user.setId(id); // Cập nhật thông tin người dùng
         userService.updateUser(user);
-        return "redirect:/Users/listUser"; 
+        return "redirect:/Users/listUser";
     }
-    
-   
 
     // Thêm phương thức để xử lý việc xác nhận 0 thành 1
     @PostMapping("/{userId}/verify")
@@ -61,4 +64,48 @@ public class UserController {
         userService.verifyStudent(userId);
         return "redirect:/?categoryId=5"; // Chuyển hướng lại trang html
     }
+
+    @GetMapping("/add")
+    public String addUserForm(Model model) {
+        model.addAttribute("user", new User());
+        return "add_user"; // Tên file html: user_add.html
+    }
+
+    @PostMapping("/add")
+    public String addUser(
+            @ModelAttribute("user") User user,
+            @RequestParam("avatar") MultipartFile avatarFile,
+            Model model
+    ) {
+        try {
+            // Gán giá trị mặc định nếu các trường là null
+            if (user.getIsVerified() == null) {
+                user.setIsVerified(false);
+            }
+            if (user.getIsLocked() == null) {
+                user.setIsLocked(false);
+            }
+            if (user.getCreatedAt() == null) {
+                user.setCreatedAt(new java.util.Date()); // hoặc LocalDateTime.now() tùy kiểu dữ liệu trong entity
+            }
+
+            // Xử lý upload ảnh
+            if (!avatarFile.isEmpty()) {
+                Map uploadResult = cloudinary.uploader().upload(avatarFile.getBytes(), ObjectUtils.emptyMap());
+                String avatarUrl = uploadResult.get("secure_url").toString();
+                user.setAvatar(avatarUrl); 
+            }
+
+            // Lưu user
+            userService.addUser(user);
+
+            return "redirect:/Users/list";
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            model.addAttribute("error", "Lỗi khi upload ảnh");
+            return "addUser";
+        }
+    }
+
 }

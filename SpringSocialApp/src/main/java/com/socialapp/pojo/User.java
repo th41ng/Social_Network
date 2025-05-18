@@ -15,15 +15,13 @@ import java.util.Set;
  *
  * @author DELL G15
  */
-
 @Entity
 @Table(name = "users")
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
-})
+    @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),})
 public class User implements Serializable {
 
     private static long serialVersionUID = 1L;
@@ -63,18 +61,18 @@ public class User implements Serializable {
     private String fullName;
 
     @Column(name = "is_verified")
-    private Boolean isVerified;
+    private Boolean isVerified = false;
 
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private Date createdAt = new Date();
 
     @Column(name = "last_password_change")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastPasswordChange;
 
     @Column(name = "is_locked")
-    private Boolean isLocked;
+    private Boolean isLocked = false;
 
     // Quan hệ với Comment
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -88,10 +86,12 @@ public class User implements Serializable {
 
     // Quan hệ với UserGroups (admin)
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserGroups> managedGroups;
 
     // Quan hệ với GroupMembers (user)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<GroupMembers> groupMemberships;
 
     public User() {
@@ -118,7 +118,6 @@ public class User implements Serializable {
     }
 
     // Getter and Setter methods
-
     public Integer getId() {
         return id;
     }

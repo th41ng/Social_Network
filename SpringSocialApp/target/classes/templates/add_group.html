@@ -24,6 +24,13 @@
                 <input type="text" id="groupName" name="groupName" class="form-control" th:field="*{groupName}" required>
             </div>
 
+            <div class="mb-3">
+                <label for="members" class="form-label">Chọn thành viên cho nhóm</label>
+                <select id="members" name="memberIds" class="form-select" multiple>
+                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary">Thêm Nhóm</button>
         </form>
     </main>

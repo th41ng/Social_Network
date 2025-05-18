@@ -118,4 +118,9 @@ public class UserServiceImpl implements UserService {
         return this.userRepository.countUsersRegisteredToday();
     }
 
+    @Override
+    public User addUser(User user) {
+       return this.userRepository.addUser(user);
+    }
+
 }

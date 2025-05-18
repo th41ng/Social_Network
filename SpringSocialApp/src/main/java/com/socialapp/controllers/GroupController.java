@@ -66,22 +66,78 @@ public class GroupController {
         return "member_management";
     }
 
+//    @GetMapping("/add")
+//    public String showAddGroupForm(Model model) {
+//        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String username = auth.getName(); // Lấy username hiện tại
+//        User currentUser = userService.getUserByUsername(username);
+//
+//        if (currentUser == null) {
+//            throw new IllegalArgumentException("Người dùng không hợp lệ.");
+//        }
+//
+//        // Thêm thông tin cần thiết vào model
+//        model.addAttribute("newGroup", new UserGroups()); // Đối tượng mới để binding
+//        model.addAttribute("adminId", currentUser.getId()); // adminId tự động
+//
+//        return "add_group"; // Tên file HTML hiển thị form
+//    }
+//
+//    @PostMapping("/add")
+//    public String addGroup(
+//            @ModelAttribute("newGroup") UserGroups group,
+//            BindingResult result,
+//            @RequestParam("adminId") int adminId,
+//            Model model) {
+//        if (result.hasErrors()) {
+//            model.addAttribute("error", "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
+//            return "add_group";
+//        }
+//
+//        try {
+//            User admin = userService.getUserById(adminId);
+//            if (admin == null) {
+//                throw new IllegalArgumentException("Admin không tồn tại.");
+//            }
+//
+//            // Gán thông tin cho nhóm
+//            group.setAdmin(admin);
+//            group.setAdminId(admin.getId());
+//            group.setCreatedAt(new Date());
+//
+//            // Lưu nhóm vào cơ sở dữ liệu
+//            groupService.addOrUpdateGroup(group);
+//
+//            // Reset form
+//            model.addAttribute("newGroup", new UserGroups());
+//            model.addAttribute("adminId", adminId);
+//
+//            return "redirect:/Group/listGroup";
+//        } catch (Exception e) {
+//            // Thêm lỗi vào model để hiển thị trên giao diện
+//            model.addAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+//            return "add_group";
+//        }
+//        
+//        
+//    }
     @GetMapping("/add")
-    public String showAddGroupForm(Model model) {
-        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
+    public String showAddGroupForm(@RequestParam Map<String, String> params, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName(); // Lấy username hiện tại
+        String username = auth.getName();
         User currentUser = userService.getUserByUsername(username);
 
         if (currentUser == null) {
             throw new IllegalArgumentException("Người dùng không hợp lệ.");
         }
 
-        // Thêm thông tin cần thiết vào model
-        model.addAttribute("newGroup", new UserGroups()); // Đối tượng mới để binding
-        model.addAttribute("adminId", currentUser.getId()); // adminId tự động
+        List<User> users = userService.getAllUsers(params); // Lấy danh sách người dùng
+        model.addAttribute("newGroup", new UserGroups());
+        model.addAttribute("adminId", currentUser.getId());
+        model.addAttribute("users", users); // Gửi danh sách người dùng sang giao diện
 
-        return "add_group"; // Tên file HTML hiển thị form
+        return "add_group";
     }
 
     @PostMapping("/add")
@@ -89,6 +145,7 @@ public class GroupController {
             @ModelAttribute("newGroup") UserGroups group,
             BindingResult result,
             @RequestParam("adminId") int adminId,
+            @RequestParam(value = "memberIds", required = false) List<Integer> memberIds,
             Model model) {
         if (result.hasErrors()) {
             model.addAttribute("error", "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
@@ -101,25 +158,32 @@ public class GroupController {
                 throw new IllegalArgumentException("Admin không tồn tại.");
             }
 
-            // Gán thông tin cho nhóm
             group.setAdmin(admin);
             group.setAdminId(admin.getId());
             group.setCreatedAt(new Date());
 
-            // Lưu nhóm vào cơ sở dữ liệu
+            // Xử lý danh sách thành viên
+            if (memberIds != null && !memberIds.isEmpty()) {
+                for (Integer userId : memberIds) {
+                    User user = userService.getUserById(userId);
+                    if (user != null) {
+                        GroupMembers member = new GroupMembers();
+                        member.setGroup(group);
+                        member.setUser(user);
+                        member.setJoinedAt(new Date());
+                        group.getMembers().add(member);
+                    }
+                }
+            }
+
             groupService.addOrUpdateGroup(group);
 
-            // Reset form
             model.addAttribute("newGroup", new UserGroups());
             model.addAttribute("adminId", adminId);
-
             return "redirect:/Group/listGroup";
         } catch (Exception e) {
-            // Thêm lỗi vào model để hiển thị trên giao diện
             model.addAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
             return "add_group";
         }
-        
-        
     }
 }

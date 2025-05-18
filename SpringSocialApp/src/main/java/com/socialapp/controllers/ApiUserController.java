@@ -3,6 +3,7 @@ package com.socialapp.controllers;
 import com.socialapp.pojo.User;
 import com.socialapp.service.UserService;
 import com.socialapp.utils.JwtUtils;
+import java.security.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,6 @@ public class ApiUserController {
         }
     }
 
-    
-    
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User u) {
         try {
@@ -82,40 +81,56 @@ public class ApiUserController {
         }
     }
 
-    
-    
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("userId") int userId) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") int id) {
         try {
-            logger.info("Đang cố gắng xoá người dùng với ID: {}", userId);
-            userDetailService.deleteUser(userId);
-            logger.info("Đã xoá thành công người dùng với ID: {}", userId);
+            logger.info("Đang cố gắng xoá người dùng với ID: {}", id);
+            userDetailService.deleteUser(id);
+            logger.info("Đã xoá thành công người dùng với ID: {}", id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            logger.error("Đã xảy ra lỗi khi xoá người dùng với ID {}: {}", userId, e.getMessage());
+            logger.error("Đã xảy ra lỗi khi xoá người dùng với ID {}: {}", id, e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-}
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody User u) {
+//    @GetMapping("/profile")
+//    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
 //        try {
-//            if (u.getUsername() == null || u.getPassword() == null) {
-//                logger.warn("Thông tin đăng nhập không đầy đủ.");
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Thiếu username hoặc password");
+//            // Lấy token từ header
+//            String token = authorizationHeader.replace("Bearer ", "");
+//
+//            // Trích xuất username từ token
+//            String username = JwtUtils.validateTokenAndGetUsername(token);
+//            if (username == null) {
+//                logger.warn("Token không hợp lệ hoặc không chứa username");
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
 //            }
 //
-//            if (this.userDetailService.authenticate(u.getUsername(), u.getPassword())) {
-//                String token = JwtUtils.generateToken(u.getUsername());
-//                logger.info("Đăng nhập thành công: {}", u.getUsername());
-//                return ResponseEntity.ok().body(Collections.singletonMap("token", token));
-//            } else {
-//                logger.warn("Đăng nhập thất bại cho username: {}", u.getUsername());
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai thông tin đăng nhập");
+//            // Lấy thông tin người dùng từ database
+//            User user = userDetailService.getUserByUsername(username);
+//            if (user == null) {
+//                logger.warn("Không tìm thấy người dùng với username: {}", username);
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại");
 //            }
+//
+//            // Trả về thông tin người dùng
+//            logger.info("Lấy thông tin profile thành công cho username: {}", username);
+//            return ResponseEntity.ok(user);
 //        } catch (Exception e) {
-//            logger.error("Đã xảy ra lỗi khi xử lý đăng nhập: {}", e.getMessage());
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xử lý đăng nhập");
+//            logger.error("Đã xảy ra lỗi khi lấy thông tin profile: {}", e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xử lý yêu cầu");
 //        }
 //    }
+    @RequestMapping("/secure/profile")
+    @ResponseBody
+    @CrossOrigin
+    public ResponseEntity<?> getProfile(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Principal is null");
+        }
+        User user = this.userDetailService.getUserByUsername(principal.getName());
+        return ResponseEntity.ok(user);
+    }
+
+}

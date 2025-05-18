@@ -4,6 +4,7 @@
  */
 package com.socialapp.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,10 +56,12 @@ public class GroupMembers implements Serializable{
 
     // Relationships
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "group_id", referencedColumnName = "group_id", nullable = false)
     private UserGroups group;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
     

@@ -7,7 +7,9 @@ export const endpoints = {
     'categories': '/categories',
     'posts': '/posts',
     'register':'/user',
-    'login':'/login'
+    'login':'/login',
+    'notifications': '/notifications',
+    'profile': '/secure/profile', // Endpoint lấy thông tin người dùng
    
 }
 export const authApis = () => {

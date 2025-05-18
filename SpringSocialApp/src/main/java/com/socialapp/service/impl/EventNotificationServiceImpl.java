@@ -39,7 +39,9 @@ public class EventNotificationServiceImpl implements EventNotificationService {
         this.eventNotificationRepository.deleteNotification(id);
     }
 
-    
+    @Override
+    public List<EventNotification> getNotificationsForUser(int userId) {
+        return eventNotificationRepository.getNotificationsForUser(userId);
+    }
 
-    
 }

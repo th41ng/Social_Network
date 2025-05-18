@@ -1,5 +1,6 @@
 package com.socialapp.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,12 +62,16 @@ public class UserGroups implements Serializable {
 
     // Quan hệ với User (admin_id)
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id", insertable = false, updatable = false, nullable = false)
     private User admin;
 
     // Quan hệ với GroupMembers (group_id)
+//    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<GroupMembers> members;
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GroupMembers> members;
+    @JsonIgnore
+    private List<GroupMembers> members = new ArrayList<>(); // Khởi tạo danh sách
 
     @Override
     public int hashCode() {

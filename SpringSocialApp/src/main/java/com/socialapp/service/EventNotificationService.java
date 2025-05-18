@@ -15,6 +15,7 @@ import java.util.Map;
  */
 public interface EventNotificationService {
 // Lấy danh sách thông báo dựa trên các tham số
+
     List<EventNotification> getNotifications(Map<String, String> params);
 
     // Lấy thông báo chi tiết theo ID
@@ -26,5 +27,6 @@ public interface EventNotificationService {
     // Xóa thông báo dựa trên ID
     void deleteNotification(int id);
 
-   
+    List<EventNotification> getNotificationsForUser(int UserId);
 }
+    

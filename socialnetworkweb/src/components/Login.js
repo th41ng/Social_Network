@@ -35,23 +35,22 @@ const Login = () => {
             let res = await Apis.post(endpoints['login'], { ...user });
             cookie.save('token', res.data.token);
             console.log(res.data.token);
-            // Comment đoạn code lấy profile để tắt tạm
-            /*
+            
             let u = await authApis().get(endpoints['profile']);
     
             dispatch({
                 type: "login",
                 payload: u.data
             });
-            */
+        
 
-            // Thay thế bằng dispatch tạm thời nếu cần
-            // dispatch({
-            //     type: "login",
-            //     payload: { username: user.username } // Hoặc dữ liệu tạm
-            // });
+            
+            dispatch({
+            type: "login",
+            payload: { username: user.username } // Hoặc dữ liệu tạm
+            });
 
-            nav("/");
+            nav("/home");
         } catch (ex) {
             console.error(ex);
         } finally {

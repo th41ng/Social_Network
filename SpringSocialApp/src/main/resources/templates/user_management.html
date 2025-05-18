@@ -9,7 +9,7 @@
 
     <main class="container mt-4">
         <h2>Quản lý Người dùng</h2>
-        <a th:href="@{/Users/addUser}" class="btn btn-info mb-3">Thêm Người dùng</a>
+        <a th:href="@{/Users/add}" class="btn btn-info mb-3">Thêm Người dùng</a>
 
         <!-- Bộ lọc tìm kiếm -->
         <form class="row g-3 mb-3" method="get" th:action="@{/Users/listUser}">
@@ -57,7 +57,7 @@
                         <td>
                             <a th:href="@{/Users/editUser/{id}(id=${user.id})}" class="btn btn-warning btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteUser(\'' + @{/api/delete/{userid}(userid=${user.id})} + '\')'">
+                                    th:onclick="'deleteUser(\'' + @{/api/delete/{id}(id=${user.id})} + '\')'">
                                 Xoá
                             </button>                 
                             <!-- Hiển thị nút Xác thực hoặc Hủy xác thực dựa trên trạng thái isVerified -->
@@ -78,7 +78,6 @@
     </main>
 
     <div th:replace="base :: footer"></div>
-
     <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

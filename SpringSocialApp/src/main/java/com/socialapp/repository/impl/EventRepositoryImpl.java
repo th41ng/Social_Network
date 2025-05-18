@@ -131,9 +131,6 @@ public class EventRepositoryImpl implements EventRepository {
         Session s = this.factory.getObject().getCurrentSession();
         Event event = this.getEventById(id);
         if (event != null) {
-            //event.setIsDeleted(true); // Soft delete (mark as deleted) 
-            //s.merge(event);
-            //Xóa cứng
             s.delete(event);
         }
     }

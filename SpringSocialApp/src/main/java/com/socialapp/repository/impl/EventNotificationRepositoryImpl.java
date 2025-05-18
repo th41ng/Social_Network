@@ -108,4 +108,18 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
 
         }
     }
+
+    @Override
+    public List<EventNotification> getNotificationsForUser(int userId) {
+        Session session = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<EventNotification> query = builder.createQuery(EventNotification.class);
+        Root<EventNotification> root = query.from(EventNotification.class);
+
+       
+        query.select(root).where(builder.equal(root.get("receiverUserId"), userId));
+
+        return session.createQuery(query).getResultList();
+    }
+
 }

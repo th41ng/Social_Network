@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Thêm Nhóm Mới</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Thêm Người Dùng Mới</h2>
+        <form method="post" th:action="@{/Users/add}" th:object="${user}" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="avatar" class="form-label">Ảnh đại diện</label>
+                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*" />
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-control" id="username" th:field="*{username}" required />
+            </div>
+            <div class="mb-3">
+                <label for="studentId" class="form-label">Mã số sinh viên</label>
+                <input type="text" class="form-control" id="studentId" th:field="*{studentId}" required />
+            </div>
+            <div class="mb-3">
+                <label for="fullName" class="form-label">Họ và tên</label>
+                <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required />
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" required />
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" required />
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Vai trò</label>
+                <select class="form-select" id="role" th:field="*{role}" required>
+                    <option value="" disabled selected>Chọn vai trò</option>
+                    <option value="ROLE_USER">Người dùng</option>
+                    <option value="ROLE_ALUMNI">Cựu sinh viên</option>
+                    <option value="ROLE_ADMIN">Quản trị viên</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="isLocked" class="form-label">Trạng thái khóa</label>
+                <select class="form-select" id="isLocked" th:field="*{isLocked}" required>
+                    <option value="false">Không khóa</option>
+                    <option value="true">Đã khóa</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="isVerified" class="form-label">Trạng thái xác thực</label>
+                <select class="form-select" id="isVerified" th:field="*{isVerified}" required>
+                    <option value="false">Chưa xác thực</option>
+                    <option value="true">Đã xác thực</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Thêm Người Dùng</button>
+        </form>
+    </main>
+
+
+
+    <div th:replace="base :: footer"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
