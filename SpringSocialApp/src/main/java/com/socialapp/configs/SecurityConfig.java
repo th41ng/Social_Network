@@ -38,7 +38,7 @@ import java.util.List;   // Import List
     "com.socialapp.repository",
     "com.socialapp.service",
     "com.socialapp.filters", // Thêm package của JwtFilter
-    "com.socialapp.utils"    // Thêm package của JwtUtils (nếu nó là @Component)
+    "com.socialapp.utils" // Thêm package của JwtUtils (nếu nó là @Component)
 })
 public class SecurityConfig {
 
@@ -59,41 +59,24 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
+            Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable()) // Tắt CSRF vì dùng token-based auth
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // API là stateless
-            .authorizeHttpRequests(authorize -> authorize
-                // Các API công khai không cần xác thực
-                .requestMatchers("/api/login", "/api/user", "/api/register").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
+                .requestMatchers("/api/login", "/api/user").permitAll() // Cho phép những đường dẫn này không cần chứng thực
+                //                .requestMatchers(HttpMethod.DELETE, "/api/posts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categories").permitAll() // <--- ADD THIS LINE
+                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll() // <
                 .requestMatchers(HttpMethod.PATCH, "/api/verify/**").permitAll()
-                // Các tài nguyên tĩnh công khai
-                .requestMatchers("/js/**", "/css/**", "/images/**", "/assets/**", "/static/**", "/public/**").permitAll()
-                .requestMatchers("/", "/index.html", "/manifest.json", "/favicon.ico", "/*.png", "/*.jpg").permitAll() // Cho React frontend
-                // Các endpoint khác của Swagger/OpenAPI nếu có
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                
-                // Tất cả các request API còn lại ("/api/**") đều yêu cầu xác thực
-                .requestMatchers("/api/**").authenticated()
-                
-                // Các request khác không phải API (nếu có, ví dụ cho trang admin MVC) có thể yêu cầu xác thực khác
-                .anyRequest().permitAll() // HOẶC .anyRequest().authenticated() tùy theo bạn muốn bảo vệ các trang MVC không
-                                         // Nếu chỉ làm API backend cho React thì có thể không cần phần formLogin và logout dưới đây
-            );
-            // Bỏ formLogin nếu bạn chỉ làm API backend và không có trang login MVC truyền thống
-            // .formLogin(form -> form
-            //     .loginPage("/Users/login") 
-            //     .loginProcessingUrl("/login")
-            //     .defaultSuccessUrl("/", true)
-            //     .failureUrl("/Users/login?error=true").permitAll()
-            // )
-            // .logout(logout -> logout.logoutSuccessUrl("/Users/login").permitAll());
-
-        // Thêm JwtFilter vào trước UsernamePasswordAuthenticationFilter
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
+                .requestMatchers("/js/**", "/css/**", "/images/**", "/assets/**").permitAll() // Các tài nguyên tĩnh như JS, CSS, ảnh, v.v.
+                .requestMatchers("/api/**").permitAll()
+                .anyRequest().authenticated()
+        )
+                .formLogin(form -> form.loginPage("/Users/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/Users/login?error=true").permitAll())
+                .logout(logout -> logout.logoutSuccessUrl("/Users/login").permitAll());//.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
