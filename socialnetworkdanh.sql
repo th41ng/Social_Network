@@ -60,7 +60,7 @@ CREATE TABLE `comments` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE,
   CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,7 +69,7 @@ CREATE TABLE `comments` (
 
 LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
-INSERT INTO `comments` VALUES (1,1,2,'Chào mừng bạn đến với mạng xã hội!','2025-01-10 10:05:00','2025-01-10 10:05:00',0),(2,1,3,'Rất vui được gặp bạn!','2025-01-10 10:10:00','2025-01-10 10:10:00',0),(3,2,1,'Cảm ơn bạn, ngày đẹp thật!','2025-01-11 14:05:00','2025-01-11 14:05:00',0),(4,4,5,'Tôi sẽ tham gia khảo sát ngay!','2025-01-13 15:10:00','2025-01-13 15:10:00',0),(5,2,4,'Comment này đã bị xóa.','2025-01-11 14:15:00','2025-01-11 14:15:00',1);
+INSERT INTO `comments` VALUES (1,1,2,'Chào mừng bạn đến với mạng xã hội!','2025-01-10 10:05:00','2025-01-10 10:05:00',0),(2,1,3,'Rất vui được gặp bạn!','2025-01-10 10:10:00','2025-01-10 10:10:00',0),(3,2,1,'Cảm ơn bạn, ngày đẹp thật!','2025-01-11 14:05:00','2025-01-11 14:05:00',0),(4,4,5,'Tôi sẽ tham gia khảo sát ngay!','2025-01-13 15:10:00','2025-01-13 15:10:00',0),(5,2,4,'Comment này đã bị xóa.','2025-01-11 14:15:00','2025-01-11 14:15:00',1),(6,12,8,'alo','2025-05-18 02:19:49',NULL,0),(7,15,8,'a','2025-05-18 15:35:03',NULL,0),(8,17,8,'hihi','2025-05-18 15:37:17',NULL,0),(9,12,8,'fs','2025-05-18 15:39:52',NULL,0),(10,12,8,'f','2025-05-18 15:52:50',NULL,0),(11,16,8,'f','2025-05-18 15:52:55',NULL,0),(12,16,8,'a','2025-05-18 15:53:00',NULL,0),(13,16,8,'a','2025-05-18 15:53:07',NULL,0),(14,12,8,'a','2025-05-18 15:53:19',NULL,0),(15,18,8,'fsdfsd','2025-05-18 15:53:36',NULL,0),(16,19,8,'anh long long','2025-05-18 17:25:19',NULL,0);
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,7 +89,7 @@ CREATE TABLE `daily_platform_summary` (
   `total_posts` int DEFAULT NULL,
   `total_users` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Thống kê tổng quan hàng ngày của nền tảng';
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Thống kê tổng quan hàng ngày của nền tảng';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +98,7 @@ CREATE TABLE `daily_platform_summary` (
 
 LOCK TABLES `daily_platform_summary` WRITE;
 /*!40000 ALTER TABLE `daily_platform_summary` DISABLE KEYS */;
-INSERT INTO `daily_platform_summary` VALUES ('2025-01-10 00:00:00',0,1,'2025-05-16 15:00:00',73,1,0),('2025-01-11 00:00:00',0,1,'2025-05-16 15:00:00',74,2,0),('2025-01-12 00:00:00',0,1,'2025-05-16 15:00:00',75,3,0),('2025-01-13 00:00:00',0,1,'2025-05-16 15:00:00',76,4,0),('2025-01-14 00:00:00',0,1,'2025-05-16 15:00:00',77,5,0),('2025-05-05 00:00:00',0,2,'2025-05-16 15:00:00',78,7,0),('2025-05-12 00:00:00',8,0,'2025-05-16 15:00:00',79,7,8),('2025-05-15 00:00:00',4,5,'2025-05-16 15:00:00',80,12,12),('2025-05-16 00:00:00',1,0,'2025-05-16 15:41:28',81,12,13),('2025-05-17 00:00:00',0,0,'2025-05-17 17:15:53',82,12,13);
+INSERT INTO `daily_platform_summary` VALUES ('2025-01-10 00:00:00',0,1,'2025-05-16 15:00:00',73,1,0),('2025-01-11 00:00:00',0,1,'2025-05-16 15:00:00',74,2,0),('2025-01-12 00:00:00',0,1,'2025-05-16 15:00:00',75,3,0),('2025-01-13 00:00:00',0,1,'2025-05-16 15:00:00',76,4,0),('2025-01-14 00:00:00',0,1,'2025-05-16 15:00:00',77,5,0),('2025-05-05 00:00:00',0,2,'2025-05-16 15:00:00',78,7,0),('2025-05-12 00:00:00',8,0,'2025-05-16 15:00:00',79,7,8),('2025-05-15 00:00:00',4,5,'2025-05-16 15:00:00',80,12,12),('2025-05-16 00:00:00',1,0,'2025-05-16 15:41:28',81,12,13),('2025-05-17 00:00:00',0,0,'2025-05-17 17:51:52',82,12,13),('2025-05-18 00:00:00',0,5,'2025-05-18 17:26:41',83,17,13);
 /*!40000 ALTER TABLE `daily_platform_summary` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,7 +136,7 @@ CREATE TABLE `event_notifications` (
 
 LOCK TABLES `event_notifications` WRITE;
 /*!40000 ALTER TABLE `event_notifications` DISABLE KEYS */;
-INSERT INTO `event_notifications` VALUES (1,4,'Mời tham gia hội thảo',1,1,NULL,'Bạn được mời tham gia hội thảo cựu sinh viên.','2025-01-25 10:00:00'),(2,4,'Thông báo ngày hội việc làm',2,NULL,2,'Nhóm CNTT được mời tham gia ngày hội việc làm.','2025-01-26 14:00:00'),(3,4,'Lễ kỷ niệm 20 năm',3,NULL,1,'Nhóm K2018 được mời tham gia lễ kỷ niệm.','2025-01-27 09:00:00'),(4,4,'Mời tham gia workshop',4,5,NULL,'Bạn được mời tham gia workshop kỹ năng.','2025-01-28 11:00:00');
+INSERT INTO `event_notifications` VALUES (2,4,'Thông báo ngày hội việc làm',2,NULL,2,'Nhóm CNTT được mời tham gia ngày hội việc làm.','2025-01-26 14:00:00'),(3,4,'Lễ kỷ niệm 20 năm',3,NULL,1,'Nhóm K2018 được mời tham gia lễ kỷ niệm.','2025-01-27 09:00:00'),(4,4,'Mời tham gia workshop',4,5,NULL,'Bạn được mời tham gia workshop kỹ năng.','2025-01-28 11:00:00');
 /*!40000 ALTER TABLE `event_notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -167,7 +167,7 @@ CREATE TABLE `events` (
 
 LOCK TABLES `events` WRITE;
 /*!40000 ALTER TABLE `events` DISABLE KEYS */;
-INSERT INTO `events` VALUES (1,4,'Hội thảo cựu sinh viên','Gặp gỡ và chia sẻ kinh nghiệm.','2025-02-01 09:00:00','2025-02-01 12:00:00','Hội trường A'),(2,4,'Ngày hội việc làm','Tuyển dụng từ các công ty lớn.','2025-02-05 08:00:00','2025-02-05 17:00:00','Sân trường'),(3,4,'Lễ kỷ niệm 20 năm','Kỷ niệm thành lập trường.','2025-03-10 18:00:00','2025-03-10 21:00:00','Hội trường B'),(4,4,'Workshop kỹ năng','Học kỹ năng mềm từ chuyên gia.','2025-02-15 13:00:00','2025-02-15 16:00:00','Phòng học C1'),(5,4,'Gala âm nhạc','Buổi biểu diễn của cựu sinh viên.','2025-02-20 19:00:00','2025-02-20 22:00:00','Sân khấu ngoài trời');
+INSERT INTO `events` VALUES (2,4,'Ngày hội việc làm','Tuyển dụng từ các công ty lớn.','2025-02-05 08:00:00','2025-02-05 17:00:00','Sân trường'),(3,4,'Lễ kỷ niệm 20 năm','Kỷ niệm thành lập trường.','2025-03-10 18:00:00','2025-03-10 21:00:00','Hội trường B'),(4,4,'Workshop kỹ năng','Học kỹ năng mềm từ chuyên gia.','2025-02-15 13:00:00','2025-02-15 16:00:00','Phòng học C1'),(5,4,'Gala âm nhạc','Buổi biểu diễn của cựu sinh viên.','2025-02-20 19:00:00','2025-02-20 22:00:00','Sân khấu ngoài trời');
 /*!40000 ALTER TABLE `events` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,7 +251,7 @@ CREATE TABLE `posts` (
   PRIMARY KEY (`post_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +260,7 @@ CREATE TABLE `posts` (
 
 LOCK TABLES `posts` WRITE;
 /*!40000 ALTER TABLE `posts` DISABLE KEYS */;
-INSERT INTO `posts` VALUES (1,1,'Chào mọi người, tôi vừa tham gia mạng xã hội này!','2025-01-10 10:00:00','2025-05-14 15:56:04',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(2,2,'Hôm nay là một ngày đẹp trời!','2025-01-11 14:00:00','2025-05-15 17:09:45',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(3,3,'Thông báo lớp học bồi dưỡng sắp tới.','2025-01-12 09:00:00','2025-01-12 09:00:00',1,0,NULL),(4,4,'Khảo sát về chất lượng đào tạo, mọi người tham gia nhé!','2025-01-13 15:00:00','2025-05-15 15:27:44',0,0,NULL),(5,1,'Bài viết này đã bị xóa.','2025-01-14 12:00:00','2025-05-15 15:27:44',0,0,NULL),(6,1,'hahaa','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(7,2,'hihi','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(8,1,'kkkkkkkkkkkkkk','2025-05-15 13:01:26',NULL,0,0,NULL),(9,4,'alo alo','2025-05-15 14:09:04','2025-05-15 17:09:45',0,0,NULL),(10,3,'aaaa','2025-05-15 14:36:07','2025-05-15 17:09:45',0,0,NULL),(11,3,'fsdsdffsd','2025-05-15 22:14:14',NULL,0,0,NULL),(12,3,'sdfsdf','2025-05-15 22:15:25',NULL,0,0,NULL),(13,1,'sfsf','2025-05-16 14:21:23',NULL,0,1,NULL),(14,2,'co len','2025-05-16 15:38:56',NULL,0,1,NULL);
+INSERT INTO `posts` VALUES (1,1,'Chào mọi người, tôi vừa tham gia mạng xã hội này!','2025-01-10 10:00:00','2025-05-14 15:56:04',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(2,2,'Hôm nay là một ngày đẹp trời!','2025-01-11 14:00:00','2025-05-15 17:09:45',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1647248652/dkeolz3ghc0eino87iec.jpg'),(3,3,'Thông báo lớp học bồi dưỡng sắp tới.','2025-01-12 09:00:00','2025-01-12 09:00:00',1,0,NULL),(4,4,'Khảo sát về chất lượng đào tạo, mọi người tham gia nhé!','2025-01-13 15:00:00','2025-05-15 15:27:44',0,0,NULL),(5,1,'Bài viết này đã bị xóa.','2025-01-14 12:00:00','2025-05-15 15:27:44',0,0,NULL),(6,1,'hahaa','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(7,2,'hihi','2025-05-05 15:32:33','2025-05-15 15:27:44',0,0,NULL),(8,1,'kkkkkkkkkkkkkk','2025-05-15 13:01:26',NULL,0,0,NULL),(9,4,'alo alo','2025-05-15 14:09:04','2025-05-15 17:09:45',0,0,NULL),(10,3,'aaaa','2025-05-15 14:36:07','2025-05-15 17:09:45',0,0,NULL),(11,3,'fsdsdffsd','2025-05-15 22:14:14',NULL,0,0,NULL),(12,3,'sdfsdf','2025-05-15 22:15:25',NULL,0,0,NULL),(13,1,'sfsf','2025-05-16 14:21:23',NULL,0,1,NULL),(14,2,'co len','2025-05-16 15:38:56',NULL,0,1,NULL),(15,8,'fsdf','2025-05-18 15:34:53','2025-05-18 15:34:53',0,0,NULL),(16,8,'kk','2025-05-18 15:35:16','2025-05-18 15:35:16',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1747557314/social_app_posts/wkxk1lxapfx96p5msvv9.png'),(17,8,'Sam ơi Sam','2025-05-18 15:36:58','2025-05-18 15:36:58',0,0,NULL),(18,8,'aaaa','2025-05-18 15:53:31','2025-05-18 15:53:31',0,0,NULL),(19,8,'anh long','2025-05-18 17:25:06','2025-05-18 17:25:06',0,0,'https://res.cloudinary.com/dxxwcby8l/image/upload/v1747563903/social_app_posts/gfptf0wumrl14mzxfmis.png');
 /*!40000 ALTER TABLE `posts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -303,13 +303,14 @@ CREATE TABLE `reactions` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `comment_id` int DEFAULT NULL,
   PRIMARY KEY (`reaction_id`),
-  UNIQUE KEY `post_id` (`post_id`,`user_id`),
+  UNIQUE KEY `uc_user_reaction_target` (`user_id`,`post_id`,`comment_id`),
   KEY `user_id` (`user_id`),
   KEY `fk_reactions_comment` (`comment_id`),
+  KEY `idx_reactions_post_id` (`post_id`),
   CONSTRAINT `fk_reactions_comment` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`),
   CONSTRAINT `reactions_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`) ON DELETE CASCADE,
   CONSTRAINT `reactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,7 +319,7 @@ CREATE TABLE `reactions` (
 
 LOCK TABLES `reactions` WRITE;
 /*!40000 ALTER TABLE `reactions` DISABLE KEYS */;
-INSERT INTO `reactions` VALUES (1,1,2,'like','2025-01-10 10:06:00',NULL),(2,1,3,'heart','2025-01-10 10:11:00',NULL),(3,2,1,'haha','2025-01-11 14:06:00',NULL),(4,4,5,'like','2025-01-13 15:11:00',NULL),(5,3,4,'heart','2025-01-12 09:05:00',NULL);
+INSERT INTO `reactions` VALUES (1,1,2,'like','2025-01-10 10:06:00',NULL),(2,1,3,'heart','2025-01-10 10:11:00',NULL),(3,2,1,'haha','2025-01-11 14:06:00',NULL),(4,4,5,'like','2025-01-13 15:11:00',NULL),(5,3,4,'heart','2025-01-12 09:05:00',NULL),(13,NULL,2,'like','2025-05-18 01:40:53',1),(33,17,8,'heart','2025-05-18 15:37:09',NULL),(50,12,8,'haha','2025-05-18 15:52:51',10),(51,16,8,'like','2025-05-18 15:53:10',11),(66,4,8,'like','2025-05-18 16:07:26',4),(75,1,8,'like','2025-05-18 16:26:05',1),(76,18,8,'heart','2025-05-18 16:27:55',NULL),(77,19,8,'like','2025-05-18 17:25:13',NULL),(78,19,8,'heart','2025-05-18 17:25:22',16);
 /*!40000 ALTER TABLE `reactions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -525,4 +526,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-05-17 17:22:55
+-- Dump completed on 2025-05-18 17:28:09

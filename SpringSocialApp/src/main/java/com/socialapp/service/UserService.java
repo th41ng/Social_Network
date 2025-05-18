@@ -32,7 +32,7 @@ public interface UserService extends UserDetailsService{
     User updateUser(User user);
 
     // Xóa người dùng bằng ID
-    void deleteUser(int id);
+    boolean deleteUser(int id); // Đã thay đổi ở lần trước, giữ nguyên là boolean
     
     User register (Map<String, String>params, MultipartFile avatar);
     

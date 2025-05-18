@@ -4,9 +4,13 @@
  */
 package com.socialapp.repository;
 
+import com.socialapp.pojo.Comment;
+import com.socialapp.pojo.Post;
 import com.socialapp.pojo.Reaction;
+import com.socialapp.pojo.User;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -25,9 +29,14 @@ public interface ReactionRepository {
     List<Reaction> getReactionsByPostId(int postId);
 
     List<Reaction> getReactionsByCommentId(int commentId);
-    
+
     Map<String, Long> countReactionsByPostId(int postId);
 
     Map<String, Long> countReactionsByCommentId(int commentId);
+
+    // Phương thức mới để tìm reaction cụ thể
+    Optional<Reaction> findByUserAndPost(User user, Post post);
+
+    Optional<Reaction> findByUserAndComment(User user, Comment comment);
 
 }

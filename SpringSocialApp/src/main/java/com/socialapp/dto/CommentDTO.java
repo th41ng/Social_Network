@@ -1,8 +1,12 @@
 package com.socialapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CommentDTO {
+
     private Integer commentId;
     private String content;
     private String userFullName;
@@ -10,6 +14,7 @@ public class CommentDTO {
 
     // Add a field to store reactions count
     private Map<String, Long> reactions;
+    private LocalDateTime createdAt;
 
     // Constructor
     public CommentDTO(Integer commentId, String content, String userFullName, String userAvatar) {
@@ -17,6 +22,10 @@ public class CommentDTO {
         this.content = content;
         this.userFullName = userFullName;
         this.userAvatar = userAvatar;
+    }
+
+    public CommentDTO() {
+        this.reactions = new HashMap<>(); // Khởi tạo reactions để tránh NullPointerException
     }
 
     // Getters and Setters
@@ -58,5 +67,21 @@ public class CommentDTO {
 
     public void setReactions(Map<String, Long> reactions) {
         this.reactions = reactions;
+    }
+
+    /**
+     * @return the createdAt
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") // Rất quan trọng
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    /**
+     * @param createdAt the createdAt to set
+     */
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -23,4 +23,6 @@ public interface CommentService {
     void deleteComment(int id);
 
     List<Comment> getCommentsByPostId(int postId);
+    
+    Comment createComment(int postId, int userId, String content); 
 }

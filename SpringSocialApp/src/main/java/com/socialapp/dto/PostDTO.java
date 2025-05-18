@@ -17,7 +17,8 @@ public class PostDTO {
     private LocalDateTime createdAt;
 
     private Map<String, Long> reactions; // New field to hold reactions count
-
+    
+     private Integer commentCount;
     // Constructor
     public PostDTO() {}
 
@@ -90,5 +91,19 @@ public class PostDTO {
      */
     public void setImage(String image) {
         this.image = image;
+    }
+
+    /**
+     * @return the commentCount
+     */
+    public Integer getCommentCount() {
+        return commentCount;
+    }
+
+    /**
+     * @param commentCount the commentCount to set
+     */
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
     }
 }

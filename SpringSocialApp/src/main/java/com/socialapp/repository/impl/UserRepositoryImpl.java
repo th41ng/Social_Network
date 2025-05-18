@@ -67,13 +67,15 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    @Override
-    public void deleteUser(int id) {
+ @Override
+    public  boolean deleteUser(int id) { // THAY ĐỔI: từ void thành boolean
         Session s = getCurrentSession();
         User user = s.get(User.class, id);
         if (user != null) {
-            s.delete(user);
+            s.remove(user); // Hoặc s.delete(user) tùy phiên bản Hibernate/JPA
+            return true; // Trả về true nếu tìm thấy và xóa
         }
+        return false; // Trả về false nếu không tìm thấy user
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service("userDetailsService")
@@ -48,9 +49,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.updateUser(user);
     }
 
-    @Override
-    public void deleteUser(int id) {
-        userRepository.deleteUser(id);
+     @Override
+    @Transactional // Các thao tác ghi/xóa/cập nhật nên có @Transactional ở tầng service
+    public boolean deleteUser(int id) {
+        // Gọi phương thức deleteUser của repository (nay đã trả về boolean)
+        return this.userRepository.deleteUser(id); 
     }
 
     @Override

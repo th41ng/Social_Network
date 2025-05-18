@@ -27,7 +27,7 @@ public interface UserRepository {
     User updateUser(User user);
     
     // Xóa người dùng theo ID
-    void deleteUser(int id);
+    boolean deleteUser(int id); // THAY ĐỔI: từ void thành boolean
 
     User register(User u);
 

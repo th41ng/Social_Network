@@ -1,63 +1,80 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.filters;
 
 import com.socialapp.utils.JwtUtils;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- *
- * @author huu-thanhduong
- */
-public class JwtFilter implements Filter{
+import java.io.IOException;
+
+@Component
+public class JwtFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserDetailsService userDetailsService; // Đây là UserService của bạn
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        
-        if (httpRequest.getRequestURI().startsWith(String.format("%s/api/secure", httpRequest.getContextPath())) == true) {
-        
-           
-            String header = httpRequest.getHeader("Authorization");
-            
-            if (header == null || !header.startsWith("Bearer ")) {
-                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
-                return;
-            }
-            else {
-                String token = header.substring(7);
-                try {
-                    String username = JwtUtils.validateTokenAndGetUsername(token);
-                    if (username != null) {
-                        httpRequest.setAttribute("username", username);
-                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, null);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+        try {
+            String jwt = parseJwt(request);
+
+            if (jwt != null && jwtUtils.validateToken(jwt)) {
+                String username = jwtUtils.getUsernameFromToken(jwt);
+
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+                    if (userDetails != null && userDetails.isEnabled() && userDetails.isAccountNonExpired() && userDetails.isCredentialsNonExpired() && userDetails.isAccountNonLocked()) {
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(userDetails,
+                                                                        null,
+                                                                        userDetails.getAuthorities());
                         
-                        chain.doFilter(request, response);
-                        return;
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        logger.debug("Người dùng '{}' đã được xác thực thành công. SecurityContext được thiết lập.", username);
+                    } else if (userDetails != null) {
+                        logger.warn("Tài khoản người dùng '{}' không hợp lệ (ví dụ: bị khóa, hết hạn).", username);
                     }
-                } catch (Exception e) {
-                    // Log lỗi
+                    else {
+                        logger.warn("Không tìm thấy UserDetails cho username: '{}' từ token.", username);
+                    }
                 }
             }
-
-            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, 
-                    "Token không hợp lệ hoặc hết hạn");
+        } catch (Exception e) {
+            logger.error("Không thể thiết lập xác thực người dùng trong JwtFilter: {}", e.getMessage(), e);
         }
-        
-        chain.doFilter(request, response);
+
+        filterChain.doFilter(request, response);
     }
-    
+
+    private String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+        return null;
+    }
 }
