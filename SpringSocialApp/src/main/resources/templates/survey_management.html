@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý khảo sát</title>
+    <head>
+        <title>Quản lý khảo sát</title>
     <th:block th:replace="~{base :: bootstrap}"></th:block>
 </head>
 <body>
@@ -51,8 +51,7 @@
                         <td>
                             <a th:href="@{'/surveys/' + ${s.surveyId}}" class="btn btn-success btn-sm mb-1" title="Chỉnh sửa">&#128296;️</a>
                             <a th:href="@{'/questions/' + ${s.surveyId}}" class="btn btn-info btn-sm mb-1" title="Quản lý Câu hỏi">Câu hỏi</a>
-                            <a th:href="@{'/responses/' + ${s.surveyId}}" class="btn btn-primary btn-sm mb-1" title="Quản lý Phản hồi">Phản hồi</a>
-
+                            <a th:href="@{'/responses/survey/' + ${s.surveyId}}" class="btn btn-primary btn-sm mb-1" title="Xem tất cả Phản hồi của Khảo sát này">Phản hồi KS</a>
                             <form th:action="@{/surveys/toggle-active/{id}(id=${s.surveyId})}" method="post" style="display: inline-block; margin-bottom: 0.25rem;">
                                 <button type="submit"
                                         th:class="${s.getIsActive() ? 'btn btn-warning btn-sm' : 'btn btn-success btn-sm'}"

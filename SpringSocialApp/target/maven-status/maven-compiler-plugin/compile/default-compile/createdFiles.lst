@@ -100,7 +100,6 @@ com\socialapp\dto\SurveyClientListDTO.class
 com\socialapp\pojo\Comment.class
 com\socialapp\controllers\ApiEventController.class
 com\socialapp\pojo\QuestionType.class
-com\socialapp\controllers\ApiSurveyQuestionController.class
 com\socialapp\configs\HibernateConfigs.class
 com\socialapp\pojo\DailyPlatformSummary.class
 com\socialapp\repository\ReactionRepository.class
