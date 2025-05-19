@@ -42,6 +42,7 @@ public class ApiNotificationController {
         }
     }
 
+
     @GetMapping("/notifications")
     public ResponseEntity<List<EventNotification>> getUserNotifications(
             @RequestHeader(value = "Authorization", required = false) String authHeader) {
@@ -82,4 +83,5 @@ public class ApiNotificationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

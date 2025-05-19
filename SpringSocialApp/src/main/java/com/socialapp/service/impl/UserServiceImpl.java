@@ -75,14 +75,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(Map<String, String> params, MultipartFile avatar) {
         User user = new User();
-        user.setFullName(params.get("fullname"));
+        user.setFullName(params.get("fullName"));
         user.setEmail(params.get("email"));
         user.setStudentId(params.get("studentId"));
         user.setUsername(params.get("username"));
         user.setPassword(this.passwordEncoder.encode(params.get("password")));
         user.setRole(params.get("role"));
         user.setCreatedAt(new Date());
-        user.setLastPasswordChange(new Date());
+        user.setLastPasswordChange(null);
         user.setIsVerified(false);
         user.setIsLocked(false);
 
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void verifyStudent(int userId) {
-         this.userRepository.verifyStudent(userId);
+        this.userRepository.verifyStudent(userId);
     }
 
     @Override
@@ -120,7 +120,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
-       return this.userRepository.addUser(user);
+        return this.userRepository.addUser(user);
     }
 
+    @Override
+    public void updatePassword(String email, String newPassword) {
+        this.userRepository.updatePassword(email, newPassword);
+    }
 }

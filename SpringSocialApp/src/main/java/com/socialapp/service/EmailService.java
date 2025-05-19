@@ -14,4 +14,7 @@ public interface EmailService {
 
     // Gửi email thông báo đã xác thực tài khoản
     void sendEmailtoStudent(String to, String subject, String body);
+    
+    // Gửi email mã xác thực
+    void sendVerifyEmail(String to, String subject, String body);
 }

@@ -65,15 +65,7 @@ public class GroupMemberRepositoryImpl implements GroupMembersRepository {
             session.delete(member);
         }
     }
-//
-//    @Override
-//    public void deleteMemberByGroupAndUserId(int groupId, int userId) {
-//        Session session = sessionFactory.getCurrentSession();
-//        Query query = session.createNamedQuery("GroupMembers.deleteByGroupAndUserId");
-//        query.setParameter("groupId", groupId);
-//        query.setParameter("userId", userId);
-//        query.executeUpdate();
-//    }
+
 
     @Override
     public List<GroupMembers> getMembersByGroupId(int groupId) {
@@ -85,3 +77,5 @@ public class GroupMemberRepositoryImpl implements GroupMembersRepository {
     }
 
 }
+
+

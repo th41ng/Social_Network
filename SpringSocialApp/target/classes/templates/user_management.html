@@ -50,8 +50,8 @@
                         <td th:text="${user.studentId}"></td>
                         <td th:text="${user.username}"></td>
                         <td th:text="${user.email}"></td>
-                        <td th:text="${user.isVerified ? 'Đã xác thực': 'Chưa xác thực'}"></td>
-                        <td th:text="${user.isLocked ? 'Không hoạt động' : 'Đang hoạt động'}"></td>
+                        <td th:text="${user.isVerified == true ? 'Đã xác thực' : 'Chưa xác thực'}"></td>
+                        <td th:text="${user.isLocked  == true ? 'Không hoạt động' : 'Đang hoạt động'}"></td>
                         <td th:text="${#dates.format(user.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td th:text="${#dates.format(user.lastPasswordChange, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>

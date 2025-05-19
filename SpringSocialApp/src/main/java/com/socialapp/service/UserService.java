@@ -44,4 +44,6 @@ public interface UserService extends UserDetailsService {
     int countUsersRegisteredToday();
 
     User addUser(User user);
+    
+    void updatePassword(String email, String newPassword);
 }

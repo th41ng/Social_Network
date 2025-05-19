@@ -1,6 +1,7 @@
 package com.socialapp.repository.impl;
 
 import com.socialapp.pojo.EventNotification;
+import com.socialapp.pojo.GroupMembers;
 import com.socialapp.repository.EventNotificationRepository;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -109,6 +110,18 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         }
     }
 
+//    @Override
+//    public List<EventNotification> getNotificationsForUser(int userId) {
+//        Session session = this.factory.getObject().getCurrentSession();
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<EventNotification> query = builder.createQuery(EventNotification.class);
+//        Root<EventNotification> root = query.from(EventNotification.class);
+//
+//       
+//        query.select(root).where(builder.equal(root.get("receiverUserId"), userId));
+//
+//        return session.createQuery(query).getResultList();
+//    }
     @Override
     public List<EventNotification> getNotificationsForUser(int userId) {
         Session session = this.factory.getObject().getCurrentSession();
@@ -116,8 +129,21 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         CriteriaQuery<EventNotification> query = builder.createQuery(EventNotification.class);
         Root<EventNotification> root = query.from(EventNotification.class);
 
-       
-        query.select(root).where(builder.equal(root.get("receiverUserId"), userId));
+        // Lấy danh sách nhóm mà người dùng thuộc về
+        CriteriaQuery<Integer> groupQuery = builder.createQuery(Integer.class);
+        Root<GroupMembers> groupRoot = groupQuery.from(GroupMembers.class);
+        groupQuery.select(groupRoot.get("groupId"))
+                .where(builder.equal(groupRoot.get("userId"), userId));
+        List<Integer> userGroupIds = session.createQuery(groupQuery).getResultList();
+
+        // Điều kiện 1: Nhận thông báo trực tiếp
+        Predicate directNotification = builder.equal(root.get("receiverUserId"), userId);
+
+        // Điều kiện 2: Nhận thông báo thông qua nhóm
+        Predicate groupNotification = root.get("groupId").in(userGroupIds);
+
+        // Kết hợp điều kiện
+        query.select(root).where(builder.or(directNotification, groupNotification));
 
         return session.createQuery(query).getResultList();
     }

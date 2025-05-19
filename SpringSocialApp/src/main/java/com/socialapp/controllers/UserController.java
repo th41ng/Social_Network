@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.socialapp.pojo.User;
 import com.socialapp.service.UserService;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -71,41 +74,21 @@ public class UserController {
         return "add_user"; // Tên file html: user_add.html
     }
 
-    @PostMapping("/add")
-    public String addUser(
-            @ModelAttribute("user") User user,
-            @RequestParam("avatar") MultipartFile avatarFile,
-            Model model
-    ) {
+    @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String addUser(@RequestParam Map<String, String> params,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+            Model model) {
         try {
-            // Gán giá trị mặc định nếu các trường là null
-            if (user.getIsVerified() == null) {
-                user.setIsVerified(false);
-            }
-            if (user.getIsLocked() == null) {
-                user.setIsLocked(false);
-            }
-            if (user.getCreatedAt() == null) {
-                user.setCreatedAt(new java.util.Date()); // hoặc LocalDateTime.now() tùy kiểu dữ liệu trong entity
-            }
-
-            // Xử lý upload ảnh
-            if (!avatarFile.isEmpty()) {
-                Map uploadResult = cloudinary.uploader().upload(avatarFile.getBytes(), ObjectUtils.emptyMap());
-                String avatarUrl = uploadResult.get("secure_url").toString();
-                user.setAvatar(avatarUrl); 
-            }
-
-            // Lưu user
-            userService.addUser(user);
-
-            return "redirect:/Users/list";
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            model.addAttribute("error", "Lỗi khi upload ảnh");
-            return "addUser";
+            User user = this.userService.register(params, avatar);
+            logger.info("Đăng ký thành công người dùng mới: {}", user.getUsername());
+            // Gửi thông báo thành công
+            model.addAttribute("successMessage", "Người dùng đã được đăng ký thành công!");
+            return "redirect:/Users/add"; // Quay lại trang /Users/add
+        } catch (Exception e) {
+            logger.error("Đã xảy ra lỗi khi đăng ký người dùng mới: {}", e.getMessage());
+            // Gửi thông báo lỗi
+            model.addAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
+            return "redirect:/?categoryId=5"; // Quay lại trang hiện tại với thông báo lỗi
         }
     }
-
 }

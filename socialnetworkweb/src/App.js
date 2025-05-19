@@ -10,6 +10,8 @@ import { Container } from "react-bootstrap";
 import React, { useReducer } from 'react';
 import MyUserReducer from './reducer/MyUserReducer'; 
 import { MyUserContext, MyDispatchContext } from './configs/Contexts';
+import ResetPassword from "./components/ResetPassword";
+import Profile from "./components/Profile";
 
 
 const App = () => {
@@ -28,6 +30,8 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/home" element={<Home />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </Container>
 

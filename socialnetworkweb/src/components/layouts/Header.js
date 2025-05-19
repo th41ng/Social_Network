@@ -12,7 +12,7 @@ const Header = () => {
 
     const loadCates = async () => {
         try {
-            let res = await Apis.get(endpoints['categories']);
+            let res = await Apis.get(endpoints["categories"]);
             setCategories(res.data);
         } catch (error) {
             console.error("Lỗi khi tải danh mục:", error);
@@ -21,7 +21,7 @@ const Header = () => {
 
     const handleLogout = () => {
         dispatch({ type: "logout" }); // Gửi hành động logout
-        navigate("/"); // Chuyển hướng về trang đăng nhập
+        navigate("/"); // Chuyển hướng về trang chính
     };
 
     useEffect(() => {
@@ -38,7 +38,14 @@ const Header = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <NavDropdown title="Danh mục" id="basic-nav-dropdown">
                         {categories.map((c) => {
-                            const path = c.id === 3 ? '/notifications' : `/?cateId=${c.id}`;
+                            let path;
+                            if (c.id === 3) {
+                                path = "/notifications";
+                            } else if (c.id === 5) {
+                                path = "/profile";
+                            } else {
+                                path = `/?cateId=${c.id}`;
+                            }
                             return (
                                 <NavDropdown.Item as={Link} key={c.id} to={path}>
                                     {c.name}
@@ -47,12 +54,12 @@ const Header = () => {
                         })}
                     </NavDropdown>
                     {user && (
-                        <>
-                            <span className="me-2">Xin chào: {user.username}</span>
+                        <div className="ms-auto d-flex align-items-center">
+                            <span className="me-3">Xin chào, {user.username}</span>
                             <Button variant="outline-danger" onClick={handleLogout}>
                                 Đăng xuất
                             </Button>
-                        </>
+                        </div>
                     )}
                 </Navbar.Collapse>
             </Container>
@@ -61,6 +68,7 @@ const Header = () => {
 };
 
 export default Header;
+
 // import { useEffect, useState } from "react";
 // import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 // import { Link, useNavigate } from "react-router-dom";

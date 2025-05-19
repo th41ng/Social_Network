@@ -25,6 +25,11 @@ public class EmailServiceImpl implements EmailService {
         sendEmail(to, subject, body);
     }
 
+     @Override
+    public void sendVerifyEmail(String to, String subject, String body) {
+       sendEmail(to, subject, body);
+    }
+    
     private void sendEmail(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -40,4 +45,6 @@ public class EmailServiceImpl implements EmailService {
             throw new RuntimeException("Failed to send email: " + e.getMessage());
         }
     }
+
+   
 }

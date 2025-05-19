@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
 
-
-
 /**
  *
  * @author DELL G15
@@ -58,19 +56,17 @@ public class Post implements Serializable {
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
-
-//    @JsonIgnore
     private User userId;
+//    @JsonIgnore
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
     // @JsonIgnore
     private Set<Comment> commentSet;
 
-     // Thêm MultipartFile để nhận file ảnh
+    // Thêm MultipartFile để nhận file ảnh
     @Transient
     private MultipartFile imageFile;
-    
-    
+
     public Post() {
     }
 
@@ -161,7 +157,7 @@ public class Post implements Serializable {
     public void setImage(String image) {
         this.image = image;
     }
-    
+
     public MultipartFile getImageFile() {
         return imageFile;
     }

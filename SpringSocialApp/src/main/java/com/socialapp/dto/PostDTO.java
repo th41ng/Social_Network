@@ -11,7 +11,7 @@ public class PostDTO {
     private String userFullName;
     private String userAvatar;
     private String image; 
-    private List<CommentDTO> comments; // danh sách comment DTO
+    private List<CommentDTO> comments; 
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;

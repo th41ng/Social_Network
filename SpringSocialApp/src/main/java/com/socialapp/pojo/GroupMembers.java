@@ -204,10 +204,4 @@ public class GroupMembers implements Serializable{
         this.user = user;
     }
 
-    
-    
-    
-    
-    
-    
 }

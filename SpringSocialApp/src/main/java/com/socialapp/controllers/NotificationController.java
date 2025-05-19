@@ -102,8 +102,8 @@ public class NotificationController {
             @ModelAttribute("notification") EventNotification notification,
             @RequestParam("adminId") Integer adminId,
             @RequestParam("eventId") Integer eventId,
-            @RequestParam("receiverUserId") Integer receiverUserId,
-            @RequestParam("groupId") Integer groupId,
+            @RequestParam(value = "receiverUserId", required = false) Integer receiverUserId,
+            @RequestParam(value = "groupId", required = false) Integer groupId,
             Model model) {
         try {
             // Lấy admin từ adminId
@@ -120,19 +120,27 @@ public class NotificationController {
             }
             notification.setEvent(event);
 
-            // Lấy receiverUser từ receiverUserId
-            User receiverUser = userService.getUserById(receiverUserId);
-            if (receiverUser == null) {
-                throw new IllegalArgumentException("Người nhận không hợp lệ.");
+            // Xử lý receiverUserId
+            if (receiverUserId != null) {
+                User receiverUser = userService.getUserById(receiverUserId);
+                if (receiverUser == null) {
+                    throw new IllegalArgumentException("Người nhận không hợp lệ.");
+                }
+                notification.setReceiverUser(receiverUser);
+            } else {
+                notification.setReceiverUser(null); // Hoặc giữ nguyên giá trị mặc định
             }
-            notification.setReceiverUser(receiverUser);
 
-            // Lấy group từ groupId
-            UserGroups group = userGroupService.getGroupById(groupId);
-            if (group == null) {
-                throw new IllegalArgumentException("Nhóm không hợp lệ.");
+            // Xử lý groupId
+            if (groupId != null) {
+                UserGroups group = userGroupService.getGroupById(groupId);
+                if (group == null) {
+                    throw new IllegalArgumentException("Nhóm không hợp lệ.");
+                }
+                notification.setGroup(group);
+            } else {
+                notification.setGroup(null); // Hoặc giữ nguyên giá trị mặc định
             }
-            notification.setGroup(group);
 
             // Thiết lập thời gian gửi
             notification.setSentAt(new Date());
