@@ -105,6 +105,7 @@ public class ApiUserController {
         }
     }
 
+
     @RequestMapping("/secure/profile")
     @ResponseBody
     @CrossOrigin

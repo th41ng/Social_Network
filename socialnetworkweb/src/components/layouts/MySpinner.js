@@ -3,7 +3,7 @@ import { Spinner as BootstrapSpinner } from 'react-bootstrap';
 
 const MySpinner = () => {
     return (
-        <div className="text-center my-3"> {/* Thêm class để căn giữa nếu muốn */}
+        <div className="text-center my-3"> 
             <BootstrapSpinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
             </BootstrapSpinner>
@@ -11,4 +11,4 @@ const MySpinner = () => {
     );
 };
 
-export default MySpinner; // Quan trọng: export default component
+export default MySpinner; 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Tổng hợp Phản hồi Khảo sát</title>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
+    <style>
+        .card-question { margin-bottom: 1.5rem; }
+        .card-question .card-header h5 { margin-bottom: 0.25rem; }
+        .card-question .card-header p { font-size: 0.9em; margin-bottom: 0; }
+        /* Có thể bỏ class .debug-info nếu không còn dùng */
+    </style>
+</head>
+<body>
+    <div th:replace="~{base :: header}"></div>
+
+    <main class="container mt-4">
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            Phản hồi đã được gửi thành công!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${survey != null}">
+            <h2 class="mb-3">Tổng hợp Phản hồi cho Khảo sát: <span th:text="${survey.title}" class="text-primary"></span></h2>
+            <p th:if="${survey.description}" th:text="${survey.description}" class="lead"></p>
+        </div>
+        <div th:if="${survey == null}" class="alert alert-warning">Không tìm thấy thông tin khảo sát.</div>
+
+        <a th:href="@{/surveys}" class="btn btn-secondary mb-4"><i class="fas fa-arrow-left me-2"></i>Quay lại Danh sách Khảo sát</a>
+
+        <div th:if="${survey != null and !hasActualResponses}"
+             class="alert alert-info" role="alert">
+            Khảo sát này chưa có câu hỏi nào được thiết lập hoặc chưa có phản hồi nào được ghi nhận.
+        </div>
+
+        <div th:if="${survey != null and hasActualResponses}">
+            <div th:each="entry, iterStat : ${responsesByQuestionMap}" class="card card-question">
+                <div class="card-header bg-light">
+                    <h5 th:text="${(iterStat.index + 1) + '. ' + entry.key.questionText}">Nội dung câu hỏi</h5>
+                    <p><em>Loại câu hỏi:
+                        <span th:if="${entry.key.typeId != null}" th:switch="${entry.key.typeId.typeId}">
+                            <span th:case="1">Trắc nghiệm - Chọn một</span>
+                            <span th:case="2">Tự luận - Văn bản</span>
+                            <span th:case="3">Tự luận - Văn bản dài (Nếu có type này, nếu không, type 2 có thể bao gồm cả hai)</span>
+                            <span th:case="4">Trắc nghiệm - Chọn nhiều (Checkbox)</span>
+                            <span th:case="*">Không xác định (<span th:text="${entry.key.typeId.typeName}"></span>)</span>
+                        </span>
+                        <span th:if="${entry.key.typeId == null}" class="text-danger">Không có thông tin loại!</span>
+                    </em></p>
+                </div>
+                <div class="card-body">
+                    <div th:if="${entry.value == null or #lists.isEmpty(entry.value)}" class="text-center text-muted fst-italic py-3">
+                        Chưa có phản hồi nào cho câu hỏi này.
+                    </div>
+                    <div th:unless="${entry.value == null or #lists.isEmpty(entry.value)}" class="table-responsive">
+                        <table class="table table-sm table-bordered table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col" style="width: 30%;">Người trả lời (ID)</th>
+                                    <th scope="col">Phản hồi</th>
+                                    <th scope="col" style="width: 25%;">Ngày trả lời</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="response : ${entry.value}">
+                                    <td th:text="${response.userId != null ? response.userId.fullName + ' (ID: ' + response.userId.id + ')' : 'N/A'}"></td>
+                                    <td>
+                                        <th:block th:if="${response.questionId != null and response.questionId.typeId != null}">
+                                            <div> <div th:if="${response.questionId.typeId.typeId == 1}">
+                                                    <span th:each="option : ${response.questionId.surveyOptions}"
+                                                          th:if="${option.optionId != null and response.optionId != null and option.optionId.equals(response.optionId)}"
+                                                          th:text="${option.optionText}"></span>
+                                                    <span th:if="${response.optionId == null}" class="text-muted"><em>(Chưa chọn)</em></span>
+                                                </div>
+                                                <div th:if="${response.questionId.typeId.typeId == 2 or response.questionId.typeId.typeId == 3}">
+                                                    <span th:text="${response.responseText != null and !response.responseText.isBlank() ? response.responseText : '(Trống)'}"></span>
+                                                </div>
+                                                <div th:if="${response.questionId.typeId.typeId == 4}">
+                                                    <span th:text="${response.responseText != null and !response.responseText.isBlank() ? #strings.abbreviate(response.responseText, 100) : '(Trống)'}"></span>
+                                                </div>
+                                                <div th:if="${response.questionId.typeId.typeId != 1 and response.questionId.typeId.typeId != 2 and response.questionId.typeId.typeId != 3 and response.questionId.typeId.typeId != 4}" class="text-warning">
+                                                    Loại câu hỏi này (<span th:text="${response.questionId.typeId.typeName}"></span>) chưa được hỗ trợ hiển thị đầy đủ.
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                        <th:block th:unless="${response.questionId != null and response.questionId.typeId != null}">
+                                            <div class="text-danger" style="font-weight: bold;">
+                                                Lỗi: Không có thông tin câu hỏi hoặc loại câu hỏi cho phản hồi này.
+                                            </div>
+                                        </th:block>
+                                    </td>
+                                    <td th:text="${response.responseAt != null ? #dates.format(response.responseAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div> </main>
+
+    <div th:replace="~{base :: footer}"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -49,22 +49,21 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+   @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
             Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
-                .requestMatchers("/api/login", "/api/user").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
+                .requestMatchers("/api/login", "/api/user").permitAll() 
                 .requestMatchers("/api/**").permitAll()
-                .anyRequest().hasRole("ADMIN")
+                .anyRequest().authenticated()
         )
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
+                 .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form.loginPage("/Users/login")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/Users/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/Users/login").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/Users/login").permitAll());//.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

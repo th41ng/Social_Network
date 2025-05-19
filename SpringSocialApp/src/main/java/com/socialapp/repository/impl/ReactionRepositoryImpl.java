@@ -4,8 +4,12 @@
  */
 package com.socialapp.repository.impl;
 
+import com.socialapp.pojo.Comment;
+import com.socialapp.pojo.Post;
 import com.socialapp.pojo.Reaction;
+import com.socialapp.pojo.User;
 import com.socialapp.repository.ReactionRepository;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -155,6 +160,42 @@ public class ReactionRepositoryImpl implements ReactionRepository {
         }
 
         return reactionCounts;
+    }
+
+    @Override
+    public Optional<Reaction> findByUserAndPost(User user, Post post) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Reaction> cq = b.createQuery(Reaction.class);
+        Root<Reaction> root = cq.from(Reaction.class);
+        cq.select(root);
+        cq.where(
+                b.equal(root.get("userId"), user), // "userId" là tên trường trong Pojo Reaction
+                b.equal(root.get("postId"), post) // "postId" là tên trường trong Pojo Reaction
+        );
+        try {
+            return Optional.ofNullable(s.createQuery(cq).getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Reaction> findByUserAndComment(User user, Comment comment) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Reaction> cq = b.createQuery(Reaction.class);
+        Root<Reaction> root = cq.from(Reaction.class);
+        cq.select(root);
+        cq.where(
+                b.equal(root.get("userId"), user),
+                b.equal(root.get("commentId"), comment) // "commentId" là tên trường trong Pojo Reaction
+        );
+        try {
+            return Optional.ofNullable(s.createQuery(cq).getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
 }

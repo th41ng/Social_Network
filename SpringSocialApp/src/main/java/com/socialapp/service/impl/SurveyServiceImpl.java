@@ -7,6 +7,7 @@ package com.socialapp.service.impl;
 import com.socialapp.pojo.Survey;
 import com.socialapp.repository.SurveyRepository;
 import com.socialapp.service.SurveyService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +43,23 @@ public class SurveyServiceImpl implements SurveyService{
     public void deleteSurvey(int id) {
         surveyRepo.deleteSurvey(id);
     }
+    
+     @Override
+    @Transactional
+    public void toggleSurveyActiveState(int surveyId) {
+        Survey survey = surveyRepo.getSurveyById(surveyId);
+
+        if (survey == null) {
+            throw new EntityNotFoundException("Không tìm thấy khảo sát với ID: " + surveyId);
+        }
+
+        // Đảo ngược trạng thái isActive.
+        // Nếu isActive là null (mặc dù DB có thể có default), coi như false để khi đảo sẽ thành true.
+        boolean currentActiveState = survey.getIsActive() != null && survey.getIsActive();
+        survey.setIsActive(!currentActiveState);
+
+        surveyRepo.addOrUpdateSurvey(survey); // Sử dụng lại phương thức hiện có để lưu (merge sẽ cập nhật)
+    }
+    
+    
 }

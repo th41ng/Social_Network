@@ -37,6 +37,9 @@ public class Survey implements Serializable {
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    
+    @Column(name = "is_active")
+    private Boolean isActive;
 
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
@@ -55,11 +58,11 @@ public class Survey implements Serializable {
         this.surveyId = surveyId;
     }
 
-    public Survey(Integer surveyId, String title, String description, Boolean isMultipleChoice, Date createdAt, User adminId, Post postId) {
+    public Survey(Integer surveyId, String title, String description, Boolean isMultipleChoice, Date createdAt,Boolean isActive, User adminId, Post postId) {
         this.surveyId = surveyId;
         this.title = title;
         this.description = description;
-
+        this.isActive = isActive;
         this.createdAt = createdAt;
         this.adminId = adminId;
         this.postId = postId;
@@ -133,5 +136,19 @@ public class Survey implements Serializable {
     @Override
     public String toString() {
         return "com.socialapp.pojo.Survey[ surveyId=" + surveyId + " ]";
+    }
+
+    /**
+     * @return the isActive
+     */
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 }

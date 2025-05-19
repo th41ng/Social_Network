@@ -19,4 +19,8 @@ public interface SurveyQuestionRepository {
 
     // Lấy câu hỏi theo ID
     SurveyQuestion getSurveyQuestionById(int questionId);
+    
+    long countQuestionsBySurveyId(int surveyId);
+    
+    
 }

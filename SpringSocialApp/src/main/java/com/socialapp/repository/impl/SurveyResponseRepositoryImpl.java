@@ -74,4 +74,20 @@ public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
         query.setParameter("questionId", questionId);
         return query.getResultList();
     }
+    
+    
+    @Override
+    public List<SurveyResponse> getResponsesBySurveyIdAndUserId(int surveyId, int userId) {
+        Session session = this.factory.getObject().getCurrentSession();
+        // Sử dụng HQL để truy vấn
+        // sr.surveyId.surveyId -> SurveyResponse.surveyId (Survey object) -> Survey.surveyId (Integer ID)
+        // sr.userId.id       -> SurveyResponse.userId (User object)    -> User.id (Integer ID)
+        String hql = "FROM SurveyResponse sr WHERE sr.surveyId.surveyId = :surveyIdParam AND sr.userId.id = :userIdParam";
+        TypedQuery<SurveyResponse> query = session.createQuery(hql, SurveyResponse.class);
+        query.setParameter("surveyIdParam", surveyId);
+        query.setParameter("userIdParam", userId);
+        return query.getResultList();
+    }
+    
+    
 }

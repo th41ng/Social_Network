@@ -6,20 +6,29 @@ import java.util.List;
 import java.util.Map;
 
 public class PostDTO {
+
     private Integer postId;
     private String content;
     private String userFullName;
     private String userAvatar;
-    private String image; 
-    private List<CommentDTO> comments; 
+
+    private String image;
+    private List<CommentDTO> comments; // danh sách comment DTO
+    private Boolean commentLocked;
+    
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     private Map<String, Long> reactions; // New field to hold reactions count
 
+    private Integer commentCount;
+
+    private Integer userId;
+
     // Constructor
-    public PostDTO() {}
+    public PostDTO() {
+    }
 
     // Getters and Setters
     public Integer getPostId() {
@@ -90,5 +99,47 @@ public class PostDTO {
      */
     public void setImage(String image) {
         this.image = image;
+    }
+
+    /**
+     * @return the commentCount
+     */
+    public Integer getCommentCount() {
+        return commentCount;
+    }
+
+    /**
+     * @param commentCount the commentCount to set
+     */
+    public void setCommentCount(Integer commentCount) {
+        this.commentCount = commentCount;
+    }
+
+    /**
+     * @return the userId
+     */
+    public Integer getUserId() {
+        return userId;
+    }
+
+    /**
+     * @param userId the userId to set
+     */
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * @return the commentLocked
+     */
+    public Boolean getCommentLocked() {
+        return commentLocked;
+    }
+
+    /**
+     * @param commentLocked the commentLocked to set
+     */
+    public void setCommentLocked(Boolean commentLocked) {
+        this.commentLocked = commentLocked;
     }
 }
