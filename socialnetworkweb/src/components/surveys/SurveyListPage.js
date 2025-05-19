@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, ListGroup, Spinner, Alert, Button } from 'react-bootstrap';
-import Apis, { endpoints, authApis } from '../../configs/Apis'; // Điều chỉnh đường dẫn nếu cần
+import Apis, { endpoints, authApis } from '../../configs/Apis'; 
 import { MyUserContext } from '../../configs/Contexts'; // Để lấy thông tin người dùng hiện tại
 
 const SurveyListPage = () => {
@@ -15,17 +15,14 @@ const SurveyListPage = () => {
             setLoading(true);
             setError(null);
             try {
-                // Nếu API yêu cầu xác thực để xem isRespondedByCurrentUser, dùng authApis()
-                // Nếu API cho phép xem công khai, dùng Apis.get()
-                // Giả sử API /api/surveys có thể được gọi mà không cần token,
-                // nhưng nếu có token, backend sẽ dùng nó để check isRespondedByCurrentUser
+               
                 const api = currentUser ? authApis() : Apis;
                 const response = await api.get(endpoints['surveys_list']);
                 
                 if (response.data && Array.isArray(response.data)) {
                     setSurveys(response.data);
                 } else {
-                    setSurveys([]); // Xử lý trường hợp data không phải mảng hoặc null/undefined
+                    setSurveys([]); 
                 }
             } catch (err) {
                 console.error("Lỗi khi tải danh sách khảo sát:", err);
@@ -34,7 +31,7 @@ const SurveyListPage = () => {
                     errorMsg = err.response.data.error || err.response.data.message;
                 }
                 setError(errorMsg);
-                setSurveys([]); // Đặt lại surveys thành mảng rỗng khi có lỗi
+                setSurveys([]); 
             } finally {
                 setLoading(false);
             }
