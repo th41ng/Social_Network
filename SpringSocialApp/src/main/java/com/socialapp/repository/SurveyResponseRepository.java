@@ -20,4 +20,7 @@ public interface SurveyResponseRepository {
     void deleteSurveyResponse(int responseId);
 
     List<SurveyResponse> getResponsesByQuestionId(int questionId);
+
+    List<SurveyResponse> getResponsesBySurveyIdAndUserId(int surveyId, int userId);
+
 }

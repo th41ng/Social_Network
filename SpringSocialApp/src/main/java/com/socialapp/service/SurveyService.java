@@ -21,5 +21,7 @@ public interface SurveyService {
     Survey addOrUpdateSurvey(Survey s);
 
     void deleteSurvey(int id);
+    
+    void toggleSurveyActiveState(int surveyId);
 
 }

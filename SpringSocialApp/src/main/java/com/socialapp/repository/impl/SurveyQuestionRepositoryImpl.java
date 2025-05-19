@@ -3,6 +3,9 @@ package com.socialapp.repository.impl;
 import com.socialapp.pojo.SurveyOption;
 import com.socialapp.pojo.SurveyQuestion;
 import com.socialapp.repository.SurveyQuestionRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -80,4 +83,19 @@ public class SurveyQuestionRepositoryImpl implements SurveyQuestionRepository {
                 .getResultList();
         return list.isEmpty() ? null : list.get(0);
     }
+
+    @Override
+    public long countQuestionsBySurveyId(int surveyId) {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<SurveyQuestion> root = cq.from(SurveyQuestion.class);
+        cq.select(cb.count(root));  // Đếm số câu hỏi
+
+        // Thay đổi ở đây: Tham chiếu đúng vào tên thuộc tính 'surveyId' trong lớp SurveyQuestion
+        cq.where(cb.equal(root.get("surveyId").get("surveyId"), surveyId)); 
+
+        return session.createQuery(cq).getSingleResult();
+    }
+
 }

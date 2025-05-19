@@ -10,7 +10,9 @@ import { Container } from "react-bootstrap";
 import React, { useReducer } from 'react';
 import MyUserReducer from './reducer/MyUserReducer'; 
 import { MyUserContext, MyDispatchContext } from './configs/Contexts';
-
+// --- THÊM IMPORT CHO CÁC COMPONENT KHẢO SÁT MỚI ---
+import SurveyListPage from './components/surveys/SurveyListPage'; // Component mới
+import TakeSurveyPage from './components/surveys/TakeSurveyPage'; // Component mới
 
 const App = () => {
   const [user, dispatch] = useReducer(MyUserReducer, null);
@@ -23,12 +25,15 @@ const App = () => {
           <Header />
 
           <Container>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/notifications" element={<Notifications />} />
-            </Routes>
+          <Routes>
+  <Route path="/" element={<Home />} /> {/* Hoặc một Welcome Page */}
+  <Route path="/login" element={<Login />} /> {/* Login component ở path /login */}
+  <Route path="/register" element={<Register />} />
+  <Route path="/home" element={<Home />} />
+  <Route path="/notifications" element={<Notifications />} />
+  <Route path="/surveys" element={<SurveyListPage />} />
+  <Route path="/surveys/:surveyId/take" element={<TakeSurveyPage />} />
+</Routes>
           </Container>
 
           <Footer />

@@ -94,34 +94,7 @@ public class ApiUserController {
         }
     }
 
-//    @GetMapping("/profile")
-//    public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String authorizationHeader) {
-//        try {
-//            // Lấy token từ header
-//            String token = authorizationHeader.replace("Bearer ", "");
-//
-//            // Trích xuất username từ token
-//            String username = JwtUtils.validateTokenAndGetUsername(token);
-//            if (username == null) {
-//                logger.warn("Token không hợp lệ hoặc không chứa username");
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token không hợp lệ");
-//            }
-//
-//            // Lấy thông tin người dùng từ database
-//            User user = userDetailService.getUserByUsername(username);
-//            if (user == null) {
-//                logger.warn("Không tìm thấy người dùng với username: {}", username);
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại");
-//            }
-//
-//            // Trả về thông tin người dùng
-//            logger.info("Lấy thông tin profile thành công cho username: {}", username);
-//            return ResponseEntity.ok(user);
-//        } catch (Exception e) {
-//            logger.error("Đã xảy ra lỗi khi lấy thông tin profile: {}", e.getMessage());
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi xử lý yêu cầu");
-//        }
-//    }
+
     @RequestMapping("/secure/profile")
     @ResponseBody
     @CrossOrigin

@@ -70,6 +70,18 @@ public class Post implements Serializable {
     @Transient
     private MultipartFile imageFile;
     
+    // === THÊM TRƯỜNG NÀY VÀ GETTER/SETTER CỦA NÓ ===
+    @Transient
+    private boolean removeCurrentImage; // Mặc định sẽ là false
+
+    public boolean isRemoveCurrentImage() {
+        return removeCurrentImage;
+    }
+
+    public void setRemoveCurrentImage(boolean removeCurrentImage) {
+        this.removeCurrentImage = removeCurrentImage;
+    }
+    // === KẾT THÚC PHẦN THÊM MỚI ===
     
     public Post() {
     }

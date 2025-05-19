@@ -1,9 +1,7 @@
 package com.socialapp.repository.impl;
 
-import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
-import com.socialapp.pojo.UserGroups;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.EmailService;
 import jakarta.persistence.NoResultException;
@@ -70,21 +68,17 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    
-    @Override
-    public void deleteUser(int id) {
-        Session s = this.factory.getObject().getCurrentSession();
-        User user = this.getUserById(id);
+ @Override
+    public  boolean deleteUser(int id) { // THAY ĐỔI: từ void thành boolean
+        Session s = getCurrentSession();
+        User user = s.get(User.class, id);
         if (user != null) {
-            // Soft delete by setting the isDeleted flag to true
-            //notification.setIsDeleted(true);
-            //s.merge(notification);
-            //Xóa cứng
-            s.delete(user);  // Xóa cứng bản ghi
-
+            s.remove(user); // Hoặc s.delete(user) tùy phiên bản Hibernate/JPA
+            return true; // Trả về true nếu tìm thấy và xóa
         }
+        return false; // Trả về false nếu không tìm thấy user
     }
-    
+
     @Override
     public User register(User u) {
         Session s = getCurrentSession();
@@ -96,9 +90,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean authenticate(String username, String password) {
         User u = this.getUserByUsername(username);
-        if (u == null) {
-            return false;
-        }
+        if (u == null) return false;
         return this.passwordEncoder.matches(password, u.getPassword());
     }
 
@@ -127,6 +119,7 @@ public class UserRepositoryImpl implements UserRepository {
         return query.getResultList();
     }
 
+
     @Override
     public long countUsers() {
         Session session = getCurrentSession();
@@ -142,7 +135,7 @@ public class UserRepositoryImpl implements UserRepository {
         // HQL sử dụng hàm DATE() hoặc có thể thay đổi tùy DB (MySQL, PostgreSQL...) 
         // Đảm bảo trường createdAt kiểu java.util.Date hoặc java.sql.Timestamp
         Query<Long> query = session.createQuery(
-                "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class);
+            "SELECT COUNT(u.id) FROM User u WHERE DATE(u.createdAt) = CURRENT_DATE", Long.class);
 
         Long count = query.getSingleResult();
         return count != null ? count.intValue() : 0;
@@ -165,8 +158,9 @@ public class UserRepositoryImpl implements UserRepository {
             );
         }
     }
-
-    @Override
+    
+    
+     @Override
     public User addUser(User user) {
         Session session = this.getCurrentSession();
 
@@ -195,3 +189,5 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
 }
+
+

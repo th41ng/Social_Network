@@ -45,10 +45,10 @@ const Login = () => {
         
 
             
-            dispatch({
-            type: "login",
-            payload: { username: user.username } // Hoặc dữ liệu tạm
-            });
+            // dispatch({
+            // type: "login",
+            // payload: { username: user.username } // Hoặc dữ liệu tạm
+            // });
 
             nav("/home");
         } catch (ex) {

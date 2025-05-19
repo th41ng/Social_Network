@@ -15,10 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author DELL G15
  */
-public interface UserService extends UserDetailsService {
-
+public interface UserService extends UserDetailsService{
+    
     List<User> getAllUsers(Map<String, String> params);
-
+    
     // Lấy thông tin người dùng bằng tên đăng nhập
     User getUserByUsername(String username);
 
@@ -32,16 +32,22 @@ public interface UserService extends UserDetailsService {
     User updateUser(User user);
 
     // Xóa người dùng bằng ID
-    void deleteUser(int id);
-
-    User register(Map<String, String> params, MultipartFile avatar);
-
+    boolean deleteUser(int id); // Đã thay đổi ở lần trước, giữ nguyên là boolean
+    
+    User register (Map<String, String>params, MultipartFile avatar);
+    
     boolean authenticate(String username, String password);
+    
 
     void verifyStudent(int userId);
 
 //    boolean verifyStudent(int userId);
+    
     int countUsersRegisteredToday();
+    
+     User addUser(User user);
 
-    User addUser(User user);
+
 }
+
+
