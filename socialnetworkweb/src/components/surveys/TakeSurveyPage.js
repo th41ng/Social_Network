@@ -59,127 +59,139 @@ const TakeSurveyPage = () => {
     }, [surveyId, currentUser]);
 
     const handleAnswerChange = (questionId, value, questionType) => {
-        setAnswers(prevAnswers => {
-            if (questionType === 'MULTIPLE_CHOICE') {
-                const currentSelection = prevAnswers[questionId] || [];
-                const newSelection = currentSelection.includes(value)
-                    ? currentSelection.filter(item => item !== value) // Bỏ chọn
-                    : [...currentSelection, value]; // Chọn mới
-                return { ...prevAnswers, [questionId]: newSelection };
-            }
+    setAnswers(prevAnswers => {
+        if (questionType === 'MULTIPLE_CHOICE') {
+            // Đối với câu hỏi trắc nghiệm, chỉ lưu một giá trị duy nhất
             return { ...prevAnswers, [questionId]: value };
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!currentUser) { // Yêu cầu đăng nhập để submit
-            alert("Vui lòng đăng nhập để gửi phản hồi.");
-            navigate("/login", { state: { from: `/surveys/${surveyId}/take` } });
-            return;
         }
-        setSubmitting(true);
-        setError(null);
+        return { ...prevAnswers, [questionId]: value }; // Cập nhật câu trả lời cho các loại câu hỏi khác
+    });
+};
 
-        const formattedResponses = Object.keys(answers).map(questionId => {
-            const question = surveyDetails.questions.find(q => q.questionId === parseInt(questionId));
-            const answerValue = answers[questionId];
-            const item = { questionId: parseInt(questionId) };
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentUser) { // Yêu cầu đăng nhập để submit
+        alert("Vui lòng đăng nhập để gửi phản hồi.");
+        navigate("/login", { state: { from: `/surveys/${surveyId}/take` } });
+        return;
+    }
 
-            if (question.questionType === 'SINGLE_CHOICE') {
-                if (answerValue) item.selectedOptionId = parseInt(answerValue);
-            } else if (question.questionType === 'MULTIPLE_CHOICE') {
-                if (Array.isArray(answerValue) && answerValue.length > 0) {
-                    item.selectedOptionIds = answerValue.map(id => parseInt(id));
-                }
-            } else if (question.questionType === 'TEXT_INPUT') {
-                if (typeof answerValue === 'string' && answerValue.trim() !== '') {
-                    item.responseText = answerValue.trim();
-                }
-            }
-            // Chỉ thêm vào mảng nếu có giá trị thực sự
-            if (item.selectedOptionId || (item.selectedOptionIds && item.selectedOptionIds.length > 0) || item.responseText) {
-                return item;
-            }
-            return null;
-        }).filter(item => item !== null); // Loại bỏ các câu trả lời rỗng
+    setSubmitting(true);
+    setError(null);
 
-        if (formattedResponses.length === 0) {
-            alert("Vui lòng trả lời ít nhất một câu hỏi.");
-            setSubmitting(false);
-            return;
+    // Kiểm tra và chuẩn bị các câu trả lời
+    const formattedResponses = Object.keys(answers).map(questionId => {
+        const question = surveyDetails.questions.find(q => q.questionId === parseInt(questionId));
+        const answerValue = answers[questionId];
+        const item = { questionId: parseInt(questionId) };
+
+        // Kiểm tra câu trả lời và xử lý các câu hỏi
+        if (question.questionType === 'SINGLE_CHOICE' && answerValue) {
+            item.selectedOptionId = parseInt(answerValue); // Dạng single choice
+        } else if (question.questionType === 'MULTIPLE_CHOICE' && answerValue) {
+            item.selectedOptionId = parseInt(answerValue); // Lưu một lựa chọn duy nhất cho multiple choice
+        } else if (question.questionType === 'TEXT_INPUT' && typeof answerValue === 'string' && answerValue.trim() !== '') {
+            item.responseText = answerValue.trim(); // Dạng text input
+        } else if (question.questionType === 'Essay' && typeof answerValue === 'string' && answerValue.trim() !== '') {
+            item.responseText = answerValue.trim();  // Dạng Essay
         }
-        
-        const payload = { responses: formattedResponses };
 
-        try {
-            await authApis().post(endpoints['survey_submit_responses'](surveyId), payload);
-            alert("Cảm ơn bạn đã hoàn thành khảo sát!");
-            navigate("/surveys"); // Hoặc trang cảm ơn
-        } catch (err) {
-            console.error("Lỗi khi gửi phản hồi khảo sát:", err);
-            let errorMsg = "Không thể gửi phản hồi của bạn.";
-            if (err.response && err.response.data && (err.response.data.error || err.response.data.message)) {
-                errorMsg = err.response.data.error || err.response.data.message;
-            }
-            setError(errorMsg);
-        } finally {
-            setSubmitting(false);
+        // Chỉ thêm vào mảng nếu có câu trả lời hợp lệ
+        if (item.selectedOptionId || item.responseText) {
+            return item;
         }
-    };
-    
-    const renderQuestion = (question) => {
-        const answerValue = answers[question.questionId];
-        switch (question.questionType) {
-            case 'SINGLE_CHOICE': // Giả sử type là 'SINGLE_CHOICE' cho radio
-                return (
-                    <Form.Group>
-                        {question.options.map(opt => (
-                            <Form.Check
-                                type="radio"
-                                key={opt.optionId}
-                                id={`q${question.questionId}-opt${opt.optionId}`}
-                                label={opt.optionText}
-                                value={opt.optionId}
-                                name={`question-${question.questionId}`}
-                                checked={parseInt(answerValue) === opt.optionId}
-                                onChange={(e) => handleAnswerChange(question.questionId, e.target.value, question.questionType)}
-                            />
-                        ))}
-                    </Form.Group>
-                );
-            case 'MULTIPLE_CHOICE': // Giả sử type là 'MULTIPLE_CHOICE' cho checkbox
-                 return (
-                    <Form.Group>
-                        {question.options.map(opt => (
-                            <Form.Check
-                                type="checkbox"
-                                key={opt.optionId}
-                                id={`q${question.questionId}-opt${opt.optionId}`}
-                                label={opt.optionText}
-                                value={opt.optionId}
-                                checked={(answerValue || []).includes(opt.optionId.toString()) || (answerValue || []).includes(opt.optionId)}
-                                onChange={(e) => handleAnswerChange(question.questionId, e.target.value, question.questionType)}
-                            />
-                        ))}
-                    </Form.Group>
-                );
-            case 'TEXT_INPUT': // Giả sử type là 'TEXT_INPUT' cho textarea
-                return (
-                    <Form.Group>
-                        <Form.Control
-                            as="textarea"
-                            rows={3}
-                            value={answerValue || ''}
-                            onChange={(e) => handleAnswerChange(question.questionId, e.target.value, question.questionType)}
-                            placeholder="Nhập câu trả lời của bạn..."
+        return null;
+    }).filter(item => item !== null); // Loại bỏ các câu trả lời rỗng
+
+    // Kiểm tra xem có câu trả lời hợp lệ hay không
+    if (formattedResponses.length === 0) {
+        alert("Vui lòng trả lời ít nhất một câu hỏi.");
+        setSubmitting(false);
+        return;
+    }
+
+    const payload = { responses: formattedResponses };
+
+    try {
+        // Gửi phản hồi khảo sát
+        await authApis().post(endpoints['survey_submit_responses'](surveyId), payload);
+        alert("Cảm ơn bạn đã hoàn thành khảo sát!");
+        navigate("/surveys"); // Hoặc trang cảm ơn
+    } catch (err) {
+        console.error("Lỗi khi gửi phản hồi khảo sát:", err);
+        let errorMsg = "Không thể gửi phản hồi của bạn.";
+        if (err.response && err.response.data && (err.response.data.error || err.response.data.message)) {
+            errorMsg = err.response.data.error || err.response.data.message;
+        }
+        setError(errorMsg);
+    } finally {
+        setSubmitting(false);
+    }
+};
+
+
+
+const renderQuestion = (question) => {
+    const answerValue = answers[question.questionId];
+
+    // Kiểm tra nếu question.options là null hoặc undefined trước khi gọi map
+    if (!question.options) {
+        if (question.questionType === 'Essay') {
+            return (
+                <Form.Group>
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={answerValue || ''} // Giá trị trả lời
+                        onChange={(e) => handleAnswerChange(question.questionId, e.target.value, question.questionType)}
+                        placeholder="Nhập câu trả lời của bạn..."
+                    />
+                </Form.Group>
+            );
+        }
+        return <p>Không có lựa chọn cho câu hỏi này.</p>;
+    }
+
+    switch (question.questionType) {
+        case 'Multiple Choice': // Dạng câu hỏi Multiple Choice (Radio button)
+            return (
+                <Form.Group>
+                    {question.options.map(opt => (
+                        <Form.Check
+                            type="radio"
+                            key={opt.optionId}
+                            id={`q${question.questionId}-opt${opt.optionId}`}
+                            label={opt.optionText}
+                            value={opt.optionId}
+                            checked={parseInt(answerValue) === opt.optionId}
+                            onChange={(e) => handleAnswerChange(question.questionId, e.target.value, question.questionType)} // Chỉ lưu một lựa chọn duy nhất
                         />
-                    </Form.Group>
-                );
-            default:
-                return <p>Loại câu hỏi không được hỗ trợ: {question.questionType}</p>;
-        }
-    };
+                    ))}
+                </Form.Group>
+            );
+
+        case 'Essay': // Dạng câu hỏi Essay (Text Input)
+            return (
+                <Form.Group>
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={answerValue || ''}
+                        onChange={(e) => handleAnswerChange(question.questionId, e.target.value, question.questionType)}
+                        placeholder="Nhập câu trả lời của bạn..."
+                    />
+                </Form.Group>
+            );
+
+        default:
+            return <p>Loại câu hỏi không được hỗ trợ: {question.questionType}</p>;
+    }
+};
+
+
+
+
+
 
 
     if (loading) {
