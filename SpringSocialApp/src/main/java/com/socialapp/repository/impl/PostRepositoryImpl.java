@@ -127,7 +127,7 @@ public class PostRepositoryImpl implements PostRepository {
         q.select(root);
 
         q.where(
-                b.equal(root.get("user").get("userId"), userId),
+                b.equal(root.get("userId").get("id"), userId),
                 b.equal(root.get("isDeleted"), false)
         );
 

@@ -38,7 +38,9 @@ const App = () => {
               <Route path="/home" element={<Home />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/surveys" element={<SurveyListPage />} />
-              <Route path="/surveys/:surveyId/take" element={<TakeSurveyPage />} />
+              <Route path="/surveys/:surveyId/take" element={<TakeSurveyPage />} /> 
+              <Route path="/profile" element={<Profile />} />
+               <Route path="/reset-password" element={<ResetPassword />} />
             </Routes>
           </Container>
 

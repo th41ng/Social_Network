@@ -21,7 +21,15 @@ export const endpoints = {
     'profile': '/secure/profile',
     'surveys_list': '/surveys',
     'survey_detail': (surveyId) => `/surveys/${surveyId}`,
-    'survey_submit_responses': (surveyId) => `/surveys/${surveyId}/responses`
+    'survey_submit_responses': (surveyId) => `/surveys/${surveyId}/responses`,
+    
+    'reset-password': '/reset-password',
+    'end-verification-code': '/send-verification-code',
+
+    userposts: (userId) =>`/user-posts/${userId}`,
+    eventDetails: (id) => `/event/${id}`,
+
+
 };
 
 export const authApis = () => {

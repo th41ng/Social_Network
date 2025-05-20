@@ -3,10 +3,13 @@ package com.socialapp.controllers;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.service.EmailService;
+import com.socialapp.service.PostApiService;
 import com.socialapp.service.PostService;
 import com.socialapp.service.UserService;
 import com.socialapp.utils.JwtUtils;
+import jakarta.ejb.PostActivate;
 import java.security.Principal;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,7 +36,7 @@ public class ApiUserController {
     @Autowired
     private EmailService emailService;
     @Autowired
-    private PostService postService;
+    private PostApiService postApiService;
     // Tạm lưu mã xác thực trong memory (nên dùng Redis hoặc DB trong thực tế)
     private Map<String, String> verificationCodes = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
@@ -105,7 +109,6 @@ public class ApiUserController {
         }
     }
 
-
     @RequestMapping("/secure/profile")
     @ResponseBody
     @CrossOrigin
@@ -115,6 +118,7 @@ public class ApiUserController {
         }
         User user = this.userDetailService.getUserByUsername(principal.getName());
         return ResponseEntity.ok(user);
+
     }
 
     @PostMapping("/send-verification-code")
@@ -178,30 +182,23 @@ public class ApiUserController {
         }
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<?> getCurrentUserPosts(Principal principal) {
+    @GetMapping("/user-posts/{userId}")
+    public ResponseEntity<?> getUserPosts(@PathVariable("userId") int userId) {
         try {
-            // Kiểm tra Principal
-            if (principal == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Principal is null");
-            }
+            // Lấy danh sách bài viết của user dựa trên userId
+            List<Post> userPosts = postApiService.getPostsByUserId(userId);
 
-            // Lấy thông tin người dùng từ Principal
-            User user = this.userDetailService.getUserByUsername(principal.getName());
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng.");
+            if (userPosts == null || userPosts.isEmpty()) {
+                logger.info("No posts found for user with ID: {}", userId);
+                return ResponseEntity.ok(Collections.emptyList());
             }
-         
-            // Lấy danh sách bài viết của người dùng
-            List<Post> posts = postService.getPostsByUserId(user.getId());
-            if (posts == null || posts.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng chưa có bài viết nào.");
-            }
-
-            return ResponseEntity.ok(posts);
+            logger.info("User ID: {}, Found posts: {}", userId, userPosts);
+            
+            logger.info("Found {} posts for user with ID: {}", userPosts.size(), userId);
+            return ResponseEntity.ok(userPosts);
         } catch (Exception e) {
-            logger.error("Lỗi khi lấy danh sách bài viết của người dùng hiện tại: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi lấy danh sách bài viết.");
+            logger.error("Error while fetching posts for user with ID {}: {}", userId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while fetching posts");
         }
     }
 }

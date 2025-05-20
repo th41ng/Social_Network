@@ -10,7 +10,7 @@ const Header = () => {
     const dispatch = useContext(MyDispatchContext);
     const navigate = useNavigate();
 
-    const SURVEY_CATEGORY_ID = 4; 
+    const PROFILE_CATEGORY_ID = 5; 
     const NOTIFICATIONS_CATEGORY_ID = 3; 
 
     const loadCates = async () => {
@@ -47,16 +47,15 @@ const Header = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto"> 
                         {user && <Nav.Link as={Link} to="/home">Trang chủ</Nav.Link>}
-                        
+
                         {categories.length > 0 && (
                             <NavDropdown title="Danh mục" id="basic-nav-dropdown">
                                 {categories.map((c) => {
                                     let path;
-                                    if (c.id === NOTIFICATIONS_CATEGORY_ID) {
+                                    if (c.id === NOTIFICATIONS_CATEGORY_ID) {   
                                         path = '/notifications';
-                                    } else if (c.id === SURVEY_CATEGORY_ID) {
-                                       
-                                        path = '/surveys'; 
+                                    } else if (c.id === PROFILE_CATEGORY_ID) {
+                                        path = '/profile'; 
                                     } else {
                                        
                                         path = `/?cateId=${c.id}`; 

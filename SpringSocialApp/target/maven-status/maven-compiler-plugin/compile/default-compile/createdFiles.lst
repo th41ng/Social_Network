@@ -68,8 +68,8 @@ com\socialapp\service\SurveyService.class
 com\socialapp\controllers\PostController.class
 com\socialapp\dto\SurveyResponseItemDTO.class
 com\socialapp\service\PostApiService.class
-com\socialapp\controllers\AdminController.class
 com\socialapp\controllers\SurveyQuestionController.class
+com\socialapp\controllers\AdminController.class
 com\socialapp\dto\SurveyOptionClientDTO.class
 com\socialapp\configs\SecurityConfig.class
 com\socialapp\repository\CommentRepository.class

@@ -284,4 +284,20 @@ public class PostApiServiceImpl implements PostApiService {
         return convertToFullPostDTO(updatedPost);
     }
 
+    @Transactional(readOnly = true)
+    
+    public List<Post> getPostsByUserId(int userId) {
+        try {
+            // Query the PostRepository for posts belonging to the specified user
+            List<Post> posts = postRepository.getPostsByUserId(userId);
+
+            // Filter out posts that are marked as deleted
+            return posts.stream()
+                    .filter(post -> post.getIsDeleted() == null || !post.getIsDeleted())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("Error while fetching posts for user ID {}: {}", userId, e.getMessage(), e);
+            return Collections.emptyList(); // Return an empty list in case of error
+        }
+    }
 }

@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
                 .requestMatchers("/api/login", "/api/user").permitAll() 
                 .requestMatchers("/api/**").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().hasRole("ADMIN")
         )
                  .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form.loginPage("/Users/login")

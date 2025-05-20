@@ -55,12 +55,13 @@ public class Post implements Serializable {
     private String image;
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JsonIgnore 
     @ManyToOne(optional = false)
     private User userId;
 //    @JsonIgnore
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
-    // @JsonIgnore
+    @JsonIgnore
     private Set<Comment> commentSet;
 
     // Thêm MultipartFile để nhận file ảnh
