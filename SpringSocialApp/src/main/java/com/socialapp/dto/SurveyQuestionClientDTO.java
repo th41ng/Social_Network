@@ -3,13 +3,16 @@ package com.socialapp.dto;
 import java.util.List;
 
 public class SurveyQuestionClientDTO {
+
     private Integer questionId;
     private String questionText;
     private String questionType; // Ví dụ: "SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT"
+    private Boolean isRequired;
     private List<SurveyOptionClientDTO> options; // Chỉ có giá trị cho câu hỏi dạng lựa chọn
 
     // Constructors, Getters and Setters
-    public SurveyQuestionClientDTO() {}
+    public SurveyQuestionClientDTO() {
+    }
 
     public Integer getQuestionId() {
         return questionId;
@@ -41,5 +44,19 @@ public class SurveyQuestionClientDTO {
 
     public void setOptions(List<SurveyOptionClientDTO> options) {
         this.options = options;
+    }
+
+    /**
+     * @return the isRequired
+     */
+    public Boolean getIsRequired() {
+        return isRequired;
+    }
+
+    /**
+     * @param isRequired the isRequired to set
+     */
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
     }
 }

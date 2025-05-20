@@ -66,6 +66,7 @@ public class SurveyApiServiceImpl implements SurveyApiService {
         } else {
             dto.setQuestionType("UNKNOWN");
         }
+        dto.setIsRequired(question.getIsRequired());
 
         if (question.getSurveyOptions() != null && !question.getSurveyOptions().isEmpty()) {
             dto.setOptions(

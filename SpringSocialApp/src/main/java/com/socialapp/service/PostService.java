@@ -6,6 +6,7 @@ package com.socialapp.service;
 
 import com.socialapp.pojo.Comment;
 import com.socialapp.pojo.Post;
+import com.socialapp.pojo.User;
 import java.util.List;
 import java.util.Map;
 
@@ -21,12 +22,14 @@ public interface PostService {
 
     Post addOrUpdatePost(Post post);
 
-    void deletePost(int id);
+//    void deletePost(int id);
 
     List<Post> getPostsByUserId(int userId);
 
     List<Comment> getCommentsByPostId(int postId);
     
     int countPostsCreatedToday();
+    
+    void deletePost(int postId, User currentUser);
 
 }

@@ -1,33 +1,42 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <title>Quản lý bài viết</title>
-    <th:block th:replace="base :: bootstrap"></th:block>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
 </head>
 <body>
-    <div th:replace="base :: header"></div>
+    <div th:replace="~{base :: header}"></div>
 
     <main class="container mt-4">
         <h2>Quản lý bài viết</h2>
 
-        <!-- Bộ lọc -->
-        <form class="row g-3 mb-3" method="get" th:action="@{/surveys}">
-            <div class="col-md-4">
-                <input type="text" class="form-control" name="kw" placeholder="Tìm theo tiêu đề..." th:value="${params['kw']}">
+        <form class="row g-3 mb-3" method="get" th:action="@{/posts}"> <div class="col-md-4">
+                <input type="text" class="form-control" name="content" placeholder="Tìm theo nội dung..." th:value="${params != null ? params['kw'] : ''}">
             </div>
             <div class="col-md-3">
-                <input type="date" class="form-control" name="fromDate" th:value="${params['fromDate']}">
+                <label for="fromDate" class="form-label visually-hidden">Từ ngày</label>
+                <input type="date" class="form-control" id="fromDate" name="fromDate" th:value="${params != null ? params['fromDate'] : ''}">
             </div>
             <div class="col-md-3">
-                <input type="date" class="form-control" name="toDate" th:value="${params['toDate']}">
+                <label for="toDate" class="form-label visually-hidden">Đến ngày</label>
+                <input type="date" class="form-control" id="toDate" name="toDate" th:value="${params != null ? params['toDate'] : ''}">
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
             </div>
         </form>
 
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-        <!-- Danh sách bài viết -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
@@ -43,38 +52,31 @@
                 <tbody>
                     <tr th:each="p : ${posts}">
                         <td th:text="${p.postId}"></td>
-                        <td th:text="${p.content}"></td>
-                        <td th:text="${p.userId.fullName}"></td>
-                        <td th:text="${#dates.format(p.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
-
-                        <!-- Hiển thị hình ảnh nếu có -->
+                        <td th:text="${#strings.abbreviate(p.content, 100)}"></td>
+                        <td th:text="${p.userId != null ? p.userId.fullName : 'N/A'}"></td>
+                        <td th:text="${p.createdAt != null ? #dates.format(p.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
                         <td>
-                            <img th:if="${p.image != null}" th:src="@{${p.image}}" alt="Post Image" width="100" />
+                            <img th:if="${p.image != null and p.image != ''}" th:src="@{${p.image}}" alt="Post Image" style="max-width: 100px; max-height: 100px; object-fit: cover;" />
+                            <span th:if="${p.image == null or p.image == ''}" class="text-muted"><em>Không có ảnh</em></span>
                         </td>
-
                         <td>
-                            <button type="button"
-                                    class="btn btn-danger btn-sm"
-                                    th:onclick="'deletePost(\'' + @{/api/posts/{id}(id=${p.postId})} + '\')'">
-                                Xoá
-                            </button>
-
-                            </button>
-                        </td>
-
+                            <form th:action="@{/posts/{postId}/delete(postId=${p.postId})}" method="post" style="display:inline-block; margin: 0;"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Xoá bài viết">
+                                    <i class="fas fa-trash-alt"></i> Xoá
+                                </button>
+                            </form>
+                            </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(posts)}">
+                    <tr th:if="${posts == null or #lists.isEmpty(posts)}">
                         <td colspan="6" class="text-center">Không có bài viết nào.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-
-
     </main>
 
-    <div th:replace="base :: footer"></div>
+    <div th:replace="~{base :: footer}"></div>
 
     <script th:src="@{/js/main.js}"></script>
 </body>
