@@ -15,6 +15,7 @@ export const endpoints = {
     'delete-comment': (commentId) => `comments/${commentId}`,
     'toggle-comment-lock': (postId) => `posts/${postId}/toggle-comment-lock`,
     'categories': '/categories',
+    'categories2': '/categories2',
     'register':'/user',
     'login':'/login',
     'notifications': '/notifications',

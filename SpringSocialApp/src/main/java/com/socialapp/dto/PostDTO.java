@@ -13,15 +13,17 @@ public class PostDTO {
     private String userAvatar;
 
     private String image;
-    private List<CommentDTO> comments; // danh sách comment DTO
+    private List<CommentDTO> comments; 
     private Boolean commentLocked;
     
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") 
+    private LocalDateTime updatedAt; 
 
-    private Map<String, Long> reactions; // New field to hold reactions count
-
+    private Map<String, Long> reactions; 
     private Integer commentCount;
 
     private Integer userId;
@@ -141,5 +143,19 @@ public class PostDTO {
      */
     public void setCommentLocked(Boolean commentLocked) {
         this.commentLocked = commentLocked;
+    }
+
+    /**
+     * @return the updatedAt
+     */
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    /**
+     * @param updatedAt the updatedAt to set
+     */
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

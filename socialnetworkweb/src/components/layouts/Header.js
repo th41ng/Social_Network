@@ -10,14 +10,15 @@ const Header = () => {
     const dispatch = useContext(MyDispatchContext);
     const navigate = useNavigate();
 
-    const PROFILE_CATEGORY_ID = 5; 
-    const NOTIFICATIONS_CATEGORY_ID = 3; 
+    const PROFILE_CATEGORY_ID = 4; 
+    const NOTIFICATIONS_CATEGORY_ID = 2; 
+    const SURVEYS_CATEGORY_ID = 3; 
 
     const loadCates = async () => {
         try {
            
-            if (endpoints['categories']) {
-                let res = await Apis.get(endpoints['categories']);
+            if (endpoints['categories2']) {
+                let res = await Apis.get(endpoints['categories2']);
                 setCategories(res.data);
             } else {
                 console.warn("Endpoint 'categories' chưa được định nghĩa.");
@@ -56,6 +57,8 @@ const Header = () => {
                                         path = '/notifications';
                                     } else if (c.id === PROFILE_CATEGORY_ID) {
                                         path = '/profile'; 
+                                    } else if (c.id === SURVEYS_CATEGORY_ID) {
+                                        path = '/surveys'; 
                                     } else {
                                        
                                         path = `/?cateId=${c.id}`; 

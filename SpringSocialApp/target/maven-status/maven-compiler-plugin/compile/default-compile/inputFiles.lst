@@ -44,6 +44,7 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\filters\Jwt
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\formatters\CategoryFormatter.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\formatters\UserFormatter.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Category.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Category2.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Comment.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\DailyPlatformSummary.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Event.java
@@ -61,11 +62,13 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Survey
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\User.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\UserGroups.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\CategoryRepository.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\CategoryRepository2.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\CommentRepository.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\EventNotificationRepository.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\EventRepository.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\GroupMembersRepository.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\impl\CategoryRepositoryImpl.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\impl\CategoryRepositoryImpl2.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\impl\CommentRepositoryImpl.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\impl\EventNotificationRepositoryImpl.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\impl\EventRepositoryImpl.java
@@ -94,12 +97,14 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\repository\UserRepository.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\schedule\StatisticsScheduler.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\CategoryService.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\CategoryService2.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\CommentService.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\EmailService.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\EventNotificationService.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\EventService.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\GroupMemberService.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\impl\CategoryServiceImpl.java
+C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\impl\CategoryServiceImpl2.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\impl\CommentServiceImpl.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\impl\EmailServiceImpl.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\service\impl\EventNotificationServiceImpl.java
