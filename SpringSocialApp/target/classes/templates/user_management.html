@@ -62,9 +62,17 @@
                             </button>                 
                             <!-- Hiển thị nút Xác thực hoặc Hủy xác thực dựa trên trạng thái isVerified -->
                             <form th:action="@{/Users/{userId}/verify(userId=${user.id})}" method="post">
-                                <button type="submit" class="btn btn-primary" th:if="${user.role == 'ROLE_ALUMNI' && !user.isVerified}">Xác thực</button>
+                                <button type="submit" class="btn btn-primary" 
+                                        th:if="${user.role == T(com.socialapp.configs.UserRole).ROLE_ALUMNI && !user.isVerified}">
+                                    Xác thực
+                                </button>
                             </form>
-
+                            <form th:action="@{/Users/banUser/{userId}(userId=${user.id})}" method="post">
+                                <button type="submit" class="btn btn-warning"  
+                                        th:if="user.isLocked">
+                                    Vô hiêu hóa
+                                </button>
+                            </form>
 
 
                         </td>

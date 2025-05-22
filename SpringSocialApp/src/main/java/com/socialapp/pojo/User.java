@@ -1,20 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.socialapp.configs.UserRole;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-/**
- *
- * @author DELL G15
- */
 @Entity
 @Table(name = "users")
 @NamedQueries({
@@ -47,8 +40,9 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING) // Lưu giá trị Enum dưới dạng chuỗi
+    @Column(name = "role", nullable = false)
+    private UserRole role;
 
     @Column(name = "avatar")
     private String avatar;
@@ -101,7 +95,7 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String studentId, String email, String password, String role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
+    public User(Integer id, String username, String studentId, String email, String password, UserRole role, String avatar, String coverImage, String fullName, Boolean isVerified, Date createdAt, Date lastPasswordChange, Boolean isLocked) {
         this.id = id;
         this.username = username;
         this.studentId = studentId;
@@ -117,7 +111,8 @@ public class User implements Serializable {
         this.isLocked = isLocked;
     }
 
-    // Getter and Setter methods
+    // Getter và Setter
+
     public Integer getId() {
         return id;
     }
@@ -150,11 +145,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
 
@@ -265,14 +260,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.socialapp.pojo.User[ id=" + id + " ]";
-    }
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public static void setSerialVersionUID(long aSerialVersionUID) {
-        serialVersionUID = aSerialVersionUID;
     }
 
     /**

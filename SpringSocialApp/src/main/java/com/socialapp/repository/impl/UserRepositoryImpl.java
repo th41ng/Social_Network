@@ -1,5 +1,6 @@
 package com.socialapp.repository.impl;
 
+import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
@@ -85,13 +86,48 @@ public class UserRepositoryImpl implements UserRepository {
         Session s = getCurrentSession();
         s.persist(u);
         s.refresh(u);
+
+        if (u != null && UserRole.ROLE_LECTURER.equals(u.getRole())) {
+            s.merge(u);
+            String defaultPassword = "ou@123"; // Nên thay bằng biến cấu hình
+            // Gửi email thông báo
+            emailService.sendEmailtoLecturer(
+                    u.getEmail(),
+                    "Thông báo đăng ký tài khoản",
+                    "Xin chào " + u.getFullName() + ",\n\n"
+                    + "Tài khoản của bạn đã được đăng ký thành công. Bạn có thể đăng nhập vào hệ thống bằng mật khẩu mặc định.\n\n"
+                    + "Vui lòng đổi mật khẩu trong vòng 24 giờ để bảo mật.\n\n"
+                    + "Trân trọng,\nĐội ngũ hỗ trợ.",
+                    defaultPassword
+            );
+        }
         return u;
+    }
+
+    @Override
+    public void verifyStudent(int userId) {
+        Session s = getCurrentSession();
+        User user = this.getUserById(userId);
+        if (user != null) {
+            user.setIsVerified(true);
+            s.merge(user);
+            // Gửi email thông báo xác nhận
+            emailService.sendEmailtoStudent(
+                    user.getEmail(),
+                    "Tài khoản của bạn đã được xác nhận",
+                    "Xin chào " + user.getFullName() + ",\n\n"
+                    + "Tài khoản của bạn đã được xác nhận thành công. Bây giờ bạn có thể truy cập vào hệ thống.\n\n"
+                    + "Trân trọng,\nĐội ngũ hỗ trợ."
+            );
+        }
     }
 
     @Override
     public boolean authenticate(String username, String password) {
         User u = this.getUserByUsername(username);
-        if (u == null) return false;
+        if (u == null) {
+            return false;
+        }
         return this.passwordEncoder.matches(password, u.getPassword());
     }
 
@@ -139,24 +175,6 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void verifyStudent(int userId) {
-        Session s = getCurrentSession();
-        User user = this.getUserById(userId);
-        if (user != null) {
-            user.setIsVerified(true);
-            s.merge(user);
-            // Gửi email thông báo xác nhận
-            emailService.sendEmailtoStudent(
-                    user.getEmail(),
-                    "Tài khoản của bạn đã được xác nhận",
-                    "Xin chào " + user.getFullName() + ",\n\n"
-                    + "Tài khoản của bạn đã được xác nhận thành công. Bây giờ bạn có thể truy cập vào hệ thống.\n\n"
-                    + "Trân trọng,\nĐội ngũ hỗ trợ."
-            );
-        }
-    }
-
-    @Override
     public User addUser(User user) {
         Session s = getCurrentSession();
         s.persist(user);
@@ -179,6 +197,16 @@ public class UserRepositoryImpl implements UserRepository {
             }
         } catch (Exception ex) {
             throw new RuntimeException("Lỗi khi cập nhật mật khẩu: " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public void banUser(int userId) {
+        Session s = getCurrentSession();
+        User user = this.getUserById(userId);
+        if (user != null) {
+            user.setIsLocked(true);
+            s.merge(user);
         }
     }
 }

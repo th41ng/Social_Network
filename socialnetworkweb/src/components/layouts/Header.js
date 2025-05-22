@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap"; 
+import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import Apis, { endpoints } from "../../configs/Apis"; 
-import { MyUserContext, MyDispatchContext } from "../../configs/Contexts"; 
+import Apis, { endpoints } from "../../configs/Apis";
+import { MyUserContext, MyDispatchContext } from "../../configs/Contexts";
 
 const Header = () => {
     const [categories, setCategories] = useState([]);
@@ -10,18 +10,18 @@ const Header = () => {
     const dispatch = useContext(MyDispatchContext);
     const navigate = useNavigate();
 
-    const PROFILE_CATEGORY_ID = 5; 
-    const NOTIFICATIONS_CATEGORY_ID = 3; 
+    const PROFILE_CATEGORY_ID = 5;
+    const NOTIFICATIONS_CATEGORY_ID = 3;
 
     const loadCates = async () => {
         try {
-           
+
             if (endpoints['categories']) {
                 let res = await Apis.get(endpoints['categories']);
                 setCategories(res.data);
             } else {
                 console.warn("Endpoint 'categories' chưa được định nghĩa.");
-                setCategories([]); 
+                setCategories([]);
             }
         } catch (error) {
             console.error("Lỗi khi tải danh mục:", error);
@@ -29,8 +29,8 @@ const Header = () => {
     };
 
     const handleLogout = () => {
-        dispatch({ type: "logout" }); 
-        navigate(user ? "/" : "/login"); 
+        dispatch({ type: "logout" });
+        navigate(user ? "/" : "/login");
     };
 
     useEffect(() => {
@@ -38,28 +38,47 @@ const Header = () => {
     }, []);
 
     return (
-        <Navbar expand="lg" className="bg-body-tertiary shadow-sm" sticky="top"> 
+        <Navbar expand="lg" className="bg-body-tertiary shadow-sm" sticky="top">
             <Container>
-                <Navbar.Brand as={Link} to={user ? "/home" : "/"}> 
+                <Navbar.Brand as={Link} to={user ? "/home" : "/"}>
                     DT's SocialNetwork
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="me-auto"> 
+                    <Nav className="me-auto">
                         {user && <Nav.Link as={Link} to="/home">Trang chủ</Nav.Link>}
 
                         {categories.length > 0 && (
                             <NavDropdown title="Danh mục" id="basic-nav-dropdown">
                                 {categories.map((c) => {
                                     let path;
-                                    if (c.id === NOTIFICATIONS_CATEGORY_ID) {   
-                                        path = '/notifications';
-                                    } else if (c.id === PROFILE_CATEGORY_ID) {
-                                        path = '/profile'; 
+                                    // Xử lý cho các ID từ 1 đến 5
+                                    if (c.id >= 1 && c.id <= 5) {
+                                        switch (c.id) {
+                                            case 1:
+                                                path = '/';
+                                                break;
+                                            case 5:
+                                                path = '/profile';
+                                                break;
+                                            case 4:
+                                                path = '/surveys';
+                                                break;
+                                            case 3:
+                                                path = '/notifications';
+                                                break;
+                                            case 2:
+                                                path = '/posts';
+                                                break;
+                                            default:
+                                                path = `/?cateId=${c.id}`;
+                                                break;
+                                        }
                                     } else {
-                                       
-                                        path = `/?cateId=${c.id}`; 
+                                        // Xử lý cho các ID ngoài khoảng 1-5
+                                        path = `/?cateId=${c.id}`;
                                     }
+
                                     return (
                                         <NavDropdown.Item as={Link} key={c.id} to={path}>
                                             {c.name}
@@ -68,18 +87,18 @@ const Header = () => {
                                 })}
                             </NavDropdown>
                         )}
-                       
+
                     </Nav>
-                    
-                    <Nav> 
+
+                    <Nav>
                         {user ? (
                             <>
-                                <Nav.Link as={Link} to="/profile" className="d-flex align-items-center"> 
+                                <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
                                     {user.avatar && (
-                                        <img 
-                                            src={user.avatar} 
-                                            alt={user.username} 
-                                            style={{width: "30px", height: "30px", borderRadius: "50%", marginRight: "8px"}}
+                                        <img
+                                            src={user.avatar}
+                                            alt={user.username}
+                                            style={{ width: "30px", height: "30px", borderRadius: "50%", marginRight: "8px" }}
                                         />
                                     )}
                                     {user.fullName || user.username}

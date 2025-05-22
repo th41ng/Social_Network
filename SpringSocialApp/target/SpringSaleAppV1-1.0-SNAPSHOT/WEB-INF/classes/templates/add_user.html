@@ -45,9 +45,9 @@
                 <label for="role" class="form-label">Vai trò</label>
                 <select class="form-select" id="role" th:field="*{role}" required>
                     <option value="" disabled selected>Chọn vai trò</option>
-                    <option value="ROLE_USER">Người dùng</option>
-                    <option value="ROLE_ALUMNI">Cựu sinh viên</option>
-                    <option value="ROLE_ADMIN">Quản trị viên</option>
+                    <option th:each="role : ${roles}" 
+                            th:value="${role}" 
+                            th:text="${role}"></option>
                 </select>
             </div>
             <div class="mb-3 form-check">

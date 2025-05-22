@@ -2,6 +2,7 @@ package com.socialapp.service.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.UserService;
@@ -49,11 +50,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.updateUser(user);
     }
 
-     @Override
+    @Override
     @Transactional // Các thao tác ghi/xóa/cập nhật nên có @Transactional ở tầng service
     public boolean deleteUser(int id) {
         // Gọi phương thức deleteUser của repository (nay đã trả về boolean)
-        return this.userRepository.deleteUser(id); 
+        return this.userRepository.deleteUser(id);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(u.getRole()));
+        authorities.add(new SimpleGrantedAuthority(u.getRole().name())); // Sử dụng Enum
         System.out.println("Found user: " + u.getUsername());
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
         user.setStudentId(params.get("studentId"));
         user.setUsername(params.get("username"));
         user.setPassword(this.passwordEncoder.encode(params.get("password")));
-        user.setRole(params.get("role"));
+        user.setRole(UserRole.valueOf(params.get("role"))); // Sử dụng Enum
         user.setCreatedAt(new Date());
         user.setLastPasswordChange(null);
         user.setIsVerified(false);
@@ -115,17 +116,21 @@ public class UserServiceImpl implements UserService {
     public void verifyStudent(int userId) {
         this.userRepository.verifyStudent(userId);
     }
-
+    
+     @Override
+    public void banUser(int userId) {
+        this.userRepository.banUser(userId);
+    }
+    
     @Override
     public int countUsersRegisteredToday() {
         return this.userRepository.countUsersRegisteredToday();
     }
-    
+
     @Override
     public User addUser(User user) {
         return this.userRepository.addUser(user);
     }
-
 
     @Override
     public void updatePassword(String email, String newPassword) {
@@ -133,4 +138,3 @@ public class UserServiceImpl implements UserService {
     }
 
 }
-

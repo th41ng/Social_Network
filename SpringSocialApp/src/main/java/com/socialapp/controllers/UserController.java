@@ -2,6 +2,7 @@ package com.socialapp.controllers;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.User;
 import com.socialapp.service.UserService;
 import jakarta.validation.Valid;
@@ -37,12 +38,12 @@ public class UserController {
         return "login"; // Chuyển tới trang login
     }
 
-    // Hiển thị danh sách người dùng với các bộ lọc
     @GetMapping("/listUser")
     public String listUsers(@RequestParam Map<String, String> params, Model model) {
         List<User> users = this.userService.getAllUsers(params);
         model.addAttribute("users", users);
         model.addAttribute("params", params);
+        model.addAttribute("roles", UserRole.values()); // Truyền tất cả giá trị Enum vào model
         return "user_management";
     }
 
@@ -67,10 +68,17 @@ public class UserController {
         userService.verifyStudent(userId);
         return "redirect:/?categoryId=5"; // Chuyển hướng lại trang html
     }
-
+    
+    @PostMapping("/banUser/{userId}")
+    public String banUser(@PathVariable("userId") int userId) {
+        userService.banUser(userId);
+        return "redirect:/?categoryId=5"; 
+    }
+    
     @GetMapping("/add")
     public String addUserForm(Model model) {
         model.addAttribute("user", new User());
+        model.addAttribute("roles", UserRole.values());
         return "add_user"; // Tên file html: user_add.html
     }
 

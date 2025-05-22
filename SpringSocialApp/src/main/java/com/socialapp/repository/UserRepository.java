@@ -32,9 +32,11 @@ public interface UserRepository {
     boolean deleteUser(int id); // THAY ĐỔI: từ void thành boolean
 
     User register(User u);
-
+    
+    void banUser(int userId);
     
     void verifyStudent(int userId);
+    
     
     boolean authenticate(String username, String password);
     

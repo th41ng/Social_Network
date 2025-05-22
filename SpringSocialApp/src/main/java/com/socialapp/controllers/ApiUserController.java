@@ -1,5 +1,6 @@
 package com.socialapp.controllers;
 
+import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.service.EmailService;
@@ -7,9 +8,9 @@ import com.socialapp.service.PostApiService;
 import com.socialapp.service.PostService;
 import com.socialapp.service.UserService;
 import com.socialapp.utils.JwtUtils;
-import jakarta.ejb.PostActivate;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -37,7 +30,7 @@ public class ApiUserController {
     private EmailService emailService;
     @Autowired
     private PostApiService postApiService;
-    // Tạm lưu mã xác thực trong memory (nên dùng Redis hoặc DB trong thực tế)
+
     private Map<String, String> verificationCodes = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
 
@@ -63,26 +56,31 @@ public class ApiUserController {
             }
 
             if (this.userDetailService.authenticate(u.getUsername(), u.getPassword())) {
-                User userDetailService = this.userDetailService.getUserByUsername(u.getUsername());
+                User userDetail = this.userDetailService.getUserByUsername(u.getUsername());
 
-                // Kiểm tra vai trò ROLE_ALUMNI và trạng thái xác thực
-                if (userDetailService.getRole().contains("ROLE_ALUMNI") && !userDetailService.getIsVerified()) {
-                    logger.warn("Người dùng ROLE_ALUMNI chưa được xác thực: {}", u.getUsername());
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("notVerifed");
+                // Kiểm tra nếu tài khoản bị khóa
+                if (userDetail.getIsLocked()) {
+                    logger.warn("Tài khoản đã bị khóa: {}", u.getUsername());
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("accountLocked");
                 }
 
-                // Kiểm tra vai trò ROLE_LECTURER và thời gian đổi mật khẩu lần cuối
-                if (userDetailService.getRole().contains("ROLE_LECTURER")) {
+                // Kiểm tra vai trò và trạng thái của người dùng
+                if (userDetail.getRole() == UserRole.ROLE_ALUMNI && !userDetail.getIsVerified()) {
+                    logger.warn("Người dùng ROLE_ALUMNI chưa được xác thực: {}", u.getUsername());
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("notVerified");
+                }
+
+                if (userDetail.getRole() == UserRole.ROLE_LECTURER) {
                     long hoursSinceCreation
-                            = (new Date().getTime() - userDetailService.getCreatedAt().getTime()) / (1000 * 60 * 60);
-                    if (hoursSinceCreation > 24 && userDetailService.getLastPasswordChange() == null) {
+                            = (new Date().getTime() - userDetail.getCreatedAt().getTime()) / (1000 * 60 * 60);
+                    if (hoursSinceCreation > 24 && userDetail.getLastPasswordChange() == null) {
                         logger.warn("Người dùng ROLE_LECTURER chưa đổi mật khẩu trong vòng 24 giờ sau khi tạo tài khoản: {}",
                                 u.getUsername());
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("expired");
                     }
                 }
 
-                // Nếu tất cả kiểm tra hợp lệ, tạo token
+                // Tạo token nếu hợp lệ
                 String token = JwtUtils.generateToken(u.getUsername());
                 logger.info("Đăng nhập thành công: {}", u.getUsername());
                 return ResponseEntity.ok().body(Collections.singletonMap("token", token));
@@ -118,7 +116,6 @@ public class ApiUserController {
         }
         User user = this.userDetailService.getUserByUsername(principal.getName());
         return ResponseEntity.ok(user);
-
     }
 
     @PostMapping("/send-verification-code")
@@ -133,13 +130,9 @@ public class ApiUserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng với email này");
         }
 
-        // Tạo mã xác thực 6 chữ số ngẫu nhiên
         String code = String.format("%06d", new Random().nextInt(999999));
-
-        // Lưu mã tạm thời theo email (thời hạn hết hạn có thể thêm xử lý riêng)
         verificationCodes.put(email, code);
 
-        // Gửi email (cần config EmailService)
         String subject = "Mã xác thực đặt lại mật khẩu";
         String body = "Mã xác thực của bạn là: " + code + ". Mã này có hiệu lực trong 10 phút.";
         emailService.sendVerifyEmail(email, subject, body);
@@ -147,7 +140,6 @@ public class ApiUserController {
         return ResponseEntity.ok("Mã xác thực đã được gửi tới email của bạn.");
     }
 
-    // Sửa lại API reset-password nhận thêm email + verificationCode
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         try {
@@ -164,16 +156,12 @@ public class ApiUserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng.");
             }
 
-            // Kiểm tra mã xác thực
             String storedCode = verificationCodes.get(email);
             if (storedCode == null || !storedCode.equals(verificationCode)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Mã xác thực không hợp lệ hoặc đã hết hạn.");
             }
 
-            // Xóa mã xác thực sau khi dùng
             verificationCodes.remove(email);
-
-            // Cập nhật mật khẩu
             userDetailService.updatePassword(user.getEmail(), newPassword);
 
             return ResponseEntity.ok("Mật khẩu đã được đặt lại thành công.");
@@ -185,15 +173,12 @@ public class ApiUserController {
     @GetMapping("/user-posts/{userId}")
     public ResponseEntity<?> getUserPosts(@PathVariable("userId") int userId) {
         try {
-            // Lấy danh sách bài viết của user dựa trên userId
             List<Post> userPosts = postApiService.getPostsByUserId(userId);
 
             if (userPosts == null || userPosts.isEmpty()) {
                 logger.info("No posts found for user with ID: {}", userId);
                 return ResponseEntity.ok(Collections.emptyList());
             }
-            logger.info("User ID: {}, Found posts: {}", userId, userPosts);
-            
             logger.info("Found {} posts for user with ID: {}", userPosts.size(), userId);
             return ResponseEntity.ok(userPosts);
         } catch (Exception e) {

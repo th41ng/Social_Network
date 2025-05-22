@@ -246,7 +246,20 @@ function deleteUser(fullUrl) {
     }
 }
 
-
+function banUser(fullUrl) {
+    console.log("ban user URL:", fullUrl);
+    if (confirm("Bạn có chắc chắn muốn cấm user này không?")) {
+        fetch(fullUrl, {
+            method: "PUT"
+        })
+                .then(res => {
+                    if (res.ok)
+                        location.reload();
+                    else
+                        alert("ban user thất bại!");
+                });
+    }
+}
 
 
 function verifyStudent(fullUrl) {
@@ -387,3 +400,5 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 });
+
+
