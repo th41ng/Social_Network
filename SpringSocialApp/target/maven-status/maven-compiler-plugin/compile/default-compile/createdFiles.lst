@@ -36,6 +36,11 @@ com\socialapp\service\impl\SurveyApiServiceImpl.class
 com\socialapp\controllers\GroupController.class
 com\socialapp\service\impl\GroupMemberServiceImpl.class
 com\socialapp\controllers\ApiReactionController$ReactionRequest.class
+<<<<<<< HEAD
+=======
+com\socialapp\pojo\Category2.class
+com\socialapp\repository\SurveyOptionRepository.class
+>>>>>>> 3cdcdb12acb50781d65e895d8447644b83f31f6a
 com\socialapp\service\impl\EventServiceImpl.class
 com\socialapp\repository\SurveyOptionRepository.class
 com\socialapp\service\PostService.class
@@ -54,6 +59,7 @@ com\socialapp\service\EmailService.class
 com\socialapp\repository\GroupMembersRepository.class
 com\socialapp\service\impl\PostServiceImpl.class
 com\socialapp\controllers\IndexController.class
+com\socialapp\service\impl\CategoryServiceImpl2.class
 com\socialapp\controllers\AuthController.class
 com\socialapp\repository\impl\PeriodicStatsRepositoryImpl.class
 com\socialapp\repository\UserGroupsRepository.class
@@ -68,8 +74,8 @@ com\socialapp\service\SurveyService.class
 com\socialapp\controllers\PostController.class
 com\socialapp\dto\SurveyResponseItemDTO.class
 com\socialapp\service\PostApiService.class
-com\socialapp\controllers\SurveyQuestionController.class
 com\socialapp\controllers\AdminController.class
+com\socialapp\controllers\SurveyQuestionController.class
 com\socialapp\dto\SurveyOptionClientDTO.class
 com\socialapp\configs\SecurityConfig.class
 com\socialapp\repository\CommentRepository.class
@@ -83,6 +89,7 @@ com\socialapp\service\SurveyResponseService.class
 com\socialapp\pojo\PeriodicSummaryStats$PeriodType.class
 com\socialapp\service\impl\SurveyOptionServiceImpl.class
 com\socialapp\repository\impl\GroupMemberRepositoryImpl.class
+com\socialapp\repository\CategoryRepository2.class
 com\socialapp\repository\PostRepository.class
 com\socialapp\repository\impl\UserGroupRepositoryImpl.class
 com\socialapp\repository\CategoryRepository.class
@@ -90,6 +97,7 @@ com\socialapp\springsocialapp\JakartaRestConfiguration.class
 com\socialapp\dto\SurveyDetailClientDTO.class
 com\socialapp\service\PlatformStatsService.class
 com\socialapp\service\impl\SurveyServiceImpl.class
+com\socialapp\repository\impl\CategoryRepositoryImpl2.class
 com\socialapp\repository\impl\SurveyResponseRepositoryImpl.class
 com\socialapp\service\impl\UserServiceImpl.class
 com\socialapp\service\impl\SurveyQuestionServiceImpl.class
@@ -109,6 +117,7 @@ com\socialapp\pojo\SurveyOption.class
 com\socialapp\service\impl\EmailServiceImpl.class
 com\socialapp\controllers\MemberController.class
 com\socialapp\repository\QuestionTypeRepository.class
+com\socialapp\service\CategoryService2.class
 com\socialapp\service\impl\QuestionTypeServiceImpl.class
 com\socialapp\controllers\ApiCommentController.class
 com\socialapp\filters\JwtFilter.class

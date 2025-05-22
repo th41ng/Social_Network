@@ -11,24 +11,27 @@ public class CommentDTO {
     private String content;
     private String userFullName;
     private String userAvatar;
-    private Integer userId; // Trường này bạn đã thêm
+    private Integer userId; 
 
     private Map<String, Long> reactions;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") // Đặt @JsonFormat ngay trên trường hoặc getter
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") 
     private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") 
+    private LocalDateTime updatedAt; 
 
-    // Constructor - Cập nhật để bao gồm userId
+    
     public CommentDTO(Integer commentId, String content, String userFullName, String userAvatar, Integer userId) {
         this.commentId = commentId;
         this.content = content;
         this.userFullName = userFullName;
         this.userAvatar = userAvatar;
-        this.userId = userId; // Gán giá trị cho userId
-        this.reactions = new HashMap<>(); // Khởi tạo reactions
+        this.userId = userId; 
+        this.reactions = new HashMap<>(); 
     }
 
-    // Constructor mặc định
+    // Constructor 
     public CommentDTO() {
         this.reactions = new HashMap<>(); // Khởi tạo reactions để tránh NullPointerException
     }
@@ -66,7 +69,7 @@ public class CommentDTO {
         this.userAvatar = userAvatar;
     }
 
-    // === THÊM GETTER VÀ SETTER CHO userId ===
+   
     public Integer getUserId() {
         return userId;
     }
@@ -74,7 +77,7 @@ public class CommentDTO {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
-    // === KẾT THÚC GETTER VÀ SETTER CHO userId ===
+  
 
     public Map<String, Long> getReactions() {
         return reactions;
@@ -90,5 +93,19 @@ public class CommentDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    /**
+     * @return the updatedAt
+     */
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    /**
+     * @param updatedAt the updatedAt to set
+     */
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -10,11 +10,11 @@ import com.socialapp.pojo.User;
 import com.socialapp.repository.PostRepository;
 import com.socialapp.repository.ReactionRepository;
 import com.socialapp.service.PostApiService;
-import jakarta.persistence.EntityNotFoundException; // Sử dụng jakarta
+import jakarta.persistence.EntityNotFoundException; 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.security.access.AccessDeniedException; // Hoặc dùng SecurityException
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,14 +56,14 @@ public class PostApiServiceImpl implements PostApiService {
         postDTO.setCommentLocked(post.getIsCommentLocked());
 
         if (post.getUserId() != null) {
-            postDTO.setUserId(post.getUserId().getId()); // Đã có sẵn, rất tốt!
+            postDTO.setUserId(post.getUserId().getId()); 
             postDTO.setUserFullName(post.getUserId().getFullName());
             postDTO.setUserAvatar(post.getUserId().getAvatar());
         } else {
             logger.warn("Post with ID {} has a null userId.", post.getPostId());
             postDTO.setUserFullName("Người dùng không xác định");
             postDTO.setUserAvatar(null);
-            // postDTO.setUserId(null); // Mặc định là null nếu không có
+            // postDTO.setUserId(null); 
         }
 
         if (post.getCreatedAt() != null) {
@@ -72,6 +72,15 @@ public class PostApiServiceImpl implements PostApiService {
                     .toLocalDateTime();
             postDTO.setCreatedAt(createdAtLDT);
         }
+
+        
+        if (post.getUpdatedAt() != null) {
+            LocalDateTime updatedAtLDT = post.getUpdatedAt().toInstant()
+                    .atZone(ZoneId.systemDefault()) // nhất quán với createdAt
+                    .toLocalDateTime();
+            postDTO.setUpdatedAt(updatedAtLDT);
+        }
+      
 
         if (post.getPostId() != null) {
             Map<String, Long> postReactions = reactionRepository.countReactionsByPostId(post.getPostId());
@@ -89,7 +98,7 @@ public class PostApiServiceImpl implements PostApiService {
                         commentDTO.setCommentId(commentEntity.getCommentId());
                         commentDTO.setContent(commentEntity.getContent());
                         if (commentEntity.getUserId() != null) {
-                            commentDTO.setUserId(commentEntity.getUserId().getId()); // Thêm userId cho comment DTO nếu cần
+                            commentDTO.setUserId(commentEntity.getUserId().getId()); 
                             commentDTO.setUserFullName(commentEntity.getUserId().getFullName());
                             commentDTO.setUserAvatar(commentEntity.getUserId().getAvatar());
                         } else {
@@ -98,6 +107,11 @@ public class PostApiServiceImpl implements PostApiService {
                         if (commentEntity.getCreatedAt() != null) {
                             commentDTO.setCreatedAt(commentEntity.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
                         }
+                        
+                        if (commentEntity.getUpdatedAt() != null) { // Giả sử Comment entity có getUpdatedAt()
+                            commentDTO.setUpdatedAt(commentEntity.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                        }
+                       
                         if (commentEntity.getCommentId() != null) {
                             commentDTO.setReactions(reactionRepository.countReactionsByCommentId(commentEntity.getCommentId()));
                         } else {
@@ -117,9 +131,9 @@ public class PostApiServiceImpl implements PostApiService {
     @Transactional
     public PostDTO addOrUpdatePost(Post postFromRequest, User currentUser) {
         MultipartFile imageFile = postFromRequest.getImageFile();
-        // String oldCloudinaryPublicId = null; // Nếu bạn lưu public_id để xóa
+      
 
-        if (postFromRequest.getPostId() != null) { // === UPDATE LOGIC ===
+        if (postFromRequest.getPostId() != null) { 
             Post existingPost = this.postRepository.getPostById(postFromRequest.getPostId());
             if (existingPost == null) {
                 logger.warn("Post with ID {} not found for update by user {}", postFromRequest.getPostId(), currentUser.getUsername());
@@ -127,7 +141,7 @@ public class PostApiServiceImpl implements PostApiService {
             }
 
             if (!existingPost.getUserId().getId().equals(currentUser.getId())) {
-                // (Tùy chọn) Kiểm tra vai trò admin ở đây nếu muốn cho phép admin sửa
+              
                 logger.warn("User {} (ID: {}) attempted to update post {} owned by user ID: {}. Permission denied.",
                         currentUser.getUsername(), currentUser.getId(), existingPost.getPostId(), existingPost.getUserId().getId());
                 throw new SecurityException("User not authorized to update this post.");
@@ -222,7 +236,7 @@ public class PostApiServiceImpl implements PostApiService {
 
     @Override
     @Transactional
-    public boolean deletePost(int postId, User currentUser) { // <<<< THAY ĐỔI SIGNATURE
+    public boolean deletePost(int postId, User currentUser) { 
         Post post = this.postRepository.getPostById(postId);
         if (post == null) {
             logger.warn("Post with ID {} not found for deletion attempt by user {}.", postId, currentUser.getUsername());
@@ -230,7 +244,7 @@ public class PostApiServiceImpl implements PostApiService {
         }
 
         // Kiểm tra quyền sở hữu (hoặc nếu currentUser là admin thì cho phép)
-        // Ví dụ: if (!post.getUserId().getId().equals(currentUser.getId()) && !currentUser.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"))) {
+      
         if (!post.getUserId().getId().equals(currentUser.getId())) {
             logger.warn("User {} (ID: {}) attempted to delete post {} owned by user ID: {}. Permission denied.",
                     currentUser.getUsername(), currentUser.getId(), postId, post.getUserId().getId());
@@ -285,7 +299,7 @@ public class PostApiServiceImpl implements PostApiService {
     }
 
     @Transactional(readOnly = true)
-    
+
     public List<Post> getPostsByUserId(int userId) {
         try {
             // Query the PostRepository for posts belonging to the specified user
