@@ -36,12 +36,8 @@ com\socialapp\service\impl\SurveyApiServiceImpl.class
 com\socialapp\controllers\GroupController.class
 com\socialapp\service\impl\GroupMemberServiceImpl.class
 com\socialapp\controllers\ApiReactionController$ReactionRequest.class
-<<<<<<< HEAD
-=======
-com\socialapp\pojo\Category2.class
-com\socialapp\repository\SurveyOptionRepository.class
->>>>>>> 3cdcdb12acb50781d65e895d8447644b83f31f6a
 com\socialapp\service\impl\EventServiceImpl.class
+com\socialapp\pojo\Category2.class
 com\socialapp\repository\SurveyOptionRepository.class
 com\socialapp\service\PostService.class
 com\socialapp\controllers\ApiSurveyController.class
@@ -74,8 +70,8 @@ com\socialapp\service\SurveyService.class
 com\socialapp\controllers\PostController.class
 com\socialapp\dto\SurveyResponseItemDTO.class
 com\socialapp\service\PostApiService.class
-com\socialapp\controllers\AdminController.class
 com\socialapp\controllers\SurveyQuestionController.class
+com\socialapp\controllers\AdminController.class
 com\socialapp\dto\SurveyOptionClientDTO.class
 com\socialapp\configs\SecurityConfig.class
 com\socialapp\repository\CommentRepository.class

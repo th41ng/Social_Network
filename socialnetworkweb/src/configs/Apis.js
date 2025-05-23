@@ -26,7 +26,7 @@ export const endpoints = {
     
     'reset-password': '/reset-password',
     'end-verification-code': '/send-verification-code',
-
+    'update-profile': '/updateProfile',
     userposts: (userId) =>`/user-posts/${userId}`,
     eventDetails: (id) => `/event/${id}`,
 

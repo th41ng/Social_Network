@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +32,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     // Hiển thị trang đăng nhập
     @GetMapping("/login")
@@ -52,14 +55,56 @@ public class UserController {
     public String editUserForm(@PathVariable("id") int id, Model model) {
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
-        return "user_edit";
+        return "edit_user";
     }
 
     @PostMapping("/editUser/{id}")
-    public String updateUser(@PathVariable("id") int id, @ModelAttribute User user) {
-        user.setId(id); // Cập nhật thông tin người dùng
-        userService.updateUser(user);
-        return "redirect:/Users/listUser";
+    public String updateUser(
+            @PathVariable("id") int id,
+            @ModelAttribute User user,
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+            @RequestParam(value = "coverImageFile", required = false) MultipartFile coverImageFile) throws IOException {
+
+        User existingUser = userService.getUserById(id);
+        if (existingUser == null) {
+            throw new IllegalArgumentException("User không tồn tại với ID: " + id);
+        }
+
+        // Cập nhật thông tin cơ bản
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setFullName(user.getFullName());
+        existingUser.setRole(user.getRole());
+        existingUser.setIsVerified(user.getIsVerified());
+        existingUser.setIsLocked(user.getIsLocked());
+       // Mã hóa mật khẩu nếu thay đổi
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            existingUser.setPassword(encodedPassword);
+        }
+
+        // Xử lý avatar
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            Map<String, Object> res = cloudinary.uploader().upload(avatarFile.getBytes(), ObjectUtils.asMap(
+                    "resource_type", "image"
+            ));
+            String avatarUrl = (String) res.get("secure_url");
+            existingUser.setAvatar(avatarUrl);
+        }
+
+        // Xử lý coverImage
+        if (coverImageFile != null && !coverImageFile.isEmpty()) {
+            Map<String, Object> res = cloudinary.uploader().upload(coverImageFile.getBytes(), ObjectUtils.asMap(
+                    "resource_type", "image"
+            ));
+            String coverImageUrl = (String) res.get("secure_url");
+            existingUser.setCoverImage(coverImageUrl);
+        }
+
+        // Lưu vào database
+        userService.updateUser(existingUser);
+
+        return "redirect:/?categoryId=5";
     }
 
     // Thêm phương thức để xử lý việc xác nhận 0 thành 1
@@ -68,13 +113,13 @@ public class UserController {
         userService.verifyStudent(userId);
         return "redirect:/?categoryId=5"; // Chuyển hướng lại trang html
     }
-    
+
     @PostMapping("/banUser/{userId}")
     public String banUser(@PathVariable("userId") int userId) {
         userService.banUser(userId);
-        return "redirect:/?categoryId=5"; 
+        return "redirect:/?categoryId=5";
     }
-    
+
     @GetMapping("/add")
     public String addUserForm(Model model) {
         model.addAttribute("user", new User());
@@ -84,10 +129,11 @@ public class UserController {
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String addUser(@RequestParam Map<String, String> params,
-            @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+            @RequestParam(value = "avatar", required = true) MultipartFile avatar,
+            @RequestParam(value = "coverImage", required = false) MultipartFile coverImage,
             Model model) {
         try {
-            User user = this.userService.register(params, avatar);
+            User user = this.userService.register(params, avatar, coverImage);
             logger.info("Đăng ký thành công người dùng mới: {}", user.getUsername());
             // Gửi thông báo thành công
             model.addAttribute("successMessage", "Người dùng đã được đăng ký thành công!");

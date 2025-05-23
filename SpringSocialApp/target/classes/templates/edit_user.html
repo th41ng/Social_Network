@@ -1,34 +1,73 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Edit User</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Edit User</h2>
-        <form th:action="@{/editUser/{id}(id=${user.id})}" th:object="${user}" method="post">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" id="username" class="form-control" th:field="*{username}" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control" th:field="*{email}" required>
-            </div>
-            <div class="mb-3">
-                <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" id="fullName" class="form-control" th:field="*{fullName}" required>
-            </div>
-            <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select id="role" class="form-select" th:field="*{role}">
-                   
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a href="/SpringSocialApp/?categoryId=5" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
-</body>
+    <head>
+        <title>Edit User</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h2 class="mb-4">Edit User</h2>
+            <form <form th:action="@{/Users/editUser/{id}(id=${user.id})}" ...
+                        th:object="${user}" method="post" enctype="multipart/form-data">
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" class="form-control" th:field="*{username}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="studentId" class="form-label">Student ID</label>
+                        <input type="text" id="studentId" class="form-control" th:field="*{studentId}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" th:field="*{email}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-control" th:field="*{password}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" id="fullName" class="form-control" th:field="*{fullName}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <select id="role" class="form-select" th:field="*{role}" required>
+                            <option th:each="r : ${T(com.socialapp.configs.UserRole).values()}" 
+                                    th:value="${r}" 
+                                    th:text="${r}" 
+                                    th:selected="${r} == ${user.role}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="avatarFile" class="form-label">Avatar</label>
+                        <input type="file" id="avatarFile" name="avatarFile" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="coverImageFile" class="form-label">Cover Image</label>
+                        <input type="file" id="coverImageFile" name="coverImageFile" class="form-control">
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" id="isVerified" class="form-check-input" th:field="*{isVerified}">
+                        <label for="isVerified" class="form-check-label">Verified</label>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" id="isLocked" class="form-check-input" th:field="*{isLocked}">
+                        <label for="isLocked" class="form-check-label">Locked</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="/SpringSocialApp/?categoryId=5" class="btn btn-secondary">Cancel</a>
+                </form>
+        </div>
+    </body>
 </html>

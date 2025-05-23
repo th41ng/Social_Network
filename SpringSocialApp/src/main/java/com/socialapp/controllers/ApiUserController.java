@@ -1,5 +1,7 @@
 package com.socialapp.controllers;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
@@ -30,15 +32,18 @@ public class ApiUserController {
     private EmailService emailService;
     @Autowired
     private PostApiService postApiService;
+    @Autowired
+    private Cloudinary cloudinary;
 
     private Map<String, String> verificationCodes = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(ApiUserController.class);
 
     @PostMapping(path = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> register(@RequestParam Map<String, String> params,
-            @RequestParam(value = "avatar") MultipartFile avatar) {
+            @RequestParam(value = "avatar") MultipartFile avatar,
+            @RequestParam(value = "coverImage") MultipartFile coverImage) {
         try {
-            User user = this.userDetailService.register(params, avatar);
+            User user = this.userDetailService.register(params, avatar, coverImage);
             logger.info("Đăng ký thành công người dùng mới: {}", user.getUsername());
             return new ResponseEntity<>(user, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -186,4 +191,66 @@ public class ApiUserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while fetching posts");
         }
     }
+
+    @PostMapping(path = "/updateProfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProfile(
+            @RequestParam("fullName") String fullName,
+            @RequestParam("email") String email,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+            @RequestParam(value = "coverImage", required = false) MultipartFile coverImage,
+            Principal principal) {
+        try {
+            if (principal == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập!");
+            }
+
+            User user = userDetailService.getUserByUsername(principal.getName());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng!");
+            }
+
+            // Cập nhật thông tin cơ bản
+            user.setFullName(fullName);
+            user.setEmail(email);
+
+            // Cập nhật avatar nếu có
+            if (avatar != null && !avatar.isEmpty()) {
+                try {
+                    Map<String, Object> avatarResult = cloudinary.uploader().upload(
+                            avatar.getBytes(),
+                            ObjectUtils.asMap("resource_type", "image", "folder", "user_avatars")
+                    );
+                    String avatarUrl = avatarResult.get("secure_url").toString();
+                    user.setAvatar(avatarUrl);
+                } catch (Exception ex) {
+                    logger.error("Lỗi khi tải lên ảnh avatar: {}", ex.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi tải lên ảnh avatar!");
+                }
+            }
+
+            // Cập nhật ảnh bìa nếu có
+            if (coverImage != null && !coverImage.isEmpty()) {
+                try {
+                    Map<String, Object> coverResult = cloudinary.uploader().upload(
+                            coverImage.getBytes(),
+                            ObjectUtils.asMap("resource_type", "image", "folder", "user_cover_images")
+                    );
+                    String coverImageUrl = coverResult.get("secure_url").toString();
+                    user.setCoverImage(coverImageUrl);
+                } catch (Exception ex) {
+                    logger.error("Lỗi khi tải lên ảnh bìa: {}", ex.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi tải lên ảnh bìa!");
+                }
+            }
+
+            // Lưu thay đổi vào database
+            userDetailService.updateUser(user);
+            return ResponseEntity.ok(user);
+
+        } catch (Exception e) {
+            logger.error("Lỗi khi cập nhật hồ sơ: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi cập nhật hồ sơ!");
+        }
+    }
+
 }

@@ -134,6 +134,7 @@ const Register = () => {
 
     const [user, setUser] = useState({});
     const avatar = useRef();
+    const coverImage = useRef();
     const [msg, setMsg] = useState();
     const [loading, setLoading] = useState(false);
     const nav = useNavigate();
@@ -164,7 +165,7 @@ const Register = () => {
                         form.append(key, user[key]);
 
                 form.append("avatar", avatar.current.files[0]);
-
+                form.append("coverImage", coverImage.current.files[0]);
                 setLoading(true);
                 await Apis.post(endpoints['register'], form, {
                     headers: {
@@ -253,6 +254,12 @@ const Register = () => {
                     <Form.Label column sm="2">Ảnh đại diện</Form.Label>
                     <Col sm="10">
                         <Form.Control type="file" ref={avatar} />
+                    </Col>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="coverImage">
+                    <Form.Label column sm="2">Ảnh bìa</Form.Label>
+                    <Col sm="10">
+                        <Form.Control type="file" ref={coverImage} />
                     </Col>
                 </Form.Group>
 

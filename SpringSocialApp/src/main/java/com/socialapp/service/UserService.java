@@ -34,7 +34,7 @@ public interface UserService extends UserDetailsService {
     // Xóa người dùng bằng ID
     boolean deleteUser(int id); // Đã thay đổi ở lần trước, giữ nguyên là boolean
 
-    User register(Map<String, String> params, MultipartFile avatar);
+    User register(Map<String, String> params, MultipartFile avatar, MultipartFile coverImage);
 
     boolean authenticate(String username, String password);
 

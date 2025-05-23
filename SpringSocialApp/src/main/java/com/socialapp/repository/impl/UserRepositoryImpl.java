@@ -205,7 +205,8 @@ public class UserRepositoryImpl implements UserRepository {
         Session s = getCurrentSession();
         User user = this.getUserById(userId);
         if (user != null) {
-            user.setIsLocked(true);
+            // Thay đổi trạng thái isLocked
+            user.setIsLocked(!user.getIsLocked());
             s.merge(user);
         }
     }

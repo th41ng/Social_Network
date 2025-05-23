@@ -5,6 +5,7 @@ import Footer from "./components/layouts/Footer";
 import Home from "./components/Home";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import Chats from "./components/Chats";
 import Notifications from "./components/Notifications";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container } from "react-bootstrap";
@@ -62,6 +63,7 @@ const App = () => {
               <Route path="/surveys/:surveyId/take" element={<TakeSurveyPage />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/chats" element={<Chats/>} />
             </Routes>
           </Container>
           <Footer />

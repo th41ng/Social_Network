@@ -70,7 +70,7 @@
                             <form th:action="@{/Users/banUser/{userId}(userId=${user.id})}" method="post">
                                 <button type="submit" class="btn btn-warning"  
                                         th:if="user.isLocked">
-                                    Vô hiêu hóa
+                                   Đổi trạng thái
                                 </button>
                             </form>
 

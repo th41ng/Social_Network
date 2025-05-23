@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(Map<String, String> params, MultipartFile avatar) {
+    public User register(Map<String, String> params, MultipartFile avatar, MultipartFile coverImage) {
         User user = new User();
         user.setFullName(params.get("fullName"));
         user.setEmail(params.get("email"));
@@ -94,6 +94,14 @@ public class UserServiceImpl implements UserService {
             try {
                 Map res = cloudinary.uploader().upload(avatar.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
                 user.setAvatar(res.get("secure_url").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (coverImage != null && !coverImage.isEmpty()) {
+            try {
+                Map res = cloudinary.uploader().upload(coverImage.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+                user.setCoverImage(res.get("secure_url").toString());
             } catch (IOException ex) {
                 Logger.getLogger(UserServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -116,12 +124,12 @@ public class UserServiceImpl implements UserService {
     public void verifyStudent(int userId) {
         this.userRepository.verifyStudent(userId);
     }
-    
-     @Override
+
+    @Override
     public void banUser(int userId) {
         this.userRepository.banUser(userId);
     }
-    
+
     @Override
     public int countUsersRegisteredToday() {
         return this.userRepository.countUsersRegisteredToday();

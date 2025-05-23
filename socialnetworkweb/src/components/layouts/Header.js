@@ -13,6 +13,7 @@ const Header = () => {
     const PROFILE_CATEGORY_ID = 4; 
     const NOTIFICATIONS_CATEGORY_ID = 2; 
     const SURVEYS_CATEGORY_ID = 3; 
+    const CHATS_CATEGORY_ID = 5; 
 
     const loadCates = async () => {
         try {
@@ -59,7 +60,11 @@ const Header = () => {
                                         path = '/profile'; 
                                     } else if (c.id === SURVEYS_CATEGORY_ID) {
                                         path = '/surveys'; 
-                                    } else {
+                                    } 
+                                    else if (c.id === CHATS_CATEGORY_ID) {
+                                        path = '/chats'; 
+                                    }
+                                    else {
                                         // Xử lý cho các ID ngoài khoảng 1-5
                                         path = `/?cateId=${c.id}`;
                                     }
