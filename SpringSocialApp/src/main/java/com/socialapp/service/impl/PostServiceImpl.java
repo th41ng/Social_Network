@@ -92,4 +92,9 @@ public class PostServiceImpl implements PostService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền xóa bài viết này.");
         }
     }
+    
+    @Override
+    public long countPosts() {
+        return this.postRepository.countPosts();
+    }
 }

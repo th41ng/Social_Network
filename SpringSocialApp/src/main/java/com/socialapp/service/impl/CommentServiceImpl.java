@@ -1,7 +1,6 @@
-
 package com.socialapp.service.impl;
 
-import com.socialapp.dto.CommentDTO; 
+import com.socialapp.dto.CommentDTO;
 import com.socialapp.pojo.Comment;
 import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
@@ -10,7 +9,7 @@ import com.socialapp.repository.PostRepository;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.CommentService;
 import jakarta.persistence.EntityNotFoundException;
-import java.time.ZoneId; 
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -52,12 +51,11 @@ public class CommentServiceImpl implements CommentService {
             dto.setCreatedAt(comment.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
 
-      
         if (comment.getUpdatedAt() != null) {
             // Chuyển đổi Date sang LocalDateTime (nếu Comment entity dùng Date và CommentDTO dùng LocalDateTime)
             dto.setUpdatedAt(comment.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
-      
+
         return dto;
     }
 
@@ -90,21 +88,21 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Deprecated // Nên dùng deleteComment(Integer, User) có kiểm tra quyền
     public void deleteComment(int id) {
-        
+
         this.commentRepository.deleteComment(id);
         logger.warn("Called deprecated deleteComment(id) for comment ID: {}. Consider using deleteComment(id, currentUser).", id);
     }
 
     @Override
     public List<Comment> getCommentsByPostId(int postId) {
-        
+
         return this.commentRepository.getCommentsByPostId(postId);
     }
 
     @Override
     @Transactional
     public Comment createComment(int postId, int userId, String content) {
-        User user = this.userRepository.getUserById(userId); 
+        User user = this.userRepository.getUserById(userId);
         Post post = this.postRepository.getPostById(postId);
 
         if (user == null) {
@@ -124,7 +122,7 @@ public class CommentServiceImpl implements CommentService {
         newComment.setContent(content.trim());
         newComment.setPostId(post);
         newComment.setUserId(user);
-       
+
         return this.addOrUpdateComment(newComment);
     }
 
@@ -171,13 +169,38 @@ public class CommentServiceImpl implements CommentService {
         }
 
         // Kiểm tra quyền sở hữu
-        if (!commentToDelete.getUserId().getId().equals(currentUser.getId())) {
-
-            logger.warn("User {} (ID: {}) attempted to delete comment {} owned by user ID: {}. Permission denied.",
-                    currentUser.getUsername(), currentUser.getId(), commentId, commentToDelete.getUserId().getId());
-            throw new SecurityException("User not authorized to delete this comment.");
-            // }
+        // === PHẦN KIỂM TRA QUYỀN ĐÃ ĐƯỢC SỬA ĐỔI ===
+        User commentAuthor = commentToDelete.getUserId(); // Người đã viết bình luận
+        Post associatedPost = commentToDelete.getPostId(); // Đối tượng Post mà bình luận này thuộc về
+        // (Giả định getPostId() trả về đối tượng Post dựa trên phương thức createComment của bạn)
+        User postOwner = null; // Người sở hữu bài viết
+        if (associatedPost != null) {
+            postOwner = associatedPost.getUserId(); // Người sở hữu bài viết
+            // (Giả định phương thức getUserId() của Post trả về đối tượng User sở hữu)
         }
+
+        boolean canDelete = false; // Biến cờ để xác định quyền xóa
+
+        // Điều kiện 1: Người dùng hiện tại là người viết bình luận
+        if (commentAuthor != null && commentAuthor.getId().equals(currentUser.getId())) {
+            canDelete = true;
+        } // Điều kiện 2: Người dùng hiện tại là chủ của bài viết chứa bình luận này
+        // (chỉ kiểm tra nếu chưa được phép xóa bởi điều kiện 1)
+        else if (postOwner != null && postOwner.getId().equals(currentUser.getId())) {
+            canDelete = true;
+        }
+
+        if (!canDelete) {
+            // Ghi log chi tiết hơn về người dùng và quyền sở hữu
+            String authorIdLog = (commentAuthor != null && commentAuthor.getId() != null) ? commentAuthor.getId().toString() : "null";
+            String ownerIdLog = (postOwner != null && postOwner.getId() != null) ? postOwner.getId().toString() : "null";
+            logger.warn("Người dùng {} (ID: {}) đã cố gắng xóa bình luận ID {} (tác giả ID: {}, chủ bài viết ID: {}). Từ chối quyền.",
+                    currentUser.getUsername(), currentUser.getId(), commentId,
+                    authorIdLog,
+                    ownerIdLog);
+            throw new SecurityException("User not authorized to delete this comment.");
+        }
+        // === KẾT THÚC PHẦN KIỂM TRA QUYỀN ===
 
         commentRepository.deleteComment(commentId); // Gọi phương thức xóa mềm của repository
         // Đảm bảo phương thức này cũng cập nhật `updatedAt`

@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @ControllerAdvice
 public class IndexController {
 
+    private static final int PAGE_SIZE = 10; 
+
     @Autowired
     private CategoryService categoryService;
 
@@ -61,14 +63,24 @@ public class IndexController {
     }
 
     @RequestMapping("/")
-    public String index(@RequestParam(value = "categoryId", required = false) Integer categoryId, Model model) {
+    public String index(@RequestParam(value = "categoryId", required = false) Integer categoryId,
+                        @RequestParam(value = "page", defaultValue = "1") int page, 
+                        Model model) {
         Map<String, String> params = new HashMap<>();
+
+        // Thêm các tham số từ request vào params
+        // Lấy tất cả RequestParam vào Map, bao gồm cả 'page'
         model.asMap().forEach((k, v) -> {
             if (v instanceof String) {
                 params.put(k, (String) v);
             }
         });
+        // Đảm bảo param 'page' luôn có trong map
+        params.put("page", String.valueOf(page));
+
+
         model.addAttribute("params", params); // Dùng chung params để lọc kết quả
+        model.addAttribute("currentPage", page); // Truyền trang hiện tại cho frontend
 
         if (categoryId != null) {
             switch (categoryId) {
@@ -86,6 +98,9 @@ public class IndexController {
 
                 case 2: // Posts
                     var posts = postService.getPosts(params);
+                    long totalPosts = postService.countPosts(); // Lấy tổng số bài viết
+                    int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE); // Tính tổng số trang
+
                     Map<Integer, List<Comment>> commentsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
@@ -107,6 +122,7 @@ public class IndexController {
                     model.addAttribute("commentsMap", commentsMap);
                     model.addAttribute("reactionsMap", postReactionsMap);
                     model.addAttribute("commentReactionsMap", commentReactionsMap);
+                    model.addAttribute("counter", counter); // Truyền tổng số trang cho frontend
 
                     return "post_management";
 
@@ -123,7 +139,10 @@ public class IndexController {
         }
 
         // Mặc định: hiển thị tất cả post
-        var posts = postService.getPosts(Map.of());
+        var posts = postService.getPosts(params); // Truyền params để sử dụng phân trang
+        long totalPosts = postService.countPosts(); // Lấy tổng số bài viết
+        int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE); // Tính tổng số trang
+
         Map<Integer, List<Comment>> commentsMap = new HashMap<>();
         Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
         Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
@@ -145,6 +164,7 @@ public class IndexController {
         model.addAttribute("commentsMap", commentsMap);
         model.addAttribute("reactionsMap", postReactionsMap);
         model.addAttribute("commentReactionsMap", commentReactionsMap);
+        model.addAttribute("counter", counter); 
 
         return "index";
     }
