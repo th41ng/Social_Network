@@ -2,16 +2,16 @@ package com.socialapp.controllers;
 
 import com.socialapp.pojo.Comment;
 import com.socialapp.pojo.Post;
-import com.socialapp.pojo.User; // THÊM IMPORT
+import com.socialapp.pojo.User; 
 import com.socialapp.service.PostService;
 import com.socialapp.service.ReactionService;
-import com.socialapp.service.UserService; // THÊM IMPORT
+import com.socialapp.service.UserService; 
 
-import org.slf4j.Logger; // THÊM IMPORT
-import org.slf4j.LoggerFactory; // THÊM IMPORT
+import org.slf4j.Logger; 
+import org.slf4j.LoggerFactory; 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication; // THÊM IMPORT
-import org.springframework.security.core.userdetails.UserDetails; // THÊM IMPORT
+import org.springframework.security.core.Authentication; 
+import org.springframework.security.core.userdetails.UserDetails; 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException; // THÊM IMPORT
-import org.springframework.web.servlet.mvc.support.RedirectAttributes; // THÊM IMPORT
+import org.springframework.web.server.ResponseStatusException; 
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; 
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.Map;
 @RequestMapping("/posts")
 public class PostController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PostController.class); // THÊM LOGGER
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class); 
 
     @Autowired
     private PostService postService;
@@ -39,7 +39,7 @@ public class PostController {
     private ReactionService reactionService;
 
     @Autowired
-    private UserService userService; // THÊM UserService ĐỂ LẤY THÔNG TIN USER
+    private UserService userService; 
 
     @GetMapping
     public String listPosts(@RequestParam Map<String, String> params, Model model) {
@@ -50,15 +50,15 @@ public class PostController {
         Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
         Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
 
-        if (posts != null) { // Kiểm tra posts không null trước khi lặp
+        if (posts != null) { 
             for (var post : posts) {
-                if (post != null && post.getPostId() != null) { // Kiểm tra post và postId không null
+                if (post != null && post.getPostId() != null) { 
                     var comments = postService.getCommentsByPostId(post.getPostId());
                     commentsMap.put(post.getPostId(), comments);
 
-                    if (comments != null) { // Kiểm tra comments không null
+                    if (comments != null) { 
                         for (var comment : comments) {
-                            if (comment != null && comment.getCommentId() != null) { // Kiểm tra comment và commentId
+                            if (comment != null && comment.getCommentId() != null) { 
                                 commentReactionsMap.put(comment.getCommentId(),
                                         reactionService.countReactionsByCommentId(comment.getCommentId()));
                             }
@@ -79,7 +79,7 @@ public class PostController {
         return "post_management";
     }
 
-    // CẬP NHẬT PHƯƠNG THỨC XÓA BÀI VIẾT
+   
     @PostMapping("/{postId}/delete")
     public String deletePost(@PathVariable("postId") int postId, 
                              Authentication authentication, // Thêm Authentication để lấy người dùng hiện tại
@@ -88,7 +88,7 @@ public class PostController {
         if (authentication == null || !authentication.isAuthenticated()) {
             logger.warn("Người dùng chưa xác thực cố gắng xóa bài viết ID: {}", postId);
             redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng đăng nhập để thực hiện hành động này.");
-            return "redirect:/Users/login"; // Hoặc trang login của bạn
+            return "redirect:/Users/login"; 
         }
 
         String username = authentication.getName();
@@ -116,6 +116,6 @@ public class PostController {
                          currentUser.getUsername(), currentUser.getId(), postId, ex.getMessage(), ex);
             redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi không mong muốn khi cố gắng xóa bài viết.");
         }
-        return "redirect:/posts"; // Chuyển hướng lại trang danh sách bài viết
+        return "redirect:/posts"; 
     }
 }

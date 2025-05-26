@@ -31,5 +31,7 @@ public interface PostService {
     int countPostsCreatedToday();
     
     void deletePost(int postId, User currentUser);
+    
+     long countPosts();
 
 }

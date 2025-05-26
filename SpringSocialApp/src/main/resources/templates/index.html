@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-    
-    <head>
-        <title>Home Page</title>
+
+<head>
+    <title>Home Page</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -10,38 +10,29 @@
     <main class="container mt-4">
         <h1>Bài viết mới nhất</h1>
 
-        <!-- Nếu không có bài viết -->
         <div class="row" th:if="${#lists.isEmpty(posts)}">
             <p>Không có bài viết nào.</p>
         </div>
 
-        <!-- Hiển thị bài viết -->
         <div class="row" th:each="post : ${posts}">
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title" th:text="'Bài viết #' + ${post.postId}"></h5>
 
-                    <!-- Nội dung bài viết -->
                     <p class="card-text" th:text="${post.content}"></p>
 
-                    <!-- Người đăng bài viết -->
                     <p class="card-text">
                         <strong>Người đăng:</strong> <span th:text="${post.userId.fullName}"></span>
                     </p>
 
-                    <!-- Thời gian đăng bài -->
                     <p class="card-text">
                         <small class="text-muted" th:text="${#dates.format(post.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
                     </p>
 
-                    <!-- Hình ảnh bài viết -->
                     <div th:if="${post.image != null}">
                         <img th:src="@{${post.image}}" alt="Post Image" class="img-fluid" style="max-width: 500px; width: 100%; height: auto;" />
                     </div>
 
-
-
-                    <!-- Reactions cho bài viết -->
                     <div th:if="${reactionsMap[post.postId] != null}">
                         <hr />
                         <p>Reactions:</p>
@@ -58,7 +49,6 @@
                         </ul>
                     </div>
 
-                    <!-- Bình luận -->
                     <div th:if="${commentsMap[post.postId] != null and !commentsMap[post.postId].isEmpty()}">
                         <hr>
                         <h6>Bình luận:</h6>
@@ -67,7 +57,6 @@
                                 <strong th:text="${c.userId.fullName} + ':'"></strong>
                                 <span th:text="${c.content}"></span>
 
-                                <!-- Reactions cho bình luận -->
                                 <div th:if="${commentReactionsMap[c.commentId] != null}">
                                     <ul class="list-inline mt-2 mb-0">
                                         <li class="list-inline-item small text-muted" th:each="entry : ${commentReactionsMap[c.commentId].entrySet()}">
@@ -87,6 +76,29 @@
                 </div>
             </div>
         </div>
+
+        ---
+
+        <nav aria-label="Page navigation" th:if="${counter != null and counter > 0}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(page=1)}" tabindex="-1" aria-disabled="true">Đầu</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(page=${currentPage - 1})}">Trước</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, counter)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/(page=${i})}" th:text="${i}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == counter} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(page=${currentPage + 1})}">Tiếp</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == counter} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(page=${counter})}">Cuối</a>
+                </li>
+            </ul>
+        </nav>
+
     </main>
 
     <div th:replace="base :: footer"></div>
