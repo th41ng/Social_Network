@@ -2,26 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Thêm Thông Báo</title>
-    <th:block th:replace="base :: bootstrap"></th:block>
-</head>
-<body>
-    <div th:replace="base :: header"></div>
-    <main class="container mt-4">
-        <h2>Thêm thành viên vào nhóm</h2>
-        <form th:action="@{/Member/add}" method="post" th:object="${newMember}">
-            <input type="hidden" name="groupId" th:value="${groupId}" />
-            <div>
-                <label for="userId">Người dùng</label>
-                <select id="userId" name="userId" th:field="*{userId}">
-                    <option value="">-- Chọn người dùng --</option>
-                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
-                </select>
-            </div>
-            <button type="submit">Thêm</button>
-        </form>
-    </main>
-
-    <div th:replace="base :: footer"></div>
-    <script th:src="@{/js/main.js}"></script>
-</body>
+        <th:block th:replace="base :: bootstrap"></th:block>
+    </head>
+    <body>
+        <div th:replace="base :: header"></div>
+        <main class="container mt-4">
+            <h2>Thêm thành viên vào nhóm</h2>
+            <form th:action="@{/Member/add}" method="post" th:object="${newMember}">
+                <input type="hidden" name="groupId" th:value="${groupId}" />
+                <div>
+                    <label for="userIds">Người dùng</label>
+                    <select id="userIds" name="userIds" class="form-select" multiple>
+                        <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Thêm</button>
+            </form>
+        </main>
+        <div th:replace="base :: footer"></div>
+        <script th:src="@{/js/main.js}"></script>
+    </body>
 </html>

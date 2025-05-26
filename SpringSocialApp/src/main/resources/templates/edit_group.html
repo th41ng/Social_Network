@@ -1,15 +1,39 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chỉnh Sửa Nhóm</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Chỉnh Sửa Nhóm</h2>
+
+        <!-- Hiển thị lỗi nếu có -->
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
+
+        <!-- Form chỉnh sửa nhóm -->
+        <form th:action="@{/Group/edit/{id}(id=${group.groupId})}" method="post" th:object="${group}">
+            <!-- Ẩn adminId -->
+            <input type="hidden" name="adminId" th:value="${adminId}" />
+
+            <!-- Tên Nhóm -->
+            <div class="mb-3">
+                <label for="groupName" class="form-label">Tên Nhóm</label>
+                <input type="text" id="groupName" name="groupName" class="form-control" th:field="*{groupName}" required>
+            </div>
+
+           
+
+            <!-- Nút lưu thay đổi -->
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+        </form>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
 </html>

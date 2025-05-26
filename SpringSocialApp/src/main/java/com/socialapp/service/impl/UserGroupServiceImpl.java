@@ -24,6 +24,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     public UserGroups getGroupById(int groupId) {
         return userGroupsRepository.getGroupById(groupId);
     }
+   
 
     @Override
     public UserGroups addOrUpdateGroup(UserGroups group) {

@@ -49,4 +49,6 @@ public interface UserService extends UserDetailsService {
 
     void updatePassword(String email, String newPassword);
 
+    
+      List<User> getAvailableUsersForGroup(int groupId);
 }

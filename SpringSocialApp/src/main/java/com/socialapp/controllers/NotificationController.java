@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -155,4 +156,89 @@ public class NotificationController {
         }
     }
 
+    @GetMapping("/editNotification/{id}")
+    public String showEditNotificationForm(
+            @PathVariable("id") Integer id,
+            Model model) {
+        // Lấy thông báo cần sửa
+        EventNotification notification = this.eventNotificationService.getNotificationById(id);
+        if (notification == null) {
+            throw new IllegalArgumentException("Không tìm thấy thông báo với ID: " + id);
+        }
+
+        // Lấy danh sách sự kiện, nhóm, và người dùng
+        List<Event> events = eventService.getAvailableEvents(null);
+        List<UserGroups> groups = userGroupService.getAllGroups(null);
+        List<User> recievedUser = userService.getAllUsers(null);
+
+        // Thêm dữ liệu vào model
+        model.addAttribute("notification", notification);
+        model.addAttribute("events", events);
+        model.addAttribute("groups", groups);
+        model.addAttribute("recievedUser", recievedUser);
+        model.addAttribute("adminId", notification.getAdmin().getId()); // Giữ admin hiện tại
+
+        return "edit_notification";
+    }
+
+    @PostMapping("/editNotification/{id}")
+    public String processEditNotification(
+            @PathVariable("id") Integer id,
+            @ModelAttribute("notification") EventNotification notification,
+            @RequestParam("adminId") Integer adminId,
+            @RequestParam("eventId") Integer eventId,
+            @RequestParam(value = "receiverUserId", required = false) Integer receiverUserId,
+            @RequestParam(value = "groupId", required = false) Integer groupId,
+            Model model) {
+        try {
+            EventNotification existingNotification = eventNotificationService.getNotificationById(id);
+            if (existingNotification == null) {
+                throw new IllegalArgumentException("Không tìm thấy thông báo với ID: " + id);
+            }
+
+            // Cập nhật thông tin cơ bản
+            existingNotification.setTitle(notification.getTitle());
+            existingNotification.setContent(notification.getContent());
+
+            // Cập nhật sự kiện
+            Event event = eventService.getEventById(eventId);
+            if (event == null) {
+                throw new IllegalArgumentException("Sự kiện không hợp lệ.");
+            }
+            existingNotification.setEvent(event);
+
+            // Cập nhật người nhận
+            if (receiverUserId != null) {
+                User receiverUser = userService.getUserById(receiverUserId);
+                if (receiverUser == null) {
+                    throw new IllegalArgumentException("Người nhận không hợp lệ.");
+                }
+                existingNotification.setReceiverUser(receiverUser);
+            } else {
+                existingNotification.setReceiverUser(null);
+            }
+
+            // Cập nhật nhóm
+            if (groupId != null) {
+                UserGroups group = userGroupService.getGroupById(groupId);
+                if (group == null) {
+                    throw new IllegalArgumentException("Nhóm không hợp lệ.");
+                }
+                existingNotification.setGroup(group);
+            } else {
+                existingNotification.setGroup(null);
+            }
+
+            // Cập nhật thời gian gửi
+            existingNotification.setSentAt(new Date());
+
+            // Lưu thông báo
+            eventNotificationService.addOrUpdateNotification(existingNotification);
+
+            return "redirect:/?categoryId=3";
+        } catch (Exception e) {
+            model.addAttribute("error", "Có lỗi xảy ra khi cập nhật thông báo: " + e.getMessage());
+            return "edit_notification";
+        }
+    }
 }

@@ -1,15 +1,64 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+        <title>Sửa Sự Kiện</title>
+    <th:block th:replace="base :: bootstrap"></th:block>
+</head>
+<body>
+    <div th:replace="base :: header"></div>
+
+    <main class="container mt-4">
+        <h2>Sửa Sự Kiện</h2>
+
+        <!-- Hiển thị lỗi nếu có -->
+        <div th:if="${error}" class="alert alert-danger">
+            <p th:text="${error}"></p>
+        </div>
+
+        <!-- Form sửa sự kiện -->
+        <form th:action="@{/Event/edit/{id}(id=${event.event_id})}" method="post" th:object="${event}">
+            <!-- Ẩn adminId -->
+            <input type="hidden" name="adminId" th:value="${adminId}" />
+
+            <!-- Tiêu đề sự kiện -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Tiêu Đề Sự Kiện</label>
+                <input type="text" id="title" name="title" class="form-control" th:field="*{title}" required>
+            </div>
+
+            <!-- Mô tả sự kiện -->
+            <div class="mb-3">
+                <label for="description" class="form-label">Mô Tả</label>
+                <textarea id="description" name="description" class="form-control" th:field="*{description}" rows="5"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="start_date" class="form-label">Ngày Bắt Đầu</label>
+                <input type="datetime-local" id="start_date" name="start_date" class="form-control" 
+                       th:field="*{start_date}" 
+                       th:value="*{#dates.format(start_date, 'yyyy-MM-dd''T''HH:mm')}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="end_date" class="form-label">Ngày Kết Thúc</label>
+                <input type="datetime-local" id="end_date" name="end_date" class="form-control" 
+                       th:field="*{end_date}" 
+                       th:value="*{#dates.format(end_date, 'yyyy-MM-dd''T''HH:mm')}" required>
+            </div>
+
+
+            <!-- Địa điểm -->
+            <div class="mb-3">
+                <label for="location" class="form-label">Địa Điểm</label>
+                <input type="text" id="location" name="location" class="form-control" th:field="*{location}" required>
+            </div>
+
+            <!-- Nút cập nhật -->
+            <button type="submit" class="btn btn-primary">Cập Nhật Sự Kiện</button>
+        </form>
+    </main>
+
+    <div th:replace="base :: footer"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
 </html>

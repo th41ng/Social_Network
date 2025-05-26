@@ -27,7 +27,8 @@ import java.util.List;
     @NamedQuery(name = "UserGroups.findById", query = "SELECT g FROM UserGroups g WHERE g.groupId = :groupId"),
     @NamedQuery(name = "UserGroups.findByName", query = "SELECT g FROM UserGroups g WHERE g.groupName LIKE :groupName"),
     @NamedQuery(name = "UserGroups.findByAdminId", query = "SELECT g FROM UserGroups g WHERE g.adminId = :adminId"),
-    @NamedQuery(name = "UserGroups.deleteById", query = "DELETE FROM UserGroups g WHERE g.groupId = :groupId")
+    @NamedQuery(name = "UserGroups.deleteById", query = "DELETE FROM UserGroups g WHERE g.groupId = :groupId"),
+    @NamedQuery(name = "UserGroups.findByIdWithMembers", query = "SELECT g FROM UserGroups g LEFT JOIN FETCH g.members WHERE g.groupId = :groupId")
 })
 public class UserGroups implements Serializable {
 

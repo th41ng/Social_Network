@@ -145,4 +145,8 @@ public class UserServiceImpl implements UserService {
         this.userRepository.updatePassword(email, newPassword);
     }
 
+    @Override
+    public List<User> getAvailableUsersForGroup(int groupId) {
+        return userRepository.findAvailableUsersForGroup(groupId);
+    }
 }

@@ -30,8 +30,7 @@
                         <td th:text="${member.user.email}"></td>
                         <td th:text="${#dates.format(member.joinedAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
-<!--                            Chưa làm -->
-                            <a th:href="@{/Event/edit/{id}(id=${member.groupMemberId})}" class="btn btn-warning btn-sm">Sửa</a>
+
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
                                     th:onclick="'deleteMember(\'' + @{/api/deleteMember/{id}(id=${member.groupMemberId})} + '\')'">
                                 Xoá

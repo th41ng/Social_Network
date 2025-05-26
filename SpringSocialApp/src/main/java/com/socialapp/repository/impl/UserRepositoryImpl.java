@@ -210,4 +210,14 @@ public class UserRepositoryImpl implements UserRepository {
             s.merge(user);
         }
     }
+
+    @Override
+    public List<User> findAvailableUsersForGroup(int groupId) {
+        Session session = getCurrentSession();
+        String hql = "SELECT u FROM User u WHERE u.id NOT IN "
+                + "(SELECT gm.user.id FROM GroupMembers gm WHERE gm.group.groupId = :groupId)";
+        return session.createQuery(hql, User.class)
+                .setParameter("groupId", groupId)
+                .list();
+    }
 }

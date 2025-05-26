@@ -19,6 +19,8 @@ public interface UserGroupService {
 
     // Lấy thông tin nhóm cụ thể theo ID
     UserGroups getGroupById(int groupId);
+    
+
 
     // Thêm mới hoặc cập nhật thông tin nhóm
     UserGroups addOrUpdateGroup(UserGroups group);

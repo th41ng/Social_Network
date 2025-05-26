@@ -56,7 +56,7 @@
                         </td>
                         <td th:text="${#dates.format(notification.sentAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
-                            <a th:href="@{/notification/{id}(id=${notification.notificationId})}" class="btn btn-primary btn-sm">Xem</a>
+                            <a th:href="@{Notification/editNotification/{id}(id=${notification.notificationId})}" class="btn btn-primary btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
                                     th:onclick="'deleteNotification(\'' + @{/api/deleteNotification/{id}(id=${notification.notificationId})} + '\')'">
                                 Xoá

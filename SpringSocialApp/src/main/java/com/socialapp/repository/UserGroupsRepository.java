@@ -15,6 +15,7 @@ import java.util.Map;
 public interface UserGroupsRepository {
     List<UserGroups> getAllGroups(Map<String, String> params);
     UserGroups getGroupById(int groupId);
+   
     UserGroups addOrUpdateGroup(UserGroups group);
     void deleteGroup(int groupId);
 }

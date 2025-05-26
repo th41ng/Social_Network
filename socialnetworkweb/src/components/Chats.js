@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { db } from "../configs/firebase"; 
 import { MyUserContext } from "../configs/Contexts";
 import { ref, onValue, push, serverTimestamp } from "firebase/database";
-import { Form, Button, ListGroup, InputGroup } from "react-bootstrap";
+import { Form, Button, ListGroup, InputGroup, Image } from "react-bootstrap";
 
 const Chats = () => {
   const [messages, setMessages] = useState([]);
@@ -37,6 +37,7 @@ const Chats = () => {
       content: newMessage,
       timestamp: serverTimestamp(),
       sender: user?.username || "Ẩn danh",
+      avatar: user?.avatar || "https://via.placeholder.com/50", // URL ảnh đại diện
     };
 
     try {
@@ -53,12 +54,14 @@ const Chats = () => {
       <ListGroup
         className="mb-3 chat-box"
         style={{
-          maxHeight: "400px",
+          height: "600px",
           overflowY: "auto",
+          overflowX: "hidden",
           backgroundColor: "#f8f9fa",
           padding: "10px",
           borderRadius: "8px",
           border: "1px solid #ced4da",
+          position: "relative",
         }}
       >
         {messages.map((msg) => (
@@ -69,8 +72,16 @@ const Chats = () => {
                 ? "justify-content-end"
                 : "justify-content-start"
             } border-0`}
-            style={{ backgroundColor: "transparent" }}
+            style={{ backgroundColor: "transparent", margin: "10px 20px" }}
           >
+            {msg.sender !== (user?.username || "Ẩn danh") && (
+              <Image
+                src={msg.avatar}
+                roundedCircle
+                style={{ width: "40px", height: "40px", marginRight: "10px" }}
+                alt="Avatar"
+              />
+            )}
             <div
               className={`p-3 rounded shadow-sm ${
                 msg.sender === (user?.username || "Ẩn danh")
@@ -80,6 +91,7 @@ const Chats = () => {
               style={{
                 maxWidth: "70%",
                 wordBreak: "break-word",
+                position: "relative",
               }}
             >
               <div className="mb-1">
@@ -104,11 +116,25 @@ const Chats = () => {
                     })
                   : "Đang gửi..."}
               </div>
+              {msg.sender === (user?.username || "Ẩn danh") && (
+                <Image
+                  src={msg.avatar}
+                  roundedCircle
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    position: "absolute",
+                    right: "-50px",
+                    bottom: "10px",
+                  }}
+                  alt="Avatar"
+                />
+              )}
             </div>
           </ListGroup.Item>
         ))}
       </ListGroup>
-      <Form onSubmit={sendMessage}>
+      <Form onSubmit={sendMessage} style={{ position: "relative" }}>
         <InputGroup>
           <Form.Control
             type="text"

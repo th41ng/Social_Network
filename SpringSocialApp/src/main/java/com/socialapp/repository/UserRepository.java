@@ -47,4 +47,7 @@ public interface UserRepository {
     
     void updatePassword(String email, String newPassword);
 
+    
+    
+     List<User> findAvailableUsersForGroup(int groupId);
 }

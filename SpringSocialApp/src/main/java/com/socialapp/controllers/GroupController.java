@@ -12,6 +12,7 @@ import com.socialapp.service.EventService;
 import com.socialapp.service.GroupMemberService;
 import com.socialapp.service.UserGroupService;
 import com.socialapp.service.UserService;
+import jakarta.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,62 +68,6 @@ public class GroupController {
         return "member_management";
     }
 
-//    @GetMapping("/add")
-//    public String showAddGroupForm(Model model) {
-//        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        String username = auth.getName(); // Lấy username hiện tại
-//        User currentUser = userService.getUserByUsername(username);
-//
-//        if (currentUser == null) {
-//            throw new IllegalArgumentException("Người dùng không hợp lệ.");
-//        }
-//
-//        // Thêm thông tin cần thiết vào model
-//        model.addAttribute("newGroup", new UserGroups()); // Đối tượng mới để binding
-//        model.addAttribute("adminId", currentUser.getId()); // adminId tự động
-//
-//        return "add_group"; // Tên file HTML hiển thị form
-//    }
-//
-//    @PostMapping("/add")
-//    public String addGroup(
-//            @ModelAttribute("newGroup") UserGroups group,
-//            BindingResult result,
-//            @RequestParam("adminId") int adminId,
-//            Model model) {
-//        if (result.hasErrors()) {
-//            model.addAttribute("error", "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
-//            return "add_group";
-//        }
-//
-//        try {
-//            User admin = userService.getUserById(adminId);
-//            if (admin == null) {
-//                throw new IllegalArgumentException("Admin không tồn tại.");
-//            }
-//
-//            // Gán thông tin cho nhóm
-//            group.setAdmin(admin);
-//            group.setAdminId(admin.getId());
-//            group.setCreatedAt(new Date());
-//
-//            // Lưu nhóm vào cơ sở dữ liệu
-//            groupService.addOrUpdateGroup(group);
-//
-//            // Reset form
-//            model.addAttribute("newGroup", new UserGroups());
-//            model.addAttribute("adminId", adminId);
-//
-//            return "redirect:/Group/listGroup";
-//        } catch (Exception e) {
-//            // Thêm lỗi vào model để hiển thị trên giao diện
-//            model.addAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
-//            return "add_group";
-//        }
-//        
-//        
-//    }
     @GetMapping("/add")
     public String showAddGroupForm(@RequestParam Map<String, String> params, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -186,4 +132,79 @@ public class GroupController {
             return "add_group";
         }
     }
+
+    // Hiển thị form sửa nhóm
+    @GetMapping("/edit/{id}")
+    public String showEditGroupForm(Model model, @PathVariable("id") int groupId) {
+        // Lấy nhóm cần sửa
+        UserGroups group = this.groupService.getGroupById(groupId);
+        if (group == null) {
+            throw new IllegalArgumentException("Không tìm thấy nhóm với ID: " + groupId);
+        }
+       
+        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User currentUser = userService.getUserByUsername(username);
+
+        if (currentUser == null) {
+            throw new IllegalArgumentException("Người dùng không hợp lệ.");
+        }
+
+        // Thêm thông tin cần thiết vào model
+        model.addAttribute("group", group);
+    
+        model.addAttribute("adminId", currentUser.getId());
+
+        return "edit_group"; // Tên file HTML hiển thị form
+    }
+
+    @PostMapping("/edit/{id}")
+    public String editGroup(
+            @ModelAttribute("group") @Valid UserGroups group,
+            BindingResult result,
+            @RequestParam("adminId") int adminId,
+            @PathVariable("id") int groupId,
+            Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("error", "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
+            model.addAttribute("adminId", adminId);
+
+            // Lấy lại nhóm gốc để hiển thị giá trị cũ trong form
+            UserGroups existingGroup = groupService.getGroupById(groupId);
+            if (existingGroup != null) {
+                model.addAttribute("group", existingGroup);
+            }
+            return "edit_group";
+        }
+
+        try {
+            // Lấy nhóm gốc từ cơ sở dữ liệu
+            UserGroups existingGroup = groupService.getGroupById(groupId);
+            if (existingGroup == null) {
+                throw new IllegalArgumentException("Không tìm thấy nhóm với ID: " + groupId);
+            }
+
+            // Lấy admin từ adminId
+            User admin = userService.getUserById(adminId);
+            if (admin == null) {
+                throw new IllegalArgumentException("Admin không tồn tại.");
+            }
+
+            // Gán giá trị mới vào nhóm gốc
+            existingGroup.setGroupName(group.getGroupName());
+            existingGroup.setAdmin(admin);
+
+            // Cập nhật nhóm
+            groupService.addOrUpdateGroup(existingGroup);
+
+            return "redirect:/Group/listGroup";
+        } catch (Exception e) {
+            model.addAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+            model.addAttribute("adminId", adminId);
+            model.addAttribute("group", group);
+            return "edit_group";
+        }
+    }
+
 }
