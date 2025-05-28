@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -148,5 +150,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAvailableUsersForGroup(int groupId) {
         return userRepository.findAvailableUsersForGroup(groupId);
+    }
+
+    @Override
+    public Page<User> getAllUsersWithPagination(Map<String, String> params, Pageable pageable) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public long countUsers() {
+        return this.userRepository.countUsers();
     }
 }

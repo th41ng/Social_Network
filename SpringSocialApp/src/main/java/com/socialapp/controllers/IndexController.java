@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @ControllerAdvice
 public class IndexController {
 
-    private static final int PAGE_SIZE = 10; 
+    private static final int PAGE_SIZE = 10;
 
     @Autowired
     private CategoryService categoryService;
@@ -64,8 +64,8 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(@RequestParam(value = "categoryId", required = false) Integer categoryId,
-                        @RequestParam(value = "page", defaultValue = "1") int page, 
-                        Model model) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            Model model) {
         Map<String, String> params = new HashMap<>();
 
         // Thêm các tham số từ request vào params
@@ -77,15 +77,23 @@ public class IndexController {
         });
         // Đảm bảo param 'page' luôn có trong map
         params.put("page", String.valueOf(page));
-
-
+        params.put("categoryId", String.valueOf(categoryId));
         model.addAttribute("params", params); // Dùng chung params để lọc kết quả
         model.addAttribute("currentPage", page); // Truyền trang hiện tại cho frontend
 
         if (categoryId != null) {
             switch (categoryId) {
                 case 5: //User
-                    model.addAttribute("users", userService.getAllUsers(params));
+                    var users = userService.getAllUsers(params);
+                    long totalUser = userService.countUsers(); // Lấy tổng số bài viết
+                    int totalPage = (int) Math.ceil((double) totalUser / PAGE_SIZE); // Tính tổng số trang
+
+                    model.addAttribute("users", users);
+                    model.addAttribute("totalUsers", totalUser); // Tổng số người dùng
+                    model.addAttribute("currentPage", page); // Trang hiện tại
+                    model.addAttribute("totalPage", totalPage); // Tổng số trang
+                    model.addAttribute("params", params); // Truyền params để dùng trong frontend
+                    model.addAttribute("categoryId", categoryId);
                     return "user_management";
                 case 3: // Thông báo
                     model.addAttribute("notification", EventNotificationService.getNotifications(params));
@@ -164,7 +172,7 @@ public class IndexController {
         model.addAttribute("commentsMap", commentsMap);
         model.addAttribute("reactionsMap", postReactionsMap);
         model.addAttribute("commentReactionsMap", commentReactionsMap);
-        model.addAttribute("counter", counter); 
+        model.addAttribute("counter", counter);
 
         return "index";
     }

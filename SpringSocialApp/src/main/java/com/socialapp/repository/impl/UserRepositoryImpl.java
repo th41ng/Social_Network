@@ -26,7 +26,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-
+    private static final int PAGE_SIZE = 10;
     @Autowired
     private EmailService emailService;
 
@@ -90,6 +90,7 @@ public class UserRepositoryImpl implements UserRepository {
         if (u != null && UserRole.ROLE_LECTURER.equals(u.getRole())) {
             s.merge(u);
             String defaultPassword = "ou@123"; // Nên thay bằng biến cấu hình
+            u.setStudentId(null);
             // Gửi email thông báo
             emailService.sendEmailtoLecturer(
                     u.getEmail(),
@@ -152,7 +153,12 @@ public class UserRepositoryImpl implements UserRepository {
                 query.setParameter("email", "%" + params.get("email") + "%");
             }
         }
-
+// Phân trang
+        if (params != null && params.containsKey("page")) {
+            int page = Integer.parseInt(params.get("page"));
+            query.setFirstResult((page - 1) * PAGE_SIZE);
+            query.setMaxResults(PAGE_SIZE);
+        }
         return query.getResultList();
     }
 
@@ -220,4 +226,5 @@ public class UserRepositoryImpl implements UserRepository {
                 .setParameter("groupId", groupId)
                 .list();
     }
+
 }

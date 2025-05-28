@@ -34,6 +34,7 @@ public class UserController {
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    private static final int PAGE_SIZE = 10;
 
     // Hiển thị trang đăng nhập
     @GetMapping("/login")
@@ -77,7 +78,7 @@ public class UserController {
         existingUser.setRole(user.getRole());
         existingUser.setIsVerified(user.getIsVerified());
         existingUser.setIsLocked(user.getIsLocked());
-       // Mã hóa mật khẩu nếu thay đổi
+        // Mã hóa mật khẩu nếu thay đổi
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             existingUser.setPassword(encodedPassword);

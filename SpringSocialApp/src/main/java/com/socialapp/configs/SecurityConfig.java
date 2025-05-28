@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -49,21 +50,32 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws
-            Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable()).authorizeHttpRequests(requests -> requests
-                .requestMatchers("/api/login", "/api/user").permitAll() 
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Cấu hình CORS
+                .csrf(csrf -> csrf.disable()) // Tắt CSRF
+                .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/login", "/api/user").permitAll() // Không cần xác thực
                 .requestMatchers("/api/**").permitAll()
-                .anyRequest().hasRole("ADMIN")
-        )
-                 .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
-                .formLogin(form -> form.loginPage("/Users/login")
+                .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") // Chỉ ADMIN và LECTURER được vào
+                .requestMatchers("/surveys/**", "/Notification/**").hasRole("LECTURER") // LECTURER truy cập vào survey và notification
+                .requestMatchers("/**").hasRole("ADMIN") // ADMIN có toàn quyền trên mọi endpoint khác
+                .anyRequest().authenticated() // Các yêu cầu khác cần xác thực
+                )
+                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class) // Thêm JWT Filter
+                .formLogin(form -> form
+                .loginPage("/Users/login") // Trang đăng nhập
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/Users/login?error=true").permitAll())
-                .logout(logout -> logout.logoutSuccessUrl("/Users/login").permitAll());//.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                .failureUrl("/Users/login?error=true")
+                .permitAll()
+                )
+                .logout(logout -> logout
+                .logoutSuccessUrl("/Users/login") // Trang đăng xuất
+                .permitAll()
+                );
+
         return http.build();
     }
 

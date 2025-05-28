@@ -70,7 +70,7 @@
                             <form th:action="@{/Users/banUser/{userId}(userId=${user.id})}" method="post">
                                 <button type="submit" class="btn btn-warning"  
                                         th:if="user.isLocked">
-                                   Đổi trạng thái
+                                    Đổi trạng thái
                                 </button>
                             </form>
 
@@ -83,6 +83,33 @@
                 </tbody>
             </table>
         </div>
+
+
+        <div th:text="'totalPage ' + ${totalPage}"></div>
+        <div th:text="'currentPage ' + ${currentPage}"></div>
+        <div th:text="'params ' + ${params}"></div>
+        <nav aria-label="Page navigation" th:if="${totalPage != null and totalPage > 0}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(categoryId=${categoryId}, page=1)}" tabindex="-1" aria-disabled="true">Đầu</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(categoryId=${categoryId}, page=${currentPage - 1})}">Trước</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPage)}" th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/(categoryId=${categoryId}, page=${i})}" th:text="${i}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPage} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(categoryId=${categoryId}, page=${currentPage + 1})}">Tiếp</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPage} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(categoryId=${categoryId}, page=${totalPage})}">Cuối</a>
+                </li>
+            </ul>
+        </nav>
+
+
+
     </main>
 
     <div th:replace="base :: footer"></div>

@@ -28,8 +28,8 @@ public class User implements Serializable {
     @Column(name = "username")
     private String username;
 
-    @Basic(optional = false)
-    @Column(name = "student_id")
+    @Basic(optional = true)
+    @Column(name = "student_id", nullable = true)
     private String studentId;
 
     @Basic(optional = false)
@@ -112,7 +112,6 @@ public class User implements Serializable {
     }
 
     // Getter và Setter
-
     public Integer getId() {
         return id;
     }

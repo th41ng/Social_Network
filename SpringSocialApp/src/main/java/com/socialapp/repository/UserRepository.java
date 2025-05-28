@@ -50,4 +50,11 @@ public interface UserRepository {
     
     
      List<User> findAvailableUsersForGroup(int groupId);
+     
+     
+     
 }
+
+
+
+

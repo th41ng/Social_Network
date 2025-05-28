@@ -10,12 +10,16 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
  * @author DELL G15
  */
 public interface UserService extends UserDetailsService {
+
+    Page<User> getAllUsersWithPagination(Map<String, String> params, Pageable pageable);
 
     List<User> getAllUsers(Map<String, String> params);
 
@@ -43,12 +47,13 @@ public interface UserService extends UserDetailsService {
 //    boolean verifyStudent(int userId);
     int countUsersRegisteredToday();
 
+    long countUsers();
+
     User addUser(User user);
 
     void banUser(int userId);
 
     void updatePassword(String email, String newPassword);
 
-    
-      List<User> getAvailableUsersForGroup(int groupId);
+    List<User> getAvailableUsersForGroup(int groupId);
 }
