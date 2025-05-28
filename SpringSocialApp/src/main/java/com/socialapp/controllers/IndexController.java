@@ -1,5 +1,6 @@
 package com.socialapp.controllers;
 
+import static com.mysql.cj.conf.PropertyKey.logger;
 import com.socialapp.pojo.Comment;
 import com.socialapp.pojo.PeriodicSummaryStats;
 import com.socialapp.pojo.Survey;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @ControllerAdvice
 public class IndexController {
 
-    private static final int PAGE_SIZE = 10; 
+    private static final int PAGE_SIZE = 10;
 
     @Autowired
     private CategoryService categoryService;
@@ -64,12 +65,11 @@ public class IndexController {
 
     @RequestMapping("/")
     public String index(@RequestParam(value = "categoryId", required = false) Integer categoryId,
-                        @RequestParam(value = "page", defaultValue = "1") int page, 
-                        Model model) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            Model model) {
         Map<String, String> params = new HashMap<>();
 
         // Thêm các tham số từ request vào params
-        // Lấy tất cả RequestParam vào Map, bao gồm cả 'page'
         model.asMap().forEach((k, v) -> {
             if (v instanceof String) {
                 params.put(k, (String) v);
@@ -77,7 +77,6 @@ public class IndexController {
         });
         // Đảm bảo param 'page' luôn có trong map
         params.put("page", String.valueOf(page));
-
 
         model.addAttribute("params", params); // Dùng chung params để lọc kết quả
         model.addAttribute("currentPage", page); // Truyền trang hiện tại cho frontend
@@ -92,13 +91,31 @@ public class IndexController {
                     return "notification_management";
 
                 case 4: // Surveys
-                    List<Survey> surveys = surveyService.getSurveys(params);
+                    // Lấy page từ params, đảm bảo params có "page"
+                    String pageParamSurvey = params.get("page"); // params này là params của IndexController
+                    int surveyPage = (pageParamSurvey == null || pageParamSurvey.trim().isEmpty()) ? 1 : Integer.parseInt(pageParamSurvey);
+                    if (surveyPage < 1) {
+                        surveyPage = 1;
+                    }
+                    // Tạo một Map params riêng cho surveyService nếu cần, hoặc dùng chung nếu cấu trúc params phù hợp
+                    Map<String, String> surveyParams = new HashMap<>(params); // Sao chép params hiện tại
+                    surveyParams.put("page", String.valueOf(surveyPage));
+
+                    List<Survey> surveys = surveyService.getSurveys(surveyParams);
+                    long totalSurveys = surveyService.countSurveys(surveyParams); // Đếm tổng số survey
+
+                    int pageSizeSurveys = com.socialapp.repository.impl.SurveyRepositoryImpl.PAGE_SIZE; // Lấy PAGE_SIZE từ SurveyRepositoryImpl
+                    int totalSurveyPages = (int) Math.ceil((double) totalSurveys / pageSizeSurveys);
+
                     model.addAttribute("surveys", surveys);
-                    return "survey_management";  // Hiển thị trang quản lý khảo sát
+                    model.addAttribute("params", surveyParams); // Truyền params đã cập nhật (có page)
+                    model.addAttribute("currentPage", surveyPage);
+                    model.addAttribute("totalPages", totalSurveyPages);
+                    return "survey_management";
 
                 case 2: // Posts
                     var posts = postService.getPosts(params);
-                    long totalPosts = postService.countPosts(); // Lấy tổng số bài viết
+                    long totalPosts = postService.countPosts(params); // Đảm bảo countPosts nhận params
                     int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE); // Tính tổng số trang
 
                     Map<Integer, List<Comment>> commentsMap = new HashMap<>();
@@ -140,7 +157,7 @@ public class IndexController {
 
         // Mặc định: hiển thị tất cả post
         var posts = postService.getPosts(params); // Truyền params để sử dụng phân trang
-        long totalPosts = postService.countPosts(); // Lấy tổng số bài viết
+        long totalPosts = postService.countPosts(params); // Đảm bảo countPosts nhận params
         int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE); // Tính tổng số trang
 
         Map<Integer, List<Comment>> commentsMap = new HashMap<>();
@@ -164,7 +181,7 @@ public class IndexController {
         model.addAttribute("commentsMap", commentsMap);
         model.addAttribute("reactionsMap", postReactionsMap);
         model.addAttribute("commentReactionsMap", commentReactionsMap);
-        model.addAttribute("counter", counter); 
+        model.addAttribute("counter", counter);
 
         return "index";
     }

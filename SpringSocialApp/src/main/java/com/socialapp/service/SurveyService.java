@@ -23,5 +23,7 @@ public interface SurveyService {
     void deleteSurvey(int id);
     
     void toggleSurveyActiveState(int surveyId);
+    
+    long countSurveys(Map<String, String> params); // Thêm phương thức này
 
 }

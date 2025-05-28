@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.socialapp.service;
 
 import com.socialapp.pojo.Comment;
@@ -22,8 +18,6 @@ public interface PostService {
 
     Post addOrUpdatePost(Post post);
 
-//    void deletePost(int id);
-
     List<Post> getPostsByUserId(int userId);
 
     List<Comment> getCommentsByPostId(int postId);
@@ -32,6 +26,5 @@ public interface PostService {
     
     void deletePost(int postId, User currentUser);
     
-     long countPosts();
-
+    long countPosts(Map<String, String> params); // Thêm params vào countPosts để hỗ trợ phân trang và lọc
 }

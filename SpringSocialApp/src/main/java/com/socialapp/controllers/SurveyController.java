@@ -2,6 +2,8 @@ package com.socialapp.controllers;
 
 import com.socialapp.pojo.Survey;
 import com.socialapp.pojo.User;
+// Quan trọng: Import PAGE_SIZE từ SurveyRepositoryImpl
+import com.socialapp.repository.impl.SurveyRepositoryImpl; // ĐẢM BẢO BẠN CÓ IMPORT NÀY
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.SurveyService;
 import com.socialapp.service.UserService;
@@ -40,12 +42,31 @@ public class SurveyController {
         model.addAttribute("categories", this.categoryService.getCategories());
     }
 
-    // Hiển thị danh sách khảo sát
+    // Hiển thị danh sách khảo sát (ĐÃ CẬP NHẬT LOGIC PHÂN TRANG)
     @GetMapping
     public String listSurveys(@RequestParam Map<String, String> params, Model model) {
+        String pageParam = params.get("page");
+        int page = (pageParam == null || pageParam.trim().isEmpty()) ? 1 : Integer.parseInt(pageParam);
+        if (page < 1) {
+            page = 1;
+        }
+        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+        params.put("page", String.valueOf(page));
+
         List<Survey> surveys = this.surveyService.getSurveys(params);
+        long totalSurveys = this.surveyService.countSurveys(params); // Lấy tổng số survey
+
+        // Sử dụng PAGE_SIZE đã import hoặc định nghĩa ở trên
+        int pageSize = SurveyRepositoryImpl.PAGE_SIZE; // PAGE_SIZE = 6 từ SurveyRepositoryImpl
+        int totalPages = (int) Math.ceil((double) totalSurveys / pageSize);
+
         model.addAttribute("surveys", surveys);
-        model.addAttribute("params", params); // Để giữ lại giá trị lọc trên form
+        model.addAttribute("params", params);
+        model.addAttribute("currentPage", page); // <--- TRUYỀN currentPage
+        model.addAttribute("totalPages", totalPages); // <--- TRUYỀN totalPages
+        // model.addAttribute("pageSize", pageSize); // Có thể truyền nếu cần
+
+        logger.info("SurveyController: Displaying surveys for page: {}, total surveys: {}, total pages: {}", page, totalSurveys, totalPages);
         return "survey_management";
     }
 
@@ -58,11 +79,6 @@ public class SurveyController {
         return "survey";
     }
 
-    // Xóa @PostMapping("/add") này đi vì /save sẽ xử lý cả thêm mới và cập nhật
-    // @PostMapping("/add")
-    // public String addOrUpdateSurvey(@ModelAttribute Survey survey) {
-    //     // Logic này sẽ được gộp vào /save
-    // }
     // Hiển thị form sửa khảo sát
     @GetMapping("/{surveyId}")
     public String editSurveyForm(@PathVariable("surveyId") int id, Model model, RedirectAttributes redirectAttributes) {
@@ -75,45 +91,7 @@ public class SurveyController {
         model.addAttribute("survey", survey);
         return "survey";
     }
-
-    // Xử lý lưu (thêm mới hoặc cập nhật) khảo sát
-//    @PostMapping("/save")
-//    public String saveSurvey(@ModelAttribute Survey survey, RedirectAttributes redirectAttributes) {
-//        // Tạm thời gán admin mặc định
-//        User defaultAdmin = this.userService.getUserById(4); // Cân nhắc lấy User từ Principal khi có Spring Security
-//        survey.setAdminId(defaultAdmin);
-//
-//        try {
-//            if (survey.getSurveyId() == null) { // Thêm mới khảo sát
-//                survey.setCreatedAt(new Date()); // Đặt ngày tạo
-//                if (survey.getIsActive() == null) { // Nếu form không gửi (ví dụ: checkbox không được tick)
-//                    survey.setIsActive(true); // Mặc định là active khi tạo mới
-//                }
-//                this.surveyService.addOrUpdateSurvey(survey);
-//                redirectAttributes.addFlashAttribute("successMessage", "Thêm khảo sát mới thành công!");
-//                logger.info("New survey added with ID: {}", survey.getSurveyId());
-//            } else { // Cập nhật khảo sát hiện có
-//                Survey existingSurvey = surveyService.getSurveyById(survey.getSurveyId());
-//                if (existingSurvey == null) {
-//                    redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy khảo sát để cập nhật.");
-//                    return "redirect:/surveys";
-//                }
-//                // Giữ lại ngày tạo gốc, không cập nhật lại ngày tạo khi sửa
-//                survey.setCreatedAt(existingSurvey.getCreatedAt());
-//
-//                if (survey.getIsActive() == null) { // Nếu checkbox isActive không được tick khi submit form sửa
-//                    survey.setIsActive(false);
-//                }
-//                this.surveyService.addOrUpdateSurvey(survey);
-//                redirectAttributes.addFlashAttribute("successMessage", "Cập nhật khảo sát thành công!");
-//                logger.info("Survey updated with ID: {}", survey.getSurveyId());
-//            }
-//        } catch (Exception e) {
-//            logger.error("Error saving survey (ID: {}): {}", survey.getSurveyId(), e.getMessage(), e);
-//            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi lưu khảo sát.");
-//        }
-//        return "redirect:/surveys";
-//    }
+    
     @PostMapping("/save")
     public String saveSurvey(@ModelAttribute Survey survey, RedirectAttributes redirectAttributes, Authentication authentication) {
         try {
