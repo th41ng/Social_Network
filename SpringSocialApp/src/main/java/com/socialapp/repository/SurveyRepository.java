@@ -15,6 +15,8 @@ import java.util.Map;
 public interface SurveyRepository {
 
     List<Survey> getSurveys(Map<String, String> params);
+    
+    long countSurveys(Map<String, String> params); // Thêm phương thức này
 
     Survey getSurveyById(int id);
 

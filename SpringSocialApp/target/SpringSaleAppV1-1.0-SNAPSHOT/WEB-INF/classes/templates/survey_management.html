@@ -3,12 +3,35 @@
     <head>
         <title>Quản lý khảo sát</title>
     <th:block th:replace="~{base :: bootstrap}"></th:block>
+<!--    <style>
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+        }
+        .pagination .page-link {
+            color: #007bff;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+    </style>-->
 </head>
 <body>
     <div th:replace="~{base :: header}"></div>
 
     <main class="container mt-4">
         <h2>Quản lý khảo sát</h2>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
 
         <a th:href="@{/surveys/add}" class="btn btn-info mb-3">Thêm khảo sát</a>
 
@@ -23,6 +46,8 @@
             <div class="col-md-3">
                 <input type="date" class="form-control" name="toDate" th:value="${params != null ? params['toDate'] : ''}">
             </div>
+            <input type="hidden" name="orderBy" th:value="${params !=null ? params['orderBy'] : ''}" />
+
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
             </div>
@@ -36,7 +61,8 @@
                         <th>Tiêu đề</th>
                         <th>Mô tả</th>
                         <th>Ngày tạo</th>
-                        <th>Trạng thái</th> <th>Hành động</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +71,8 @@
                         <td th:text="${s.title}"></td>
                         <td th:text="${s.description}"></td>
                         <td th:text="${s.createdAt != null ? #dates.format(s.createdAt, 'dd/MM/yyyy HH:mm') : ''}"></td>
-                        <td> <span th:if="${s.getIsActive()}" class="badge bg-success">Hoạt động</span>
+                        <td>
+                            <span th:if="${s.getIsActive()}" class="badge bg-success">Hoạt động</span>
                             <span th:unless="${s.getIsActive()}" class="badge bg-danger">Không hoạt động</span>
                         </td>
                         <td>
@@ -59,7 +86,6 @@
                                     <span th:text="${s.getIsActive() ? 'Tắt' : 'Bật'}"></span>
                                 </button>
                             </form>
-
                             <button type="button" class="btn btn-danger btn-sm mb-1" title="Xoá"
                                     th:onclick="'deleteSurvey(\'' + @{/api/surveys/{id}(id=${s.surveyId})} + '\')'">
                                 Xoá
@@ -67,12 +93,36 @@
                         </td>
                     </tr>
                     <tr th:if="${surveys == null or #lists.isEmpty(surveys)}">
-                        <td colspan="6" class="text-center">Không có khảo sát nào.</td> </tr>
+                        <td colspan="6" class="text-center">Không có khảo sát nào.</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+
+        <nav aria-label="Page navigation" th:if="${totalPages > 0}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link" 
+                       th:href="@{/surveys(page=${currentPage - 1}, kw=${params['kw']}, fromDate=${params['fromDate']}, toDate=${params['toDate']}, orderBy=${params['orderBy']})}">Trước</a>
+                </li>
+
+                <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    th:classappend="${i == currentPage ? 'active' : ''}">
+                    <a class="page-link" 
+                       th:href="@{/surveys(page=${i}, kw=${params['kw']}, fromDate=${params['fromDate']}, toDate=${params['toDate']}, orderBy=${params['orderBy']})}"
+                       th:text="${i}"></a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                    <a class="page-link" 
+                       th:href="@{/surveys(page=${currentPage + 1}, kw=${params['kw']}, fromDate=${params['fromDate']}, toDate=${params['toDate']}, orderBy=${params['orderBy']})}">Sau</a>
+                </li>
+            </ul>
+        </nav>
     </main>
 
     <div th:replace="~{base :: footer}"></div>
-    <script th:src="@{/js/main.js}"></script> </body>
+    <script th:src="@{/js/main.js}"></script>
+
+</body>
 </html>

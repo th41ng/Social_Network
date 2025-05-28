@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -55,6 +56,12 @@ public class Comment implements Serializable {
     @ManyToOne(optional = false)
     @JsonIgnore
     private Post postId;
+    
+    
+    @OneToMany(mappedBy = "commentId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Reaction> reactionSet;
+   
 
     public Comment() {
     }
@@ -89,6 +96,16 @@ public class Comment implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+    
+    
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
+    }
+
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
+    }
+   
 
     public Date getCreatedAt() {
         return createdAt;

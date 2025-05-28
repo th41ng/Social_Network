@@ -1,35 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.service.impl;
 
 import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.Comment;
 import com.socialapp.pojo.Post;
-import com.socialapp.pojo.User; // Thêm import User Pojo của bạn
+import com.socialapp.pojo.User;
 import com.socialapp.repository.PostRepository;
 import com.socialapp.service.PostService;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger; // Thêm import
-import org.slf4j.LoggerFactory; // Thêm import
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus; // Thêm import
-// Không cần import GrantedAuthority nếu kiểm tra trực tiếp qua trường 'role'
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException; // Thêm import
+import org.springframework.web.server.ResponseStatusException;
 
-/**
- *
- * @author DELL G15
- */
 @Service
 public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostRepository postRepository;
-    private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class); // Thêm logger
+    private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
 
     @Override
     public List<Post> getPosts(Map<String, String> params) {
@@ -43,8 +34,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post addOrUpdatePost(Post post) {
-        // Nếu phương thức này cần logic liên quan đến người dùng hiện tại (ví dụ: gán userId khi tạo mới),
-        // bạn có thể cần truyền đối tượng User vào đây.
         return this.postRepository.addOrUpdatePost(post);
     }
 
@@ -93,8 +82,9 @@ public class PostServiceImpl implements PostService {
         }
     }
     
+    // === CẬP NHẬT COUNTPOSTS ĐỂ HỖ TRỢ PHÂN TRANG ===
     @Override
-    public long countPosts() {
-        return this.postRepository.countPosts();
+    public long countPosts(Map<String, String> params) {
+        return this.postRepository.countPosts(params);
     }
 }

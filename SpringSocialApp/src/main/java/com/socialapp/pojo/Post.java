@@ -67,11 +67,18 @@ public class Post implements Serializable {
     // Thêm MultipartFile để nhận file ảnh
     @Transient
     private MultipartFile imageFile;
+    
+    
+    
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Reaction> reactionSet;
+    
 
     
-    // === THÊM TRƯỜNG NÀY VÀ GETTER/SETTER CỦA NÓ ===
+   
     @Transient
-    private boolean removeCurrentImage; // Mặc định sẽ là false
+    private boolean removeCurrentImage; 
 
     public boolean isRemoveCurrentImage() {
         return removeCurrentImage;
@@ -80,7 +87,7 @@ public class Post implements Serializable {
     public void setRemoveCurrentImage(boolean removeCurrentImage) {
         this.removeCurrentImage = removeCurrentImage;
     }
-    // === KẾT THÚC PHẦN THÊM MỚI ===
+    
 
     public Post() {
     }
@@ -107,6 +114,16 @@ public class Post implements Serializable {
     public void setPostId(Integer postId) {
         this.postId = postId;
     }
+    
+    
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
+    }
+
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
+    }
+    
 
     public String getContent() {
         return content;

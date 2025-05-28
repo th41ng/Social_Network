@@ -68,15 +68,21 @@ public class User implements Serializable {
     @Column(name = "is_locked")
     private Boolean isLocked = false;
 
-    // Quan hệ với Comment
+   
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Comment> commentSet;
 
-    // Quan hệ với Post
+  
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Post> postSet;
+    
+   
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Reaction> reactionSet;
+    
 
     // Quan hệ với UserGroups (admin)
     @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -223,6 +229,16 @@ public class User implements Serializable {
     public void setPostSet(Set<Post> postSet) {
         this.postSet = postSet;
     }
+    
+    
+    public Set<Reaction> getReactionSet() {
+        return reactionSet;
+    }
+
+    public void setReactionSet(Set<Reaction> reactionSet) {
+        this.reactionSet = reactionSet;
+    }
+   
 
     public List<UserGroups> getManagedGroups() {
         return managedGroups;
@@ -240,6 +256,8 @@ public class User implements Serializable {
         this.groupMemberships = groupMemberships;
     }
 
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;

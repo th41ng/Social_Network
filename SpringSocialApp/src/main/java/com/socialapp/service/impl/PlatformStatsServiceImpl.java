@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
         DailyPlatformSummary summary = statsRepo.getSummaryByDate(startOfDay);
 
         long userCount = userRepo.countUsers();
-        long postCount = postRepo.countPosts();
+        long postCount = postRepo.countPosts(Map.of());  // Truyền một Map rỗng vào countPosts()
         int newUsersToday = userRepo.countUsersRegisteredToday();
         int newPostsToday = postRepo.countPostsCreatedToday();
 
