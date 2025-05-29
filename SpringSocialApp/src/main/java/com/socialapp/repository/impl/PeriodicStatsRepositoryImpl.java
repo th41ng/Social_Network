@@ -8,7 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +27,8 @@ public class PeriodicStatsRepositoryImpl implements PeriodicStatsRepository {
     @Override
     public List<PeriodicSummaryStats> getAllPeriodicStats() {
         Session session = getCurrentSession();
-        String hql = "FROM PeriodicSummaryStats ORDER BY summaryYear DESC, summaryMonth DESC";
+        // CẬP NHẬT DÒNG HQL Ở ĐÂY
+        String hql = "FROM PeriodicSummaryStats ORDER BY summaryYear DESC, summaryMonth DESC, calculatedAt DESC";
         logger.info("Executing HQL for getAllPeriodicStats: {}", hql);
 
         Query<PeriodicSummaryStats> query = session.createQuery(hql, PeriodicSummaryStats.class);
@@ -38,14 +39,15 @@ public class PeriodicStatsRepositoryImpl implements PeriodicStatsRepository {
             // Log chi tiết một vài bản ghi đầu tiên để kiểm tra (ví dụ 5 bản ghi)
             int count = 0;
             for (PeriodicSummaryStats stat : results) {
-                logger.debug("Repo fetched stat: ID={}, Year={}, Month={}, Quarter={}, Type={}",
-                        stat.getSummaryId(),
-                        stat.getSummaryYear(),
-                        stat.getSummaryMonth(),
-                        stat.getSummaryQuarter(),
-                        stat.getPeriodType());
+                logger.debug("Repo fetched stat: ID={}, Year={}, Month={}, Quarter={}, Type={}, CalculatedAt={}", // Thêm CalculatedAt vào log
+                             stat.getSummaryId(),
+                             stat.getSummaryYear(),
+                             stat.getSummaryMonth(),
+                             stat.getSummaryQuarter(),
+                             stat.getPeriodType(),
+                             stat.getCalculatedAt()); // Log giá trị CalculatedAt
                 count++;
-                if (count >= 5 && results.size() > 5) { 
+                if (count >= 5 && results.size() > 5) {
                     logger.debug("Repo fetched stat: ... and {} more records.", results.size() - count);
                     break;
                 }
@@ -64,7 +66,6 @@ public class PeriodicStatsRepositoryImpl implements PeriodicStatsRepository {
         } else if (periodType == PeriodicSummaryStats.PeriodType.quarterly && quarter != null) {
             hqlBuilder.append(" AND s.summaryQuarter = :quarter");
         }
-        
 
         Query<PeriodicSummaryStats> query = session.createQuery(hqlBuilder.toString(), PeriodicSummaryStats.class);
         query.setParameter("year", year);

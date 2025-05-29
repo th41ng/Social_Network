@@ -1,10 +1,12 @@
-// src/components/PostItem.js
 import React, { useState, useContext } from 'react';
 import { Card, Button, Form, InputGroup, Dropdown, Alert } from 'react-bootstrap';
 import MySpinner from './layouts/MySpinner'; // Assuming MySpinner is in layouts
 import { MyUserContext } from '../configs/Contexts'; // For currentUser
 
-const PostItem = ({
+import '../styles/PostItem.css'
+
+// Bọc component PostItem với React.memo để tối ưu hiệu suất
+const PostItem = React.memo(({
     post,
     currentUser,
     formatDate,
@@ -36,12 +38,10 @@ const PostItem = ({
             return;
         }
         setSubmittingComment(true);
-        // Call the passed-in handler which encapsulates API logic
         await onAddComment(post.postId, newCommentContent.trim());
         setNewCommentContent(''); // Clear input after successful submission (parent should handle this state update)
         setSubmittingComment(false);
     };
-
 
     return (
         <Card className="mb-3 shadow-sm rounded position-relative">
@@ -181,6 +181,6 @@ const PostItem = ({
             </Card.Body>
         </Card>
     );
-};
+});
 
 export default PostItem;

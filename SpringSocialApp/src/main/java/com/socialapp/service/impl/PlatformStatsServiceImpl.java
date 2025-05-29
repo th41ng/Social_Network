@@ -49,7 +49,7 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
         DailyPlatformSummary summary = statsRepo.getSummaryByDate(startOfDay);
 
         long userCount = userRepo.countUsers();
-        long postCount = postRepo.countPosts(Map.of());  // Truyền một Map rỗng vào countPosts()
+        long postCount = postRepo.countPosts(Map.of());
         int newUsersToday = userRepo.countUsersRegisteredToday();
         int newPostsToday = postRepo.countPostsCreatedToday();
 
@@ -92,106 +92,125 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
     public void generatePeriodicSummaries() {
         LocalDateTime now = LocalDateTime.now();
 
-        // MONTHLY
-        YearMonth previousMonth = YearMonth.from(now).minusMonths(1);
-        int prevMonthValue = previousMonth.getMonthValue();
-        int prevMonthYear = previousMonth.getYear();
+        // --- MONTHLY ---
+        YearMonth previousMonthPeriod = YearMonth.from(now).minusMonths(1); // Kỳ tháng trước
+        int prevMonthValue = previousMonthPeriod.getMonthValue();
+        int prevMonthYear = previousMonthPeriod.getYear();
 
-        PeriodicSummaryStats monthlySummary = periodicStatsRepo.findByPeriod(prevMonthYear, prevMonthValue, null, PeriodType.monthly);
+        // Luôn tính toán dữ liệu cho kỳ tháng trước
+        LocalDateTime startOfPrevMonth = previousMonthPeriod.atDay(1).atStartOfDay();
+        // Ngày đầu tiên của tháng hiện tại (để làm mốc cuối cho tháng trước)
+        LocalDateTime endOfPrevMonthExclusive = YearMonth.from(now).atDay(1).atStartOfDay();
 
-        if (monthlySummary == null) {
-            LocalDateTime startOfPrevMonth = previousMonth.atDay(1).atStartOfDay();
-            LocalDateTime startOfCurrentMonth = YearMonth.from(now).atDay(1).atStartOfDay();
+        Long newUsersLastMonth = statsRepo.sumNewUsersByDateRange(startOfPrevMonth, endOfPrevMonthExclusive);
+        Long newPostsLastMonth = statsRepo.sumNewPostsByDateRange(startOfPrevMonth, endOfPrevMonthExclusive);
 
-            Long newUsersLastMonth = statsRepo.sumNewUsersByDateRange(startOfPrevMonth, startOfCurrentMonth);
-            Long newPostsLastMonth = statsRepo.sumNewPostsByDateRange(startOfPrevMonth, startOfCurrentMonth);
+        if (newUsersLastMonth != null && newPostsLastMonth != null) {
+            PeriodicSummaryStats monthlySummary = periodicStatsRepo.findByPeriod(prevMonthYear, prevMonthValue, null, PeriodType.monthly);
 
-            if (newUsersLastMonth != null && newPostsLastMonth != null) {
+            String actionType = "UPDATING";
+            if (monthlySummary == null) {
                 monthlySummary = new PeriodicSummaryStats();
                 monthlySummary.setSummaryYear(prevMonthYear);
                 monthlySummary.setSummaryMonth(prevMonthValue);
-                monthlySummary.setSummaryQuarter(null);
+                monthlySummary.setSummaryQuarter(null); // Cho monthly thì quarter là null
                 monthlySummary.setPeriodType(PeriodType.monthly);
-                monthlySummary.setNewUsersCount(newUsersLastMonth.intValue());
-                monthlySummary.setNewPostsCount(newPostsLastMonth.intValue());
-                monthlySummary.setCalculatedAt(now);
-
-                periodicStatsRepo.save(monthlySummary);
-                logger.info("Generated monthly summary for {}", previousMonth);
-            } else {
-                logger.warn("No daily data available for monthly summary {}", previousMonth);
+                actionType = "CREATING";
             }
+
+            monthlySummary.setNewUsersCount(newUsersLastMonth.intValue());
+            monthlySummary.setNewPostsCount(newPostsLastMonth.intValue());
+            monthlySummary.setCalculatedAt(now); // Luôn cập nhật thời điểm tính toán
+
+            periodicStatsRepo.save(monthlySummary);
+            logger.info("{} monthly summary for {}: Users={}, Posts={}", actionType, previousMonthPeriod, newUsersLastMonth, newPostsLastMonth);
+
         } else {
-            logger.info("Monthly summary for {} already exists", previousMonth);
+            logger.warn("No daily data available to generate/update monthly summary for {}", previousMonthPeriod);
         }
 
-        // QUARTERLY
+        // --- QUARTERLY ---
         LocalDate today = LocalDate.now();
         int currentQuarterValue = today.get(java.time.temporal.IsoFields.QUARTER_OF_YEAR);
-        int currentYear = today.getYear();
+        int currentYearForQuarter = today.getYear();
 
-        int prevQuarterValue = currentQuarterValue == 1 ? 4 : currentQuarterValue - 1;
-        int prevQuarterYear = currentQuarterValue == 1 ? currentYear - 1 : currentYear;
+        // Xác định quý trước đó
+        int prevQuarterValue;
+        int prevQuarterYear;
+        if (currentQuarterValue == 1) {
+            prevQuarterValue = 4;
+            prevQuarterYear = currentYearForQuarter - 1;
+        } else {
+            prevQuarterValue = currentQuarterValue - 1;
+            prevQuarterYear = currentYearForQuarter;
+        }
+        String prevQuarterId = "Q" + prevQuarterValue + "/" + prevQuarterYear;
 
-        PeriodicSummaryStats quarterlySummary = periodicStatsRepo.findByPeriod(prevQuarterYear, null, prevQuarterValue, PeriodType.quarterly);
+        // Tính toán dữ liệu cho quý trước
+        LocalDate startOfPrevQuarterDate = LocalDate.of(prevQuarterYear, (prevQuarterValue - 1) * 3 + 1, 1);
+        // Ngày đầu tiên của quý hiện tại (làm mốc cuối cho quý trước)
+        LocalDate startOfCurrentQuarterDate = LocalDate.of(currentYearForQuarter, (currentQuarterValue - 1) * 3 + 1, 1);
 
-        if (quarterlySummary == null) {
-            LocalDate startOfPrevQuarter = LocalDate.of(prevQuarterYear, (prevQuarterValue - 1) * 3 + 1, 1);
-            LocalDate startOfCurrentQuarter = LocalDate.of(currentYear, (currentQuarterValue - 1) * 3 + 1, 1);
+        LocalDateTime startOfPrevQuarterTime = startOfPrevQuarterDate.atStartOfDay();
+        LocalDateTime endOfPrevQuarterTimeExclusive = startOfCurrentQuarterDate.atStartOfDay();
 
-            LocalDateTime startOfPrevQuarterTime = startOfPrevQuarter.atStartOfDay();
-            LocalDateTime startOfCurrentQuarterTime = startOfCurrentQuarter.atStartOfDay();
+        Long newUsersLastQuarter = statsRepo.sumNewUsersByDateRange(startOfPrevQuarterTime, endOfPrevQuarterTimeExclusive);
+        Long newPostsLastQuarter = statsRepo.sumNewPostsByDateRange(startOfPrevQuarterTime, endOfPrevQuarterTimeExclusive);
 
-            Long newUsersLastQuarter = statsRepo.sumNewUsersByDateRange(startOfPrevQuarterTime, startOfCurrentQuarterTime);
-            Long newPostsLastQuarter = statsRepo.sumNewPostsByDateRange(startOfPrevQuarterTime, startOfCurrentQuarterTime);
-
-            if (newUsersLastQuarter != null && newPostsLastQuarter != null) {
+        if (newUsersLastQuarter != null && newPostsLastQuarter != null) {
+            PeriodicSummaryStats quarterlySummary = periodicStatsRepo.findByPeriod(prevQuarterYear, null, prevQuarterValue, PeriodType.quarterly);
+            String actionType = "UPDATING";
+            if (quarterlySummary == null) {
                 quarterlySummary = new PeriodicSummaryStats();
                 quarterlySummary.setSummaryYear(prevQuarterYear);
-                quarterlySummary.setSummaryMonth(null);
+                quarterlySummary.setSummaryMonth(null); // Cho quarterly thì month là null
                 quarterlySummary.setSummaryQuarter(prevQuarterValue);
                 quarterlySummary.setPeriodType(PeriodType.quarterly);
-                quarterlySummary.setNewUsersCount(newUsersLastQuarter.intValue());
-                quarterlySummary.setNewPostsCount(newPostsLastQuarter.intValue());
-                quarterlySummary.setCalculatedAt(now);
-
-                periodicStatsRepo.save(quarterlySummary);
-                logger.info("Generated quarterly summary for Q{}/{}", prevQuarterValue, prevQuarterYear);
-            } else {
-                logger.warn("No daily data for quarterly summary Q{}/{}", prevQuarterValue, prevQuarterYear);
+                actionType = "CREATING";
             }
+
+            quarterlySummary.setNewUsersCount(newUsersLastQuarter.intValue());
+            quarterlySummary.setNewPostsCount(newPostsLastQuarter.intValue());
+            quarterlySummary.setCalculatedAt(now);
+
+            periodicStatsRepo.save(quarterlySummary);
+            logger.info("{} quarterly summary for {}: Users={}, Posts={}", actionType, prevQuarterId, newUsersLastQuarter, newPostsLastQuarter);
         } else {
-            logger.info("Quarterly summary for Q{}/{} already exists", prevQuarterValue, prevQuarterYear);
+            logger.warn("No daily data available to generate/update quarterly summary for {}", prevQuarterId);
         }
 
-        // YEARLY
-        int prevYearValue = now.getYear() - 1;
-        PeriodicSummaryStats yearlySummary = periodicStatsRepo.findByPeriod(prevYearValue, null, null, PeriodType.yearly);
 
-        if (yearlySummary == null) {
-            LocalDateTime startOfPrevYear = LocalDateTime.of(prevYearValue, 1, 1, 0, 0);
-            LocalDateTime startOfCurrentYear = LocalDateTime.of(now.getYear(), 1, 1, 0, 0);
+        // --- YEARLY ---
+        int prevYearValue = now.getYear() - 1; // Năm trước đó
 
-            Long newUsersLastYear = statsRepo.sumNewUsersByDateRange(startOfPrevYear, startOfCurrentYear);
-            Long newPostsLastYear = statsRepo.sumNewPostsByDateRange(startOfPrevYear, startOfCurrentYear);
+        // Tính toán dữ liệu cho năm trước
+        LocalDateTime startOfPrevYear = LocalDateTime.of(prevYearValue, 1, 1, 0, 0);
+        // Ngày đầu tiên của năm hiện tại (làm mốc cuối cho năm trước)
+        LocalDateTime endOfPrevYearExclusive = LocalDateTime.of(now.getYear(), 1, 1, 0, 0);
 
-            if (newUsersLastYear != null && newPostsLastYear != null) {
+        Long newUsersLastYear = statsRepo.sumNewUsersByDateRange(startOfPrevYear, endOfPrevYearExclusive);
+        Long newPostsLastYear = statsRepo.sumNewPostsByDateRange(startOfPrevYear, endOfPrevYearExclusive);
+
+        if (newUsersLastYear != null && newPostsLastYear != null) {
+            PeriodicSummaryStats yearlySummary = periodicStatsRepo.findByPeriod(prevYearValue, null, null, PeriodType.yearly);
+            String actionType = "UPDATING";
+            if (yearlySummary == null) {
                 yearlySummary = new PeriodicSummaryStats();
                 yearlySummary.setSummaryYear(prevYearValue);
                 yearlySummary.setSummaryMonth(null);
                 yearlySummary.setSummaryQuarter(null);
                 yearlySummary.setPeriodType(PeriodType.yearly);
-                yearlySummary.setNewUsersCount(newUsersLastYear.intValue());
-                yearlySummary.setNewPostsCount(newPostsLastYear.intValue());
-                yearlySummary.setCalculatedAt(now);
-
-                periodicStatsRepo.save(yearlySummary);
-                logger.info("Generated yearly summary for {}", prevYearValue);
-            } else {
-                logger.warn("No daily data for yearly summary {}", prevYearValue);
+                actionType = "CREATING";
             }
+
+            yearlySummary.setNewUsersCount(newUsersLastYear.intValue());
+            yearlySummary.setNewPostsCount(newPostsLastYear.intValue());
+            yearlySummary.setCalculatedAt(now);
+
+            periodicStatsRepo.save(yearlySummary);
+            logger.info("{} yearly summary for {}: Users={}, Posts={}", actionType, prevYearValue, newUsersLastYear, newPostsLastYear);
         } else {
-            logger.info("Yearly summary for {} already exists", prevYearValue);
+            logger.warn("No daily data available to generate/update yearly summary for {}", prevYearValue);
         }
     }
 }

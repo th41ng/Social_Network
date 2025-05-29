@@ -77,11 +77,8 @@ public class IndexController {
         });
         // Đảm bảo param 'page' luôn có trong map
         params.put("page", String.valueOf(page));
-<<<<<<< HEAD
         params.put("categoryId", String.valueOf(categoryId));
-=======
 
->>>>>>> 3032f424c0696fa167ca537d2abfe2cd4bee33b0
         model.addAttribute("params", params); // Dùng chung params để lọc kết quả
         model.addAttribute("currentPage", page); // Truyền trang hiện tại cho frontend
 

@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/login", "/api/user").permitAll() // Không cần xác thực
                 .requestMatchers("/api/**").permitAll()
                 .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") // Chỉ ADMIN và LECTURER được vào
-                .requestMatchers("/surveys/**", "/Notification/**").hasRole("LECTURER") // LECTURER truy cập vào survey và notification
+                .requestMatchers("/surveys/**", "/Notification/**").hasAnyRole("ADMIN","LECTURER") // LECTURER truy cập vào survey và notification
                 .requestMatchers("/**").hasRole("ADMIN") // ADMIN có toàn quyền trên mọi endpoint khác
                 .anyRequest().authenticated() // Các yêu cầu khác cần xác thực
                 )
