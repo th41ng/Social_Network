@@ -53,7 +53,7 @@
 //   if (error) return <div>{error}</div>;
 
 //   return (
-     
+
 //     <div className="notifications-container">
 //      <h2>Thông báo của bạn</h2>
 //       {notifications.length === 0 ? (
@@ -275,6 +275,7 @@ const Notifications = () => {
   const fetchNotifications = useCallback(async (pageToLoad) => {
     if (pageToLoad === 1) {
       setLoading(true);
+      setCanLoadMore(true);  // reset lại trạng thái load more
     } else {
       setLoadingMore(true);
     }
@@ -316,16 +317,12 @@ const Notifications = () => {
   }, [fetchEventDetailsForNotifications]);
 
   useEffect(() => {
-    fetchNotifications(1);
-  }, [fetchNotifications]);
+    fetchNotifications(currentPage);
+  }, [currentPage, fetchNotifications]);
 
   const handleLoadMore = () => {
     if (!loadingMore && canLoadMore) {
-      setCurrentPage(prevPage => {
-        const nextPage = prevPage + 1;
-        fetchNotifications(nextPage);
-        return nextPage;
-      });
+      setCurrentPage(prevPage => prevPage + 1);
     }
   };
 
@@ -346,15 +343,17 @@ const Notifications = () => {
     <div className="mt-4">
       <h2 className="mb-4 text-center text-primary">Thông báo của bạn</h2>
       {error && <Alert variant="warning" className="text-center my-2">{error}</Alert>}
-      
+
       {notifications.length === 0 && !loading && (
         <Alert variant="info" className="text-center">Hiện tại không có thông báo nào.</Alert>
       )}
 
       {notifications.length > 0 && (
         <div className="grid">
-          {notifications.map(notif => (
-            <div className="notification-card" key={notif.notificationId}>
+          {notifications.map((notif, index) => (
+            <div
+              className="notification-card"
+              key={`${notif.notificationId}-${notif.sentAt}-${index}`}>
               <h3>{notif.title}</h3>
               <p><strong>Mô tả:</strong> {notif.content}</p>
               <p><small>Gửi lúc: {new Date(notif.sentAt).toLocaleString()}</small></p>
@@ -380,14 +379,14 @@ const Notifications = () => {
           <Button onClick={handleLoadMore} variant="primary">Tải thêm</Button>
         </div>
       )}
-      
+
       {loadingMore && (
         <div className="text-center my-3">
           <Spinner animation="border" variant="secondary" size="sm" />
           <span className="ms-2">Đang tải thêm...</span>
         </div>
       )}
-      
+
       {!canLoadMore && notifications.length > 0 && !loading && (
         <Alert variant="light" className="text-center mt-3 mb-0">Đã hiển thị tất cả thông báo.</Alert>
       )}

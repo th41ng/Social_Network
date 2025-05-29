@@ -15,41 +15,20 @@ import EditPostModal from "./EditPostModal";
 import EditCommentModal from "./EditCommentModal";
 
 const Home = () => {
-    // State cho danh sách posts và pagination
+    
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [canLoadMore, setCanLoadMore] = useState(true);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [q] = useSearchParams();
     const nav = useNavigate();
-
-    // State cho comment mới - This will be managed within PostItem or passed to it
-    // const [showComments, setShowComments] = useState({}); // Managed by PostItem
-    // const [newCommentContent, setNewCommentContent] = useState({}); // Managed by PostItem
-
-    // State cho việc tạo bài viết mới - now mostly managed by CreatePostForm
-    // const [newPostText, setNewPostText] = useState("");
-    // const [newPostImage, setNewPostImage] = useState(null);
-    // const imageInputRef = useRef(null); // Managed by CreatePostForm
-
     const currentUser = useContext(MyUserContext);
     const dispatch = useContext(MyDispatchContext);
-
-    // State chung cho việc submit (POST, PUT) - dùng cho cả post và comment modal
     const [isSubmitting, setIsSubmitting] = useState(false); // Renamed for clarity, used by multiple actions
-
-    // State cho việc sửa bài viết
     const [editingPost, setEditingPost] = useState(null); // This is the post object
     const [showEditModal, setShowEditModal] = useState(false);
-    // editText, editImageFile, etc., are now within EditPostModal
-
-    // State cho việc sửa bình luận
     const [editingComment, setEditingComment] = useState(null); // { postId, commentId, content, userId }
     const [showEditCommentModal, setShowEditCommentModal] = useState(false);
-    // editCommentText is now within EditCommentModal
-
-
-    // --- useEffects ---
     useEffect(() => {
         const token = cookie.load("token");
         if (!token && !currentUser) {
@@ -71,25 +50,20 @@ const Home = () => {
             fetchCurrentUser();
         }
     }, [nav, currentUser, dispatch]);
-
     const loadPosts = useCallback(async (pageToLoad, isNewSearch = false) => {
         if (!isNewSearch && !canLoadMore && pageToLoad > 1) return;
         if (loadingPosts && !isNewSearch && pageToLoad > 1) return;
-
         setLoadingPosts(true);
         try {
             let url = endpoints['posts'];
             const params = new URLSearchParams();
             params.append('page', pageToLoad.toString());
-
             const currentKw = q.get("kw");
             if (currentKw) {
                 params.append('kw', currentKw);
             }
             const fullUrl = `${url}?${params.toString()}`;
-
             const res = await Apis.get(fullUrl);
-
             if (res.data && Array.isArray(res.data)) {
                 const fetchedPosts = res.data;
                 if (fetchedPosts.length === 0) {
@@ -109,7 +83,6 @@ const Home = () => {
         } finally {
             setLoadingPosts(false);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [q.get("kw"), canLoadMore]); // Removed loadingPosts from dependencies as it causes re-runs
 
     useEffect(() => {
@@ -120,7 +93,6 @@ const Home = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, currentUser]); // Removed loadPosts, it will be stable due to useCallback
-
     useEffect(() => {
         setCurrentPage(1);
         setCanLoadMore(true);
@@ -129,16 +101,12 @@ const Home = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [q.get("kw"), currentUser]); // Removed loadPosts
-
-    // --- Helper Functions ---
     const formatDate = (dateStr) => {
         if (!dateStr) return "Không rõ thời gian";
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return "Thời gian không hợp lệ";
         return date.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     };
-
-    // Generic action handler
     const handleAuthAction = async (actionFunc, errorMessageDefault, unauthorizedMessage) => {
         if (!cookie.load("token") || !currentUser) {
             alert(unauthorizedMessage || "Vui lòng đăng nhập để thực hiện hành động này.");
@@ -190,8 +158,6 @@ const Home = () => {
             return error.response || { data: { error: msg }, status: error.code || 'NETWORK_ERROR' }; // Return error structure
         }
     };
-
-    // --- Post Actions ---
     const handlePostReactionClick = async (postId, reactionType) => {
         const result = await handleAuthAction(
             () => authApis().post(endpoints['post-reactions'](postId), { type: reactionType }),
@@ -202,7 +168,6 @@ const Home = () => {
             setPosts(prev => prev.map(p => p.postId === postId ? { ...p, reactions: result.data } : p));
         }
     };
-
     const handlePostCreated = (newPostDTO) => {
         setPosts(prevPosts => [newPostDTO, ...prevPosts]);
         // Resetting form fields is now handled within CreatePostForm
