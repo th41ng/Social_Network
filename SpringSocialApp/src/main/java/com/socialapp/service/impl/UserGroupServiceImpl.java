@@ -35,4 +35,9 @@ public class UserGroupServiceImpl implements UserGroupService {
     public void deleteGroup(int groupId) {
         userGroupsRepository.deleteGroup(groupId);
     }
+    
+     @Override
+    public long countGroup() {
+        return this.userGroupsRepository.countGroup();
+    }
 }

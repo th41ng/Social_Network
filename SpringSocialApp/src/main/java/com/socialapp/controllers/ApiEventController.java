@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ApiEventController {
 
+    
     @Autowired
     private EventService eventService;
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);

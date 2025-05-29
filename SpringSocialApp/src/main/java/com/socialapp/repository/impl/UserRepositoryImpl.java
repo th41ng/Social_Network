@@ -26,7 +26,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    private static final int PAGE_SIZE = 10;
+    public  static final int PAGE_SIZE = 5;
     @Autowired
     private EmailService emailService;
 

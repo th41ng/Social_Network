@@ -40,5 +40,8 @@ public class EventServiceImpl implements EventService {
         return eventRepository.getAvailableEvents(params);
     }
 
-    
+     @Override
+    public long countEvent() {
+        return this.eventRepository.countEvent();
+    }
 }

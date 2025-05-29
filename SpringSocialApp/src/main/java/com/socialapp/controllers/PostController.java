@@ -34,7 +34,7 @@ public class PostController {
 
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
     // Định nghĩa PAGE_SIZE cho posts. Đảm bảo PostRepository của bạn cũng dùng PAGE_SIZE này.
-    private static final int PAGE_SIZE = 10; 
+    private static final int PAGE_SIZE = 5; 
 
     @Autowired
     private PostService postService;

@@ -2,13 +2,13 @@ package com.socialapp.repository.impl;
 
 import com.socialapp.pojo.UserGroups;
 import com.socialapp.repository.UserGroupsRepository;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
+
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,7 +24,7 @@ public class UserGroupRepositoryImpl implements UserGroupsRepository {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 5;
 
     @Override
     public List<UserGroups> getAllGroups(Map<String, String> params) {
@@ -53,8 +53,6 @@ public class UserGroupRepositoryImpl implements UserGroupsRepository {
         return (UserGroups) query.getSingleResult();
     }
 
-   
-
     @Override
     public UserGroups addOrUpdateGroup(UserGroups group) {
         Session session = this.sessionFactory.getCurrentSession();
@@ -68,5 +66,13 @@ public class UserGroupRepositoryImpl implements UserGroupsRepository {
         Query query = session.createNamedQuery("UserGroups.deleteById");
         query.setParameter("groupId", groupId);
         query.executeUpdate();
+    }
+
+    @Override
+    public long countGroup() {
+        Session session = this.sessionFactory.getCurrentSession();
+        Query<Long> query = session.createQuery("SELECT COUNT(g.groupId) FROM UserGroups g", Long.class);
+        Long count = query.getSingleResult();
+        return count != null ? count : 0;
     }
 }

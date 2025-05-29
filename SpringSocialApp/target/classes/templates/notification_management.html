@@ -14,12 +14,12 @@
         <a th:href="@{/Group/listGroup}" class="btn btn-info mb-3">Quản lý nhóm</a>
 
         <!-- Bộ lọc -->
-        <form class="row g-3 mb-3" method="get" th:action="@{/?categoryId=3/listNotification}">
+        <form class="row g-3 mb-3" method="get" th:action="@{/Notification/listNotification}">
             <div class="col-md-4">
                 <input type="text" class="form-control" name="title" placeholder="Tìm theo tiêu đề" 
                        th:value="${params['title']}">
             </div>
-            
+
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary">Tìm kiếm</button>
             </div>
@@ -56,7 +56,7 @@
                         </td>
                         <td th:text="${#dates.format(notification.sentAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
-                            <a th:href="@{Notification/editNotification/{id}(id=${notification.notificationId})}" class="btn btn-primary btn-sm">Sửa</a>
+                            <a th:href="@{/Notification/editNotification/{id}(id=${notification.notificationId})}" class="btn btn-primary btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
                                     th:onclick="'deleteNotification(\'' + @{/api/deleteNotification/{id}(id=${notification.notificationId})} + '\')'">
                                 Xoá
@@ -70,6 +70,33 @@
                 </tbody>
             </table>
         </div>
+
+
+        <nav aria-label="Page navigation" th:if="${totalPages > 0}">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Page Link -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" 
+                       th:href="@{/Notification/listNotification(page=${currentPage - 1}, title=${params['title']})}">Trước</a>
+                </li>
+
+                <!-- Page Numbers -->
+                <li class="page-item" 
+                    th:each="i : ${#numbers.sequence(1, totalPages)}" 
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" 
+                       th:href="@{/Notification/listNotification(page=${i}, title=${params['title']})}" 
+                       th:text="${i}"></a>
+                </li>
+
+                <!-- Next Page Link -->
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" 
+                       th:href="@{/Notification/listNotification(page=${currentPage + 1}, title=${params['title']})}">Sau</a>
+                </li>
+            </ul>
+        </nav>
+
     </main>
 
     <div th:replace="base :: footer"></div>

@@ -8,6 +8,7 @@ import com.socialapp.pojo.Event;
 import com.socialapp.pojo.GroupMembers;
 import com.socialapp.pojo.User;
 import com.socialapp.pojo.UserGroups;
+import com.socialapp.repository.impl.UserGroupRepositoryImpl;
 import com.socialapp.service.EventService;
 import com.socialapp.service.GroupMemberService;
 import com.socialapp.service.UserGroupService;
@@ -48,8 +49,20 @@ public class GroupController {
 
     @GetMapping("/listGroup")
     public String listEvent(@RequestParam Map<String, String> params, Model model) {
+        String pageParam = params.get("page");
+        int page = (pageParam == null || pageParam.trim().isEmpty()) ? 1 : Integer.parseInt(pageParam);
+        if (page < 1) {
+            page = 1;
+        }
+        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+        params.put("page", String.valueOf(page));
+        long totalGroup = this.groupService.countGroup();
+        // Sử dụng PAGE_SIZE đã import hoặc định nghĩa ở trên
+        int pageSize = UserGroupRepositoryImpl.PAGE_SIZE;
+        int totalGroupPages = (int) Math.ceil((double) totalGroup / pageSize);
         List<UserGroups> group = this.groupService.getAllGroups(params);
-
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalGroupPages);
         model.addAttribute("params", params);
         model.addAttribute("group", group);
         return "group_management";
@@ -141,7 +154,7 @@ public class GroupController {
         if (group == null) {
             throw new IllegalArgumentException("Không tìm thấy nhóm với ID: " + groupId);
         }
-       
+
         // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -153,7 +166,7 @@ public class GroupController {
 
         // Thêm thông tin cần thiết vào model
         model.addAttribute("group", group);
-    
+
         model.addAttribute("adminId", currentUser.getId());
 
         return "edit_group"; // Tên file HTML hiển thị form

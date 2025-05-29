@@ -25,6 +25,7 @@ public interface EventNotificationRepository {
 
     // Xóa thông báo dựa trên ID
     void deleteNotification(int id);
+    long countNotis();
 
-    List<EventNotification> getNotificationsForUser(int userId);
+    List<EventNotification> getNotificationsForUser(int userId,Map<String, String> params);
 }

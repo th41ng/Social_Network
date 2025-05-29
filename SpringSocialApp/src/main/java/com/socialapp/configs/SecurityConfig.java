@@ -53,15 +53,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Cấu hình CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/login", "/api/user").permitAll() // Không cần xác thực
+                .requestMatchers("/api/login", "/api/user").permitAll() 
                 .requestMatchers("/api/**").permitAll()
-                .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") // Chỉ ADMIN và LECTURER được vào
-                .requestMatchers("/surveys/**", "/Notification/**").hasRole("LECTURER") // LECTURER truy cập vào survey và notification
-                .requestMatchers("/**").hasRole("ADMIN") // ADMIN có toàn quyền trên mọi endpoint khác
-                .anyRequest().authenticated() // Các yêu cầu khác cần xác thực
+                .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") 
+                .requestMatchers("/surveys/**", "/Notification/**").hasAnyRole("ADMIN", "LECTURER") 
+                .requestMatchers("/**").hasRole("ADMIN") 
+                .anyRequest().authenticated() 
                 )
                 .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class) // Thêm JWT Filter
                 .formLogin(form -> form

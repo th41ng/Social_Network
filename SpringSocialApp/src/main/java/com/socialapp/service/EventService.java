@@ -18,7 +18,7 @@ public interface EventService {
     Event getEventById(int id);
 
     Event addOrUpdateEvent(Event event);
-
+    long countEvent();
     void deleteEvent(int id);
 
 }

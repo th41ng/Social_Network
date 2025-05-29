@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Quản lý Sự kiện</title>
+    <head>
+        <title>Quản lý Sự kiện</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -26,40 +26,67 @@
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Admin ID</th>
-                    <th>Tiêu đề</th>
-                    <th>Mô tả</th>
-                    <th>Ngày bắt đầu</th>
-                    <th>Ngày kết thúc</th>
-                    <th>Địa điểm</th>
-                    <th>Hành động</th>
-                </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Admin ID</th>
+                        <th>Tiêu đề</th>
+                        <th>Mô tả</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Địa điểm</th>
+                        <th>Hành động</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr th:each="event : ${event}">
-                    <td th:text="${event.event_id}"></td>
-                    <td th:text="${event.admin_id}"></td>
-                    <td th:text="${event.title}"></td>
-                    <td th:text="${event.description}"></td>
-                    <td th:text="${#dates.format(event.start_date, 'dd/MM/yyyy HH:mm')}"></td>
-                    <td th:text="${#dates.format(event.end_date, 'dd/MM/yyyy HH:mm')}"></td>
-                    <td th:text="${event.location}"></td>
-                    <td>
-                        <a th:href="@{/Event/edit/{id}(id=${event.event_id})}" class="btn btn-warning btn-sm">Sửa</a>
-                        <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                th:onclick="'deleteEvent(\'' + @{/api/deleteEvent/{id}(id=${event.event_id})} + '\')'">
-                            Xoá
-                        </button>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(event)}">
-                    <td colspan="8" class="text-center">Không có sự kiện nào.</td>
-                </tr>
+                    <tr th:each="event : ${event}">
+                        <td th:text="${event.event_id}"></td>
+                        <td th:text="${event.admin_id}"></td>
+                        <td th:text="${event.title}"></td>
+                        <td th:text="${event.description}"></td>
+                        <td th:text="${#dates.format(event.start_date, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${#dates.format(event.end_date, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${event.location}"></td>
+                        <td>
+                            <a th:href="@{/Event/edit/{id}(id=${event.event_id})}" class="btn btn-warning btn-sm">Sửa</a>
+                            <button type="button" class="btn btn-danger btn-sm" title="Xoá"
+                                    th:onclick="'deleteEvent(\'' + @{/api/deleteEvent/{id}(id=${event.event_id})} + '\')'">
+                                Xoá
+                            </button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(event)}">
+                        <td colspan="8" class="text-center">Không có sự kiện nào.</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
+
+
+
+        <nav aria-label="Page navigation" th:if="${totalPages > 0}">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Page Link -->
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" 
+                       th:href="@{/Event/listEvent(page=${currentPage - 1}, title=${params['title']})}">Trước</a>
+                </li>
+
+                <!-- Page Numbers -->
+                <li class="page-item" 
+                    th:each="i : ${#numbers.sequence(1, totalPages)}" 
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" 
+                       th:href="@{/Event/listEvent(page=${i}, title=${params['title']})}" 
+                       th:text="${i}"></a>
+                </li>
+
+                <!-- Next Page Link -->
+                <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                    <a class="page-link" 
+                       th:href="@{/Event/listEvent(page=${currentPage + 1}, title=${params['title']})}">Sau</a>
+                </li>
+            </ul>
+        </nav>
     </main>
 
     <div th:replace="base :: footer"></div>

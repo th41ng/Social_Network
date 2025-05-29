@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 @Transactional
 public class PostRepositoryImpl implements PostRepository {
 
-    private static final int PAGE_SIZE = 10; // Kích thước trang mặc định
+    private static final int PAGE_SIZE = 5; // Kích thước trang mặc định
     private static final Logger logger = LoggerFactory.getLogger(PostRepositoryImpl.class);
 
     @Autowired

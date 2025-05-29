@@ -8,6 +8,8 @@ import com.socialapp.pojo.Event;
 import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.User;
 import com.socialapp.pojo.UserGroups;
+import com.socialapp.repository.impl.EventNotificationRepositoryImpl;
+import static com.socialapp.repository.impl.EventNotificationRepositoryImpl.PAGE_SIZE;
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.EventNotificationService;
 import com.socialapp.service.EmailService;
@@ -60,8 +62,23 @@ public class NotificationController {
 
     @GetMapping("/listNotification")
     public String listNotification(@RequestParam Map<String, String> params, Model model) {
+        String pageParam = params.get("page");
+        int page = (pageParam == null || pageParam.trim().isEmpty()) ? 1 : Integer.parseInt(pageParam);
+        if (page < 1) {
+            page = 1;
+        }
+        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+        params.put("page", String.valueOf(page));
+
         List<EventNotification> event_notification = this.eventNotificationService.getNotifications(params);
-        System.out.println("Notifications fetched: " + event_notification.size());
+        long totalNotis = this.eventNotificationService.countNotis();
+
+        int pageSize = EventNotificationRepositoryImpl.PAGE_SIZE;
+        int totalNotiPage = (int) Math.ceil((double) totalNotis / pageSize);
+
+        model.addAttribute("params", params);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalNotiPage);
         model.addAttribute("notification", event_notification);
         return "notification_management";
     }

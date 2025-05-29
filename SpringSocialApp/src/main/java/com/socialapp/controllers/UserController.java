@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.socialapp.configs.UserRole;
 import com.socialapp.pojo.User;
+import com.socialapp.repository.impl.UserRepositoryImpl;
 import com.socialapp.service.UserService;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class UserController {
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-    private static final int PAGE_SIZE = 10;
+//    private static final int PAGE_SIZE = 10;
 
     // Hiển thị trang đăng nhập
     @GetMapping("/login")
@@ -44,9 +45,25 @@ public class UserController {
 
     @GetMapping("/listUser")
     public String listUsers(@RequestParam Map<String, String> params, Model model) {
+        String pageParam = params.get("page");
+        int page = (pageParam == null || pageParam.trim().isEmpty()) ? 1 : Integer.parseInt(pageParam);
+        if (page < 1) {
+            page = 1;
+        }
+        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+        params.put("page", String.valueOf(page));
+
         List<User> users = this.userService.getAllUsers(params);
+        long totalUsers = this.userService.countUsers();
+        
+         // Sử dụng PAGE_SIZE đã import hoặc định nghĩa ở trên
+        int pageSize = UserRepositoryImpl.PAGE_SIZE; 
+        int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
+        
         model.addAttribute("users", users);
         model.addAttribute("params", params);
+          model.addAttribute("currentPage", page);
+           model.addAttribute("totalPages", totalPages);
         model.addAttribute("roles", UserRole.values()); // Truyền tất cả giá trị Enum vào model
         return "user_management";
     }

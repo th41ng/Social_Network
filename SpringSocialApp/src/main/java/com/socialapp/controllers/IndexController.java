@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @ControllerAdvice
 public class IndexController {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 5;
 
     @Autowired
     private CategoryService categoryService;
@@ -77,11 +77,9 @@ public class IndexController {
         });
         // Đảm bảo param 'page' luôn có trong map
         params.put("page", String.valueOf(page));
-<<<<<<< HEAD
-        params.put("categoryId", String.valueOf(categoryId));
-=======
 
->>>>>>> 3032f424c0696fa167ca537d2abfe2cd4bee33b0
+        params.put("categoryId", String.valueOf(categoryId));
+
         model.addAttribute("params", params); // Dùng chung params để lọc kết quả
         model.addAttribute("currentPage", page); // Truyền trang hiện tại cho frontend
 
@@ -95,12 +93,21 @@ public class IndexController {
                     model.addAttribute("users", users);
                     model.addAttribute("totalUsers", totalUser); // Tổng số người dùng
                     model.addAttribute("currentPage", page); // Trang hiện tại
-                    model.addAttribute("totalPage", totalPage); // Tổng số trang
+                    model.addAttribute("totalPages", totalPage); // Tổng số trang
                     model.addAttribute("params", params); // Truyền params để dùng trong frontend
-                    model.addAttribute("categoryId", categoryId);
+                    
                     return "user_management";
                 case 3: // Thông báo
-                    model.addAttribute("notification", EventNotificationService.getNotifications(params));
+                    var notifications = EventNotificationService.getNotifications(params);
+                    long totalNotis = EventNotificationService.countNotis(); // Lấy tổng số bài viết
+                    int totalNotiPage = (int) Math.ceil((double) totalNotis / PAGE_SIZE); // Tính tổng số trang
+
+                    
+                    model.addAttribute("totalNotis", totalNotis); // Tổng số người dùng
+                    model.addAttribute("currentPage", page); // Trang hiện tại
+                    model.addAttribute("totalPages", totalNotiPage); // Tổng số trang
+                    model.addAttribute("params", params); // Truyền params để dùng trong frontend
+                    model.addAttribute("notification",notifications );
                     return "notification_management";
 
                 case 4: // Surveys

@@ -3,7 +3,7 @@ package com.socialapp.repository.impl;
 import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.GroupMembers;
 import com.socialapp.repository.EventNotificationRepository;
-import jakarta.persistence.Query;
+import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -22,60 +22,32 @@ import java.util.Map;
 @Transactional
 public class EventNotificationRepositoryImpl implements EventNotificationRepository {
 
-    private static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 5;
 
     @Autowired
     private LocalSessionFactoryBean factory;
 
     @Override
     public List<EventNotification> getNotifications(Map<String, String> params) {
-        Session s = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder b = s.getCriteriaBuilder();
-        CriteriaQuery<EventNotification> q = b.createQuery(EventNotification.class);
-        Root<EventNotification> root = q.from(EventNotification.class);
-        q.select(root);
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<EventNotification> query = session.getNamedQuery("Notis.findAll");
 
-        if (params != null) {
-            List<Predicate> predicates = new ArrayList<>();
-
-            // Filter by adminId
-            String adminId = params.get("adminId");
-            if (adminId != null && !adminId.isEmpty()) {
-                predicates.add(b.equal(root.get("adminId"), Integer.parseInt(adminId)));
+        if (params != null && !params.isEmpty()) {
+            StringBuilder hql = new StringBuilder("SELECT n FROM EventNotification n WHERE 1=1");
+            if (params.containsKey("title")) {
+                hql.append(" AND n.title LIKE :title");
             }
-
-            // Filter by eventId
-            String eventId = params.get("eventId");
-            if (eventId != null && !eventId.isEmpty()) {
-                predicates.add(b.equal(root.get("eventId"), Integer.parseInt(eventId)));
+            query = session.createQuery(hql.toString(), EventNotification.class);
+            if (params.containsKey("title")) {
+                query.setParameter("title", "%" + params.get("title") + "%");
             }
-
-            // Filter by receiverUserId
-            String receiverUserId = params.get("receiverUserId");
-            if (receiverUserId != null && !receiverUserId.isEmpty()) {
-                predicates.add(b.equal(root.get("receiverUserId"), Integer.parseInt(receiverUserId)));
-            }
-
-            // Filter by groupId
-            String groupId = params.get("groupId");
-            if (groupId != null && !groupId.isEmpty()) {
-                predicates.add(b.equal(root.get("groupId"), Integer.parseInt(groupId)));
-            }
-
-            // Ensure isDeleted is false (soft delete filter)
-            //predicates.add(b.equal(root.get("isDeleted"), false));
-            q.where(predicates.toArray(Predicate[]::new));
         }
-
-        Query query = s.createQuery(q);
-
-        // Pagination
+// Phân trang
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
-            query.setMaxResults(PAGE_SIZE);
             query.setFirstResult((page - 1) * PAGE_SIZE);
+            query.setMaxResults(PAGE_SIZE);
         }
-
         return query.getResultList();
     }
 
@@ -110,42 +82,40 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         }
     }
 
-//    @Override
-//    public List<EventNotification> getNotificationsForUser(int userId) {
-//        Session session = this.factory.getObject().getCurrentSession();
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<EventNotification> query = builder.createQuery(EventNotification.class);
-//        Root<EventNotification> root = query.from(EventNotification.class);
-//
-//       
-//        query.select(root).where(builder.equal(root.get("receiverUserId"), userId));
-//
-//        return session.createQuery(query).getResultList();
-//    }
     @Override
-    public List<EventNotification> getNotificationsForUser(int userId) {
+    public List<EventNotification> getNotificationsForUser(int userId, Map<String, String> params) {
         Session session = this.factory.getObject().getCurrentSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<EventNotification> query = builder.createQuery(EventNotification.class);
-        Root<EventNotification> root = query.from(EventNotification.class);
+        Query<EventNotification> query = session.getNamedQuery("Notis.findForUser");
 
-        // Lấy danh sách nhóm mà người dùng thuộc về
+        // Get the user's group IDs
+        CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Integer> groupQuery = builder.createQuery(Integer.class);
         Root<GroupMembers> groupRoot = groupQuery.from(GroupMembers.class);
         groupQuery.select(groupRoot.get("groupId"))
                 .where(builder.equal(groupRoot.get("userId"), userId));
         List<Integer> userGroupIds = session.createQuery(groupQuery).getResultList();
 
-        // Điều kiện 1: Nhận thông báo trực tiếp
-        Predicate directNotification = builder.equal(root.get("receiverUserId"), userId);
+        // Set query parameters
+        query.setParameter("userId", userId);
+        query.setParameter("groupIds", userGroupIds.isEmpty() ? List.of(-1) : userGroupIds); 
+       
 
-        // Điều kiện 2: Nhận thông báo thông qua nhóm
-        Predicate groupNotification = root.get("groupId").in(userGroupIds);
+        // Apply pagination if needed
+        if (params != null && params.containsKey("page")) {
+            int page = Integer.parseInt(params.get("page"));
+            query.setFirstResult((page - 1) * PAGE_SIZE);
+            query.setMaxResults(PAGE_SIZE);
+        }
 
-        // Kết hợp điều kiện
-        query.select(root).where(builder.or(directNotification, groupNotification));
+        return query.getResultList();
+    }
 
-        return session.createQuery(query).getResultList();
+    @Override
+    public long countNotis() {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<Long> query = session.createQuery("SELECT COUNT(n.notificationId) FROM EventNotification n", Long.class);
+        Long count = query.getSingleResult();
+        return count != null ? count : 0;
     }
 
 }

@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ReactionRepositoryImpl implements ReactionRepository {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 5;
 
     @Autowired
     private LocalSessionFactoryBean factory;

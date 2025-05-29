@@ -7,6 +7,7 @@ package com.socialapp.controllers;
 import com.socialapp.pojo.Event;
 import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.User;
+import com.socialapp.repository.impl.EventRepositoryImpl;
 import com.socialapp.service.EventService;
 import com.socialapp.service.UserService;
 import jakarta.validation.Valid;
@@ -54,7 +55,22 @@ public class EventController {
 
     @GetMapping("/listEvent")
     public String listEvent(@RequestParam Map<String, String> params, Model model) {
+        String pageParam = params.get("page");
+        int page = (pageParam == null || pageParam.trim().isEmpty()) ? 1 : Integer.parseInt(pageParam);
+        if (page < 1) {
+            page = 1;
+        }
+        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+        params.put("page", String.valueOf(page));
+
         List<Event> event = this.eventService.getEvents(params);
+        long totalEvent = this.eventService.countEvent();
+
+        int pageSize = EventRepositoryImpl.PAGE_SIZE;
+        int totalEventPages = (int) Math.ceil((double) totalEvent / pageSize);
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalEventPages);
         model.addAttribute("event", event);
         model.addAttribute("params", params);
         return "event_management";

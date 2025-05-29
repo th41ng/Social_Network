@@ -13,9 +13,14 @@ import java.util.Map;
  * @author Admin
  */
 public interface UserGroupsRepository {
+
     List<UserGroups> getAllGroups(Map<String, String> params);
+
     UserGroups getGroupById(int groupId);
-   
+
+    long countGroup();
+
     UserGroups addOrUpdateGroup(UserGroups group);
+
     void deleteGroup(int groupId);
 }

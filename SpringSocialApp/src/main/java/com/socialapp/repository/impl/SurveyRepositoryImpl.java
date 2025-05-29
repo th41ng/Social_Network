@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SurveyRepositoryImpl implements SurveyRepository {
 
     // PAGE_SIZE nên là static final hoặc lấy từ file properties
-    public static final int PAGE_SIZE = 6; // Giữ nguyên hoặc di chuyển ra nơi cấu hình chung
+    public static final int PAGE_SIZE = 5; // Giữ nguyên hoặc di chuyển ra nơi cấu hình chung
 
     @Autowired
     private LocalSessionFactoryBean factory;

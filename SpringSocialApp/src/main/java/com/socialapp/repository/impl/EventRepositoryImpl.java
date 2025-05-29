@@ -3,7 +3,7 @@ package com.socialapp.repository.impl;
 import com.socialapp.pojo.Event;
 import com.socialapp.pojo.EventNotification;
 import com.socialapp.repository.EventRepository;
-import jakarta.persistence.Query;
+import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -23,49 +23,44 @@ import java.util.Map;
 @Transactional
 public class EventRepositoryImpl implements EventRepository {
 
-    private static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 5;
 
     @Autowired
     private LocalSessionFactoryBean factory;
 
-        @Override
-        public List<Event> getEvents(Map<String, String> params) {
-            Session s = this.factory.getObject().getCurrentSession();
-            CriteriaBuilder b = s.getCriteriaBuilder();
-            CriteriaQuery<Event> q = b.createQuery(Event.class);
-            Root<Event> root = q.from(Event.class);
-            q.select(root);
+    @Override
+    public List<Event> getEvents(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<Event> q = b.createQuery(Event.class);
+        Root<Event> root = q.from(Event.class);
+        q.select(root);
 
-            if (params != null) {
-                List<Predicate> predicates = new ArrayList<>();
+        if (params != null) {
+            List<Predicate> predicates = new ArrayList<>();
 
-                // Filter by event title
-                String title = params.get("title");
-                if (title != null && !title.isEmpty()) {
-                    predicates.add(b.like(root.get("title"), String.format("%%%s%%", title)));
-                }
-
-                // Filter by event date (or other criteria)
-                String eventDate = params.get("eventDate");
-                if (eventDate != null && !eventDate.isEmpty()) {
-                    predicates.add(b.equal(root.get("eventDate"), eventDate));
-                }
-
-                // Add other filters as necessary
-                q.where(predicates.toArray(Predicate[]::new));
+            // Filter by event title
+            String title = params.get("title");
+            if (title != null && !title.isEmpty()) {
+                predicates.add(b.like(root.get("title"), String.format("%%%s%%", title)));
             }
 
-            Query query = s.createQuery(q);
-
-            // Pagination
-            if (params != null && params.containsKey("page")) {
-                int page = Integer.parseInt(params.get("page"));
-                query.setMaxResults(PAGE_SIZE);
-                query.setFirstResult((page - 1) * PAGE_SIZE);
-            }
-
-            return query.getResultList();
+            // Add other filters as necessary
+            q.where(predicates.toArray(Predicate[]::new));
         }
+
+        Query query = s.createQuery(q);
+
+        // Pagination
+        if (params != null && params.containsKey("page")) {
+            int page = params != null && params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
+            query.setFirstResult((page - 1) * PAGE_SIZE);
+            query.setMaxResults(PAGE_SIZE);
+        }
+
+        return query.getResultList();
+    }
+
     @Override
     public List<Event> getAvailableEvents(Map<String, String> params) {
         Session s = this.factory.getObject().getCurrentSession();
@@ -133,5 +128,13 @@ public class EventRepositoryImpl implements EventRepository {
         if (event != null) {
             s.delete(event);
         }
+    }
+
+    @Override
+    public long countEvent() {
+        Session session = this.factory.getObject().getCurrentSession();
+        Query<Long> query = session.createQuery("SELECT COUNT(e.event_id) FROM Event e", Long.class);
+        Long count = query.getSingleResult();
+        return count != null ? count : 0;
     }
 }
