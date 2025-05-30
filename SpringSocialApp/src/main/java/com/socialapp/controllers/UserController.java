@@ -35,12 +35,10 @@ public class UserController {
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
-//    private static final int PAGE_SIZE = 10;
 
-    // Hiển thị trang đăng nhập
     @GetMapping("/login")
     public String loginView() {
-        return "login"; // Chuyển tới trang login
+        return "login"; 
     }
 
     @GetMapping("/listUser")
@@ -50,13 +48,12 @@ public class UserController {
         if (page < 1) {
             page = 1;
         }
-        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+     
         params.put("page", String.valueOf(page));
 
         List<User> users = this.userService.getAllUsers(params);
         long totalUsers = this.userService.countUsers();
         
-         // Sử dụng PAGE_SIZE đã import hoặc định nghĩa ở trên
         int pageSize = UserRepositoryImpl.PAGE_SIZE; 
         int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
         

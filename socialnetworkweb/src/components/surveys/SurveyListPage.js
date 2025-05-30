@@ -54,7 +54,7 @@ const SurveyListPage = () => {
                     );
                     // Kiểm tra xem có phải trang cuối không dựa trên số lượng item trả về
                     // Giả sử PAGE_SIZE ở backend là 6
-                    const BACKEND_PAGE_SIZE = 6;
+                    const BACKEND_PAGE_SIZE = 5;
                     if (fetchedSurveys.length < BACKEND_PAGE_SIZE) {
                         setCanLoadMore(false);
                     }

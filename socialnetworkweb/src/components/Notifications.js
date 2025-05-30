@@ -121,7 +121,7 @@ const Notifications = () => {
                 <h4>Thông tin sự kiện:</h4>
                 {eventDetails[notif.eventId] ? (
                   <div>
-                    <p><strong>Tên sự kiện:</strong> {eventDetails[notif.eventId].name}</p>
+                    <p><strong>Tên sự kiện:</strong> {eventDetails[notif.eventId].title}</p>
                     <p><strong>Mô tả:</strong> {eventDetails[notif.eventId].description}</p>
                     <p><strong>Thời gian:</strong> {new Date(eventDetails[notif.eventId].start_date).toLocaleString()} đến {new Date(eventDetails[notif.eventId].end_date).toLocaleString()}</p>
                   </div>
