@@ -2,8 +2,7 @@ package com.socialapp.controllers;
 
 import com.socialapp.pojo.Survey;
 import com.socialapp.pojo.User;
-// Quan trọng: Import PAGE_SIZE từ SurveyRepositoryImpl
-import com.socialapp.repository.impl.SurveyRepositoryImpl; // ĐẢM BẢO BẠN CÓ IMPORT NÀY
+import com.socialapp.repository.impl.SurveyRepositoryImpl; 
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.SurveyService;
 import com.socialapp.service.UserService;
@@ -22,7 +21,6 @@ import java.util.Map;
 import org.springframework.security.core.Authentication;
 
 @Controller
-@ControllerAdvice // Nếu bạn dùng @ControllerAdvice cho exception handling chung
 @RequestMapping("/surveys")
 public class SurveyController {
 
@@ -42,7 +40,7 @@ public class SurveyController {
         model.addAttribute("categories", this.categoryService.getCategories());
     }
 
-    // Hiển thị danh sách khảo sát (ĐÃ CẬP NHẬT LOGIC PHÂN TRANG)
+    
     @GetMapping
     public String listSurveys(@RequestParam Map<String, String> params, Model model) {
         String pageParam = params.get("page");
@@ -50,31 +48,31 @@ public class SurveyController {
         if (page < 1) {
             page = 1;
         }
-        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+      
         params.put("page", String.valueOf(page));
 
         List<Survey> surveys = this.surveyService.getSurveys(params);
-        long totalSurveys = this.surveyService.countSurveys(params); // Lấy tổng số survey
+        long totalSurveys = this.surveyService.countSurveys(params); 
 
-        // Sử dụng PAGE_SIZE đã import hoặc định nghĩa ở trên
-        int pageSize = SurveyRepositoryImpl.PAGE_SIZE; // PAGE_SIZE = 6 từ SurveyRepositoryImpl
+       
+        int pageSize = SurveyRepositoryImpl.PAGE_SIZE; 
         int totalPages = (int) Math.ceil((double) totalSurveys / pageSize);
 
         model.addAttribute("surveys", surveys);
         model.addAttribute("params", params);
-        model.addAttribute("currentPage", page); // <--- TRUYỀN currentPage
-        model.addAttribute("totalPages", totalPages); // <--- TRUYỀN totalPages
-        // model.addAttribute("pageSize", pageSize); // Có thể truyền nếu cần
+        model.addAttribute("currentPage", page); 
+        model.addAttribute("totalPages", totalPages); 
+      
 
         logger.info("SurveyController: Displaying surveys for page: {}, total surveys: {}, total pages: {}", page, totalSurveys, totalPages);
         return "survey_management";
     }
 
-    // Hiển thị form thêm khảo sát mới
+  
     @GetMapping("/add")
     public String addSurveyForm(Model model) {
         Survey newSurvey = new Survey();
-        newSurvey.setIsActive(true); // Mặc định khảo sát mới là active
+        newSurvey.setIsActive(true); 
         model.addAttribute("survey", newSurvey);
         return "survey";
     }
@@ -91,7 +89,7 @@ public class SurveyController {
         model.addAttribute("survey", survey);
         return "survey";
     }
-    
+
     @PostMapping("/save")
     public String saveSurvey(@ModelAttribute Survey survey, RedirectAttributes redirectAttributes, Authentication authentication) {
         try {
@@ -99,7 +97,7 @@ public class SurveyController {
             if (authentication == null || !authentication.isAuthenticated()) {
                 logger.warn("Người dùng chưa xác thực khi tạo hoặc chỉnh sửa khảo sát.");
                 redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng đăng nhập để thực hiện hành động này.");
-                return "redirect:/Users/login"; // Điều hướng đến trang đăng nhập
+                return "redirect:/Users/login"; 
             }
 
             String username = authentication.getName(); // Lấy tên người dùng từ Authentication
@@ -114,10 +112,10 @@ public class SurveyController {
             // Gán người dùng hiện tại là admin của khảo sát
             survey.setAdminId(currentUser);
 
-            if (survey.getSurveyId() == null) { // Thêm mới khảo sát
-                survey.setCreatedAt(new Date()); // Đặt ngày tạo khảo sát
-                if (survey.getIsActive() == null) { // Nếu form không gửi, mặc định khảo sát là active
-                    survey.setIsActive(true);
+            if (survey.getSurveyId() == null) { 
+                survey.setCreatedAt(new Date());
+                if (survey.getIsActive() == null) {
+                    survey.setIsActive(true); 
                 }
                 this.surveyService.addOrUpdateSurvey(survey);
                 redirectAttributes.addFlashAttribute("successMessage", "Thêm khảo sát mới thành công!");
@@ -128,12 +126,14 @@ public class SurveyController {
                     redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy khảo sát để cập nhật.");
                     return "redirect:/surveys";
                 }
-                // Giữ lại ngày tạo gốc, không cập nhật lại ngày tạo khi sửa
+                // Giữ lại ngày tạo gốc
                 survey.setCreatedAt(existingSurvey.getCreatedAt());
 
-                if (survey.getIsActive() == null) { // Nếu checkbox isActive không được tick khi submit form sửa
-                    survey.setIsActive(false);
+              
+                if (survey.getIsActive() == null) {
+                    survey.setIsActive(existingSurvey.getIsActive());
                 }
+              
                 this.surveyService.addOrUpdateSurvey(survey);
                 redirectAttributes.addFlashAttribute("successMessage", "Cập nhật khảo sát thành công!");
                 logger.info("Survey updated with ID: {}", survey.getSurveyId());
@@ -145,7 +145,7 @@ public class SurveyController {
         return "redirect:/surveys";
     }
 
-    // Endpoint mới để bật/tắt trạng thái active của survey
+   
     @PostMapping("/toggle-active/{surveyId}")
     public String toggleSurveyActiveState(@PathVariable("surveyId") int surveyId, RedirectAttributes redirectAttributes) {
         try {

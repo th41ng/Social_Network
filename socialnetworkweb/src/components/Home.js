@@ -1,7 +1,5 @@
-
-import { useEffect, useState, useCallback, useRef, useContext } from "react";
-import { Alert, Button, Col, Row } // Removed Form, InputGroup, Dropdown, Modal as they are now in child components primarily
-    from "react-bootstrap";
+import { useEffect, useState, useCallback, useContext } from "react"; // useRef không còn được dùng trực tiếp trong Home
+import { Alert, Button, Col, Row } from "react-bootstrap";
 import Apis, { endpoints, authApis } from "../configs/Apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import cookie from "react-cookies";
@@ -10,25 +8,30 @@ import { MyUserContext, MyDispatchContext } from "../configs/Contexts";
 
 // Import the new components
 import CreatePostForm from "./CreatePostForm";
-import PostItem from "./PostItem";
+import PostItem from "./PostItem"; // Đảm bảo PostItem được React.memo nếu bạn muốn tối ưu hóa tối đa
 import EditPostModal from "./EditPostModal";
 import EditCommentModal from "./EditCommentModal";
 
 const Home = () => {
-    
     const [posts, setPosts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [canLoadMore, setCanLoadMore] = useState(true);
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [q] = useSearchParams();
     const nav = useNavigate();
+
     const currentUser = useContext(MyUserContext);
     const dispatch = useContext(MyDispatchContext);
-    const [isSubmitting, setIsSubmitting] = useState(false); // Renamed for clarity, used by multiple actions
-    const [editingPost, setEditingPost] = useState(null); // This is the post object
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [editingPost, setEditingPost] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [editingComment, setEditingComment] = useState(null); // { postId, commentId, content, userId }
+
+    const [editingComment, setEditingComment] = useState(null);
     const [showEditCommentModal, setShowEditCommentModal] = useState(false);
+
+    // --- useEffects ---
     useEffect(() => {
         const token = cookie.load("token");
         if (!token && !currentUser) {
@@ -50,17 +53,24 @@ const Home = () => {
             fetchCurrentUser();
         }
     }, [nav, currentUser, dispatch]);
+
+    const keyword = q.get("kw"); // Trích xuất keyword để dùng trong dependency của loadPosts
+
     const loadPosts = useCallback(async (pageToLoad, isNewSearch = false) => {
         if (!isNewSearch && !canLoadMore && pageToLoad > 1) return;
-        if (loadingPosts && !isNewSearch && pageToLoad > 1) return;
+        // Guard `loadingPosts` đã được comment out trong code gốc, giữ nguyên
+        // if (loadingPosts && !isNewSearch && pageToLoad > 1) return;
+
+
         setLoadingPosts(true);
         try {
             let url = endpoints['posts'];
             const params = new URLSearchParams();
             params.append('page', pageToLoad.toString());
-            const currentKw = q.get("kw");
-            if (currentKw) {
-                params.append('kw', currentKw);
+
+            // const currentKw = q.get("kw"); // Sử dụng keyword từ bên ngoài
+            if (keyword) { // Sử dụng keyword đã trích xuất
+                params.append('kw', keyword);
             }
             const fullUrl = `${url}?${params.toString()}`;
             const res = await Apis.get(fullUrl);
@@ -71,55 +81,60 @@ const Home = () => {
                     if (pageToLoad === 1 || isNewSearch) setPosts([]);
                 } else {
                     setPosts(prev => (pageToLoad === 1 || isNewSearch) ? fetchedPosts : [...prev, ...fetchedPosts]);
-                    setCanLoadMore(true);
+                    setCanLoadMore(true); // Cho phép tải thêm nếu có kết quả
                 }
-            } else {
+            } else { // Trường hợp res.data không phải mảng hoặc không có
                 setCanLoadMore(false);
                 if (pageToLoad === 1 || isNewSearch) setPosts([]);
             }
         } catch (ex) {
             console.error("Lỗi khi tải danh sách bài viết:", ex);
-            setCanLoadMore(false); // Ensure loading indicator stops on error
+            setCanLoadMore(false);
         } finally {
             setLoadingPosts(false);
         }
-    }, [q.get("kw"), canLoadMore]); // Removed loadingPosts from dependencies as it causes re-runs
+    }, [keyword, canLoadMore]); // Dependencies: keyword và canLoadMore
+
 
     useEffect(() => {
         if (cookie.load("token") && currentUser) {
             if (currentPage > 0) {
-                loadPosts(currentPage, currentPage === 1 && q.get("kw") !== null);
+                loadPosts(currentPage, currentPage === 1 && keyword !== null);
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage, currentUser]); // Removed loadPosts, it will be stable due to useCallback
+    }, [currentPage, currentUser, loadPosts, keyword]); // Thêm loadPosts và keyword (nếu loadPosts dùng nó)
+
     useEffect(() => {
         setCurrentPage(1);
-        setCanLoadMore(true);
-        if (cookie.load("token") && currentUser) {
-            loadPosts(1, true); // isNewSearch = true
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [q.get("kw"), currentUser]); // Removed loadPosts
-    const formatDate = (dateStr) => {
+        setCanLoadMore(true); // Reset canLoadMore khi tìm kiếm mới
+        // if (cookie.load("token") && currentUser) { // loadPosts sẽ được gọi bởi useEffect ở trên khi currentPage đổi thành 1
+        //     loadPosts(1, true);
+        // }
+        // useEffect trên sẽ tự gọi loadPosts(1, true) do currentPage thay đổi và keyword có thể thay đổi
+    }, [keyword, currentUser]); // Chỉ chạy khi keyword hoặc currentUser thay đổi
+
+
+    // --- Helper Functions ---
+    const formatDate = useCallback((dateStr) => {
         if (!dateStr) return "Không rõ thời gian";
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return "Thời gian không hợp lệ";
         return date.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    };
-    const handleAuthAction = async (actionFunc, errorMessageDefault, unauthorizedMessage) => {
+    }, []);
+
+    const handleAuthAction = useCallback(async (actionFunc, errorMessageDefault, unauthorizedMessage) => {
         if (!cookie.load("token") || !currentUser) {
             alert(unauthorizedMessage || "Vui lòng đăng nhập để thực hiện hành động này.");
-            if (!currentUser && cookie.load("token")) { // Edge case: token exists but user not in context
+            if (!currentUser && cookie.load("token")) {
                 cookie.remove("token");
                 dispatch({ type: "logout" });
             }
             nav("/login");
-            return null; // Indicate failure or redirection
+            return null;
         }
         try {
             const response = await actionFunc();
-            return response; // Return the response for the caller to process
+            return response;
         } catch (error) {
             console.error(errorMessageDefault, error);
             let msg = errorMessageDefault;
@@ -131,7 +146,6 @@ const Home = () => {
                     nav("/login");
                 } else {
                     const errorData = error.response.data;
-                    // Simplified error message extraction
                     if (errorData && (errorData.error || errorData.message || errorData.detail)) {
                         msg = errorData.error || errorData.message || errorData.detail;
                     } else if (typeof errorData === 'string' && errorData.length < 200 && !errorData.toLowerCase().includes("<html")) {
@@ -144,21 +158,23 @@ const Home = () => {
                                 break;
                             }
                         }
-                        if (msg === errorMessageDefault) { // Fallback if no specific message found
+                        if (msg === errorMessageDefault) {
                             try { msg = `Lỗi Server: ${error.response.status} - ${JSON.stringify(errorData)}`; } catch (e) { /* ignore */ }
                         }
                     } else if (error.response.statusText && msg === errorMessageDefault) {
                         msg = `Lỗi: ${error.response.status} - ${error.response.statusText}`;
                     }
                 }
-            } else if (error.message) { // Network error or other client-side error
+            } else if (error.message) {
                 msg = `${errorMessageDefault} (Chi tiết: ${error.message})`;
             }
             alert(msg);
-            return error.response || { data: { error: msg }, status: error.code || 'NETWORK_ERROR' }; // Return error structure
+            return error.response || { data: { error: msg }, status: error.code || 'NETWORK_ERROR' };
         }
-    };
-    const handlePostReactionClick = async (postId, reactionType) => {
+    }, [currentUser, dispatch, nav]);
+
+    // --- Post Actions ---
+    const handlePostReactionClick = useCallback(async (postId, reactionType) => {
         const result = await handleAuthAction(
             () => authApis().post(endpoints['post-reactions'](postId), { type: reactionType }),
             "Có lỗi xảy ra khi tương tác với bài viết.",
@@ -167,14 +183,14 @@ const Home = () => {
         if (result && result.status === 200 && result.data) {
             setPosts(prev => prev.map(p => p.postId === postId ? { ...p, reactions: result.data } : p));
         }
-    };
-    const handlePostCreated = (newPostDTO) => {
+    }, [handleAuthAction]);
+
+    const handlePostCreated = useCallback((newPostDTO) => {
         setPosts(prevPosts => [newPostDTO, ...prevPosts]);
-        // Resetting form fields is now handled within CreatePostForm
-    };
+    }, []);
 
 
-    const handleDeletePost = async (postIdToDelete) => {
+    const handleDeletePost = useCallback(async (postIdToDelete) => {
         if (!window.confirm("Bạn có chắc chắn muốn xóa bài viết này? Hành động này không thể hoàn tác.")) {
             return;
         }
@@ -183,30 +199,30 @@ const Home = () => {
             "Có lỗi xảy ra khi xóa bài viết.",
             "Vui lòng đăng nhập để xóa bài viết."
         );
-        if (result && (result.status === 204 || result.status === 200)) { // 204 No Content is common for DELETE
+        if (result && (result.status === 204 || result.status === 200)) {
             setPosts(currentPosts => currentPosts.filter(p => p.postId !== postIdToDelete));
             alert("Xóa bài viết thành công!");
         }
-    };
+    }, [handleAuthAction]);
 
-    const openEditPostModalHandler = (postToEdit) => {
+    const openEditPostModalHandler = useCallback((postToEdit) => {
         if (!currentUser || !postToEdit.userId || currentUser.id !== postToEdit.userId) {
             alert("Bạn không có quyền sửa bài viết này.");
             return;
         }
         setEditingPost(postToEdit);
         setShowEditModal(true);
-    };
+    }, [currentUser]);
 
-    const closeEditPostModalHandler = () => {
+    const closeEditPostModalHandler = useCallback(() => {
         setShowEditModal(false);
-        setEditingPost(null); // Clear editing state
-    };
+        setEditingPost(null);
+    }, []);
 
-    const handleUpdatePost = async (formData) => { // formData is now prepared by EditPostModal
+    const handleUpdatePost = useCallback(async (formData) => {
         setIsSubmitting(true);
         const result = await handleAuthAction(
-            () => authApis().post(endpoints['posts'], formData, { // Assumes your update endpoint is same as create but uses POST with postId
+            () => authApis().post(endpoints['posts'], formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             }),
             "Có lỗi xảy ra khi cập nhật bài viết.",
@@ -216,17 +232,17 @@ const Home = () => {
         if (result && result.status === 200 && result.data && result.data.postId) {
             const updatedPostFromServer = result.data;
             setPosts(currentPosts => currentPosts.map(p =>
-                p.postId === editingPost.postId // Use editingPost.postId from state
-                    ? { ...updatedPostFromServer, userId: updatedPostFromServer.userId || editingPost.userId } // Ensure userId is preserved
+                p.postId === editingPost?.postId // Thêm optional chaining phòng trường hợp editingPost là null
+                    ? { ...updatedPostFromServer, userId: updatedPostFromServer.userId || editingPost?.userId }
                     : p
             ));
             alert("Cập nhật bài viết thành công!");
-            closeEditPostModalHandler();
+            closeEditPostModalHandler(); // Gọi hàm đã được memoize
         }
-    };
+    }, [handleAuthAction, editingPost, closeEditPostModalHandler]); // Thêm closeEditPostModalHandler vào dependencies
 
-    const handleToggleCommentLock = async (postId) => {
-        const currentPost = posts.find(p => p.postId === postId);
+    const handleToggleCommentLock = useCallback(async (postId) => {
+        const currentPost = posts.find(p => p.postId === postId); // posts có thể thay đổi
         if (!currentPost || !currentUser || currentUser.id !== currentPost.userId) {
             alert("Bạn không có quyền thực hiện hành động này.");
             return;
@@ -236,7 +252,7 @@ const Home = () => {
         if (!window.confirm(`Bạn có chắc muốn ${actionMessage} bình luận cho bài viết này?`)) {
             return;
         }
-        setIsSubmitting(true); // Use the general submitting state
+        setIsSubmitting(true);
         const result = await handleAuthAction(
             () => authApis().post(endpoints['toggle-comment-lock'](postId)),
             `Có lỗi khi ${actionMessage} bình luận.`,
@@ -247,16 +263,16 @@ const Home = () => {
             const updatedPostFromServer = result.data;
             setPosts(currentPosts => currentPosts.map(p =>
                 p.postId === postId
-                    ? { ...updatedPostFromServer, userId: updatedPostFromServer.userId || p.userId } // Ensure userId is preserved
+                    ? { ...updatedPostFromServer, userId: updatedPostFromServer.userId || p.userId }
                     : p
             ));
             alert(`Đã ${actionMessage} bình luận thành công!`);
         }
-    };
+    }, [posts, currentUser, handleAuthAction]); // Thêm posts, currentUser
 
 
-    // --- Comment Actions (many will be passed to PostItem) ---
-    const handleCommentReactionClick = async (postId, commentId, reactionType) => {
+    // --- Comment Actions ---
+    const handleCommentReactionClick = useCallback(async (postId, commentId, reactionType) => {
         const result = await handleAuthAction(
             () => authApis().post(endpoints['comment-reactions'](commentId), { type: reactionType }),
             "Có lỗi xảy ra khi tương tác với bình luận.",
@@ -270,16 +286,14 @@ const Home = () => {
                 return p;
             }));
         }
-    };
+    }, [handleAuthAction]);
 
-    const handleAddComment = async (postId, content) => { // Content now passed from PostItem
-        // setIsSubmitting(true); // PostItem can manage its own submitting state for comments or use a shared one
+    const handleAddComment = useCallback(async (postId, content) => {
         const result = await handleAuthAction(
             () => authApis().post(endpoints['add-comment'](postId), { content: content }),
             "Lỗi không xác định khi thêm bình luận.",
             "Vui lòng đăng nhập để bình luận."
         );
-        // setIsSubmitting(false);
         if (result && result.status === 201 && result.data && result.data.commentId) {
             const newCommentDTO = result.data;
             setPosts(prev => prev.map(p => {
@@ -293,13 +307,12 @@ const Home = () => {
                 }
                 return p;
             }));
-            // Clearing input is handled in PostItem
-            return true; // Indicate success
+            return true;
         }
-        return false; // Indicate failure
-    };
+        return false;
+    }, [handleAuthAction]);
 
-    const handleDeleteComment = async (postId, commentIdToDelete) => {
+    const handleDeleteComment = useCallback(async (postId, commentIdToDelete) => {
         if (!window.confirm("Bạn có chắc chắn muốn xóa bình luận này?")) {
             return;
         }
@@ -322,91 +335,90 @@ const Home = () => {
             }));
             alert("Xóa bình luận thành công!");
         }
-    };
+    }, [handleAuthAction]);
 
-    const openEditCommentModalHandler = (currentPost, commentToEdit) => { // currentPost needed to get postId
+    const openEditCommentModalHandler = useCallback((currentPost, commentToEdit) => {
         if (!currentUser || !commentToEdit.userId || currentUser.id !== commentToEdit.userId) {
             alert("Bạn không có quyền sửa bình luận này.");
             return;
         }
-        setEditingComment({ // Store all necessary info
+        setEditingComment({
             postId: currentPost.postId,
             commentId: commentToEdit.commentId,
             content: commentToEdit.content,
             userId: commentToEdit.userId
         });
         setShowEditCommentModal(true);
-    };
+    }, [currentUser]);
 
-    const closeEditCommentModalHandler = () => {
+    const closeEditCommentModalHandler = useCallback(() => {
         setShowEditCommentModal(false);
         setEditingComment(null);
-    };
+    }, []);
 
-    const handleUpdateComment = async (commentId, content, postId) => { // postId needed to update the correct post's comments
-        setIsSubmitting(true);
-        const result = await handleAuthAction(
-            () => authApis().put(endpoints['update-comment'](commentId), { content: content }),
-            "Có lỗi xảy ra khi cập nhật bình luận.",
-            "Vui lòng đăng nhập để cập nhật bình luận."
-        );
-        setIsSubmitting(false);
-        if (result && result.status === 200 && result.data) {
-            const updatedCommentFromServer = result.data;
-            setPosts(currentPosts => currentPosts.map(p => {
-                if (p.postId === postId) { // Use postId from the editingComment state
-                    return {
-                        ...p,
-                        comments: p.comments.map(c =>
-                            c.commentId === commentId
-                                ? { ...updatedCommentFromServer, userId: updatedCommentFromServer.userId || editingComment.userId }
-                                : c
-                        )
-                    };
-                }
-                return p;
-            }));
-            alert("Cập nhật bình luận thành công!");
-            closeEditCommentModalHandler();
-        }
-    };
+  const handleUpdateComment = useCallback(async (commentId, content, postId) => {
+    setIsSubmitting(true);
+    const result = await handleAuthAction(
+        () => authApis().put(endpoints['update-comment'](commentId), { content: content }),
+        "Có lỗi xảy ra khi cập nhật bình luận.",
+        "Vui lòng đăng nhập để cập nhật bình luận."
+    );
+    setIsSubmitting(false);
+
+    if (result && result.status === 200 && result.data) {
+        const updatedCommentFromServer = result.data;
+
+        // Tìm comment trong post đã sửa và giữ lại reactions cũ
+        setPosts(currentPosts => currentPosts.map(p => {
+            if (p.postId === postId) {
+                return {
+                    ...p,
+                    comments: p.comments.map(c =>
+                        c.commentId === commentId
+                            ? { ...updatedCommentFromServer, reactions: c.reactions || {} } // Giữ lại reactions cũ
+                            : c
+                    )
+                };
+            }
+            return p;
+        }));
+
+        alert("Cập nhật bình luận thành công!");
+        closeEditCommentModalHandler(); // Gọi hàm đã được memoize
+    }
+}, [handleAuthAction, editingComment, closeEditCommentModalHandler]);
+
 
 
     // --- Load More ---
-    const loadMore = () => {
+    const loadMore = useCallback(() => {
         if (!loadingPosts && canLoadMore) {
             setCurrentPage(prevPage => prevPage + 1);
         }
-    };
+    }, [loadingPosts, canLoadMore]);
 
     // --- Render Logic ---
     if (!currentUser && cookie.load("token")) {
         return <div className="text-center mt-5"><MySpinner /><p>Đang tải dữ liệu người dùng...</p></div>;
     }
     if (!currentUser && !cookie.load("token")) {
-        // This case might mean the initial auth check is still pending or failed silently,
-        // or the user is genuinely logged out.
-        // Depending on your app flow, you might want to redirect to login or show a message.
-        // For now, keeping the spinner.
         return <div className="text-center mt-5"><MySpinner /><p>Đang kiểm tra đăng nhập...</p></div>;
     }
 
-    // Show main loading spinner only on initial load of first page without search query
-    if (loadingPosts && currentPage === 1 && posts.length === 0 && !q.get("kw")) {
+    if (loadingPosts && currentPage === 1 && posts.length === 0 && !keyword) { // Sử dụng keyword
         return <div className="text-center mt-5"><MySpinner /></div>;
     }
-
 
     return (
         <>
             {currentUser && (
                 <CreatePostForm
                     onPostCreated={handlePostCreated}
-                    isSubmitting={isSubmitting} // Pass the general submitting state
-                    setIsSubmitting={setIsSubmitting} 
+                    isSubmitting={isSubmitting}
+                    setIsSubmitting={setIsSubmitting}
                     authApis={authApis}
                     endpoints={endpoints}
-                    handleAuthAction={handleAuthAction} // Pass this if CreatePostForm handles its own submission fully
+                    handleAuthAction={handleAuthAction}
                 />
             )}
 
@@ -430,10 +442,9 @@ const Home = () => {
                             onAddComment={handleAddComment}
                             onDeleteComment={handleDeleteComment}
                             onOpenEditCommentModal={openEditCommentModalHandler}
-                            // Pass down authApis, endpoints, and handleAuthAction if needed by PostItem for its internal logic
-                            authApis={authApis}
-                            endpoints={endpoints}
-                            handleAuthAction={handleAuthAction}
+                            authApis={authApis} // Truyền xuống nếu PostItem cần gọi API trực tiếp (ít phổ biến hơn)
+                            endpoints={endpoints} // Tương tự
+                            handleAuthAction={handleAuthAction} // Truyền xuống nếu PostItem tự xử lý auth
                         />
                     ))}
                 </Col>
@@ -444,10 +455,8 @@ const Home = () => {
                     show={showEditModal}
                     onHide={closeEditPostModalHandler}
                     postToEdit={editingPost}
-                    onUpdatePost={handleUpdatePost} // This function now takes formData
+                    onUpdatePost={handleUpdatePost}
                     isSubmitting={isSubmitting}
-                // authApis and endpoints can be passed if EditPostModal needs to make its own calls
-                // but it's better to handle the call in Home.js via onUpdatePost
                 />
             )}
 
@@ -455,8 +464,8 @@ const Home = () => {
                 <EditCommentModal
                     show={showEditCommentModal}
                     onHide={closeEditCommentModalHandler}
-                    commentToEdit={editingComment} // This is an object like { postId, commentId, content, userId }
-                    onUpdateComment={handleUpdateComment} // Takes commentId, newContent, postId
+                    commentToEdit={editingComment}
+                    onUpdateComment={handleUpdateComment}
                     isSubmitting={isSubmitting}
                 />
             )}

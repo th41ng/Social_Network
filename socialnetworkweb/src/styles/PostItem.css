@@ -1,0 +1,267 @@
+
+:root {
+  --postitem-primary-color: #0d6efd;
+  --postitem-primary-color-dark: #0a58ca;
+  --postitem-primary-color-light: #cfe2ff;
+  --postitem-text-color: #212529;
+  --postitem-text-muted-color: #6c757d;
+  --postitem-background-color: #fff;
+  --postitem-light-background-color: #f8f9fa;
+  --postitem-border-color: #dee2e6;
+  --postitem-border-radius: 0.375rem;
+  --postitem-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --postitem-shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  --postitem-shadow-lg-hover: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.12);
+  --postitem-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --postitem-transition-duration: 0.25s;
+}
+
+/* --- CARD CHUNG CỦA BÀI ĐĂNG --- */
+.card.hover-shadow-lg {
+  background-color: var(--postitem-background-color);
+  border: 1px solid var(--postitem-border-color);
+  border-radius: var(--postitem-border-radius);
+  box-shadow: var(--postitem-shadow-md);
+  transition: box-shadow var(--postitem-transition-duration) ease-in-out, transform var(--postitem-transition-duration) ease-in-out;
+}
+
+.card.hover-shadow-lg:hover {
+  box-shadow: var(--postitem-shadow-lg-hover);
+  transform: translateY(-3px);
+}
+
+/* --- MENU TÙY CHỌN BÀI ĐĂNG (BA DẤU CHẤM) --- */
+.no-caret::after {
+  display: none !important;
+}
+
+.dropdown-toggle.no-caret {
+  color: var(--postitem-text-muted-color);
+  transition: color var(--postitem-transition-duration) ease;
+}
+.dropdown-toggle.no-caret:hover {
+  color: var(--postitem-primary-color);
+}
+
+.dropdown-menu {
+  border-radius: var(--postitem-border-radius);
+  box-shadow: var(--postitem-shadow-md);
+  border: 1px solid var(--postitem-border-color);
+  padding: 0.5rem 0;
+  animation: fadeInDropdown 0.2s ease-out;
+}
+
+.dropdown-item {
+  color: var(--postitem-text-color);
+  padding: 0.5rem 1rem;
+  transition: background-color var(--postitem-transition-duration) ease, color var(--postitem-transition-duration) ease;
+}
+.dropdown-item:hover {
+  background-color: var(--postitem-primary-color-light);
+  color: var(--postitem-primary-color-dark);
+}
+.dropdown-item.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+.dropdown-item svg {
+    margin-right: 0.75rem;
+    opacity: 0.8;
+}
+.dropdown-item:hover svg {
+    opacity: 1;
+}
+
+/* Animation cho dropdown menu */
+@keyframes fadeInDropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- THÔNG TIN TÁC GIẢ --- */
+.card-body .d-flex.align-items-center img.rounded-circle {
+  box-shadow: var(--postitem-shadow-sm);
+  transition: transform var(--postitem-transition-duration) ease;
+}
+.card-body .d-flex.align-items-center img.rounded-circle:hover {
+  transform: scale(1.05);
+}
+.card-body strong.fs-6 {
+    font-weight: 600;
+    color: var(--postitem-text-color);
+}
+.card-body small.text-muted {
+    font-size: 0.8em;
+    letter-spacing: 0.02em;
+}
+
+/* --- NỘI DUNG BÀI VIẾT --- */
+.card-text {
+  line-height: 1.65;
+  color: var(--postitem-text-color);
+}
+.card-img {
+  border-radius: calc(var(--postitem-border-radius) - 2px);
+  box-shadow: var(--postitem-shadow-sm);
+}
+
+/* --- KHU VỰC HIỂN THỊ SỐ LƯỢNG TƯƠNG TÁC BÀI VIẾT --- */
+.mt-2 .d-flex.align-items-center.flex-wrap span.me-3 .reaction-icon {
+  font-size: 1.2em;
+  filter: grayscale(30%);
+  transition: filter var(--postitem-transition-duration) ease, transform var(--postitem-transition-duration) ease;
+}
+.mt-2 .d-flex.align-items-center.flex-wrap span.me-3:hover .reaction-icon {
+  filter: grayscale(0%);
+  transform: scale(1.1);
+}
+
+/* --- CÁC NÚT HÀNH ĐỘNG CHÍNH (LIKE, COMMENT BÀI VIẾT) --- */
+.reaction-btn {
+  font-weight: 500;
+  border-radius: var(--postitem-border-radius);
+  padding: 0.4rem 0.8rem;
+  transition: background-color var(--postitem-transition-duration) ease,
+              border-color var(--postitem-transition-duration) ease,
+              color var(--postitem-transition-duration) ease,
+              transform 0.15s ease-out;
+}
+.reaction-btn:hover {
+  transform: translateY(-1px);
+}
+.reaction-btn:active {
+  transform: translateY(1px) scale(0.98);
+  filter: brightness(95%);
+}
+.reaction-btn .reaction-icon {
+  margin-right: 0.4rem;
+  font-size: 1.15em;
+}
+/* Tùy chỉnh cho nút Bình luận nếu muốn làm nổi bật hơn */
+.d-flex.justify-content-around .btn.ms-2 {
+    background-color: var(--postitem-primary-color-light);
+    color: var(--postitem-primary-color-dark);
+    border-color: var(--postitem-primary-color-light);
+}
+.d-flex.justify-content-around .btn.ms-2:hover {
+    background-color: var(--postitem-primary-color);
+    color: var(--postitem-background-color);
+}
+
+
+/* --- KHU VỰC HIỂN THỊ BÌNH LUẬN --- */
+.mt-3 h6.mb-0 { /* Tiêu đề "Bình luận" */
+  font-weight: 600;
+  color: var(--postitem-text-color);
+}
+
+/* Ô NHẬP BÌNH LUẬN */
+.form-control[as="textarea"] {
+  border-radius: var(--postitem-border-radius) 0 0 var(--postitem-border-radius) !important;
+  border-color: var(--postitem-border-color);
+  transition: border-color var(--postitem-transition-duration) ease, box-shadow var(--postitem-transition-duration) ease;
+  line-height: 1.6;
+}
+.form-control[as="textarea"]:focus {
+  border-color: var(--postitem-primary-color);
+  box-shadow: 0 0 0 0.2rem var(--postitem-primary-color-light);
+}
+.input-group .btn[type="submit"] {
+  border-radius: 0 var(--postitem-border-radius) var(--postitem-border-radius) 0 !important;
+  background-color: var(--postitem-primary-color);
+  border-color: var(--postitem-primary-color);
+  font-weight: 500;
+  transition: background-color var(--postitem-transition-duration) ease, transform 0.15s ease-out;
+}
+.input-group .btn[type="submit"]:hover {
+  background-color: var(--postitem-primary-color-dark);
+  border-color: var(--postitem-primary-color-dark);
+}
+.input-group .btn[type="submit"]:active {
+  transform: scale(0.97);
+}
+.input-group .btn[type="submit"] .spinner-border {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+/* MỤC BÌNH LUẬN CÁ NHÂN */
+.comment-item {
+  background-color: var(--postitem-light-background-color);
+  border-radius: var(--postitem-border-radius);
+  padding: 0.8rem 1rem !important;
+  border-left: 4px solid var(--postitem-primary-color-light) !important;
+  transition: background-color var(--postitem-transition-duration) ease, border-left-color var(--postitem-transition-duration) ease;
+  box-shadow: var(--postitem-shadow-sm);
+}
+.comment-item:hover {
+  background-color: #eef2f7;
+  border-left-color: var(--postitem-primary-color) !important;
+}
+.comment-item strong.fs-6 {
+    font-weight: 500;
+}
+.comment-item p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--postitem-text-color);
+}
+.comment-item small.text-muted {
+    font-size: 0.78em;
+}
+.comment-item .comment-options-toggle svg {
+    color: var(--postitem-text-muted-color);
+    opacity: 0.6;
+    transition: opacity var(--postitem-transition-duration) ease, color var(--postitem-transition-duration) ease, transform var(--postitem-transition-duration) ease;
+}
+.comment-item .comment-options-toggle:hover svg {
+    opacity: 1;
+    color: var(--postitem-primary-color);
+    transform: scale(1.1);
+}
+
+/* NÚT TƯƠNG TÁC CHO MỖI BÌNH LUẬN */
+.comment-action-buttons .reaction-button-comment {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--postitem-text-muted-color);
+  text-decoration: none !important;
+  padding: 0.2rem 0.4rem;
+  border-radius: calc(var(--postitem-border-radius) / 2);
+  transition: color var(--postitem-transition-duration) ease, background-color var(--postitem-transition-duration) ease;
+}
+.comment-action-buttons .reaction-button-comment:hover {
+  color: var(--postitem-primary-color);
+  background-color: var(--postitem-primary-color-light);
+}
+.comment-action-buttons .reaction-button-comment + .reaction-button-comment {
+  margin-left: 0.5rem;
+}
+
+/* --- THÔNG BÁO (ALERT) --- */
+.alert.small {
+    font-size: 0.85em;
+    padding: 0.6rem 1rem;
+}
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #664d03;
+    border-left-width: 4px;
+}
+
+/* --- THÔNG BÁO "CHƯA CÓ BÌNH LUẬN NÀO" --- */
+p.text-muted.small.fst-italic {
+  padding: 1rem;
+  text-align: center;
+  background-color: var(--postitem-light-background-color);
+  border-radius: var(--postitem-border-radius);
+  border: 1px dashed var(--postitem-border-color);
+  color: var(--postitem-text-muted-color) !important;
+}

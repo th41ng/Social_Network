@@ -2,108 +2,112 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <title>Quản lý bài viết</title>
-        <th:block th:replace="~{base :: bootstrap}"></th:block>
-      
-    </head>
-    <body>
-        <div th:replace="~{base :: header}"></div>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
+</head>
+<body>
+    <div th:replace="~{base :: header}"></div>
 
-        <main class="container mt-4">
-            <h2>Quản lý bài viết</h2>
+    <main class="container mt-4">
+        <h2>Quản lý bài viết</h2>
 
-            <form class="row g-3 mb-3" method="get" th:action="@{/posts}">
-                <div class="col-md-4">
-                    <input type="text" class="form-control" name="content" placeholder="Tìm theo nội dung..." th:value="${params != null ? params.get('content') : ''}">
-                </div>
-                <div class="col-md-3">
-                    <label for="fromDate" class="form-label visually-hidden">Từ ngày</label>
-                    <input type="date" class="form-control" id="fromDate" name="fromDate" th:value="${params != null ? params.get('fromDate') : ''}">
-                </div>
-                <div class="col-md-3">
-                    <label for="toDate" class="form-label visually-hidden">Đến ngày</label>
-                    <input type="date" class="form-control" id="toDate" name="toDate" th:value="${params != null ? params.get('toDate') : ''}">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search"></i> Tìm kiếm
-                    </button>
-                </div>
-            </form>
-
-            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-                <span th:text="${successMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <form class="row g-3 mb-3" method="get" th:action="@{/posts}">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="content" placeholder="Tìm theo nội dung..." th:value="${params != null ? params.get('content') : ''}">
             </div>
-            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span th:text="${errorMessage}"></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="col-md-3">
+                <label for="fromDate" class="form-label visually-hidden">Từ ngày</label>
+                <input type="date" class="form-control" id="fromDate" name="fromDate" th:value="${params != null ? params.get('fromDate') : ''}">
             </div>
-
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nội dung</th>
-                            <th>Người đăng</th>
-                            <th>Ngày đăng</th>
-                            <th>Hình ảnh</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="p : ${posts}">
-                            <td th:text="${p.postId}"></td>
-                            <td th:text="${#strings.abbreviate(p.content, 100)}"></td>
-                            <td th:text="${p.userId != null ? p.userId.fullName : 'N/A'}"></td>
-                            <td th:text="${p.createdAt != null ? #dates.format(p.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
-                            <td>
-                                <img th:if="${p.image != null and p.image != ''}" th:src="@{${p.image}}" alt="Post Image" style="max-width: 100px; max-height: 100px; object-fit: cover;" />
-                                <span th:if="${p.image == null or p.image == ''}" class="text-muted"><em>Không có ảnh</em></span>
-                            </td>
-                            <td>
-                                <form th:action="@{/posts/{postId}/delete(postId=${p.postId}, page=${currentPage}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}"
-                                      method="post" style="display:inline-block; margin: 0;"
-                                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Xoá bài viết">
-                                        <i class="fas fa-trash-alt"></i> Xoá
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr th:if="${posts == null or #lists.isEmpty(posts)}">
-                            <td colspan="6" class="text-center">Không có bài viết nào.</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="col-md-3">
+                <label for="toDate" class="form-label visually-hidden">Đến ngày</label>
+                <input type="date" class="form-control" id="toDate" name="toDate" th:value="${params != null ? params.get('toDate') : ''}">
             </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
 
-            <nav aria-label="Page navigation" th:if="${counter != null and counter > 0}">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                        <a class="page-link" th:href="@{/posts(page=1, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}" tabindex="-1" aria-disabled="true">Đầu</a>
-                    </li>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-                    <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                        <a class="page-link" th:href="@{/posts(page=${currentPage - 1}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}">Trước</a>
-                    </li>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nội dung</th>
+                        <th>Người đăng</th>
+                        <th>Ngày đăng</th>
+                        <th>Hình ảnh</th>
+                        <th>Bình luận</th> <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${posts}">
+                        <td th:text="${p.postId}"></td>
+                        <td th:text="${#strings.abbreviate(p.content, 100)}"></td>
+                        <td th:text="${p.userId != null ? p.userId.fullName : 'N/A'}"></td>
+                        <td th:text="${p.createdAt != null ? #dates.format(p.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                        <td>
+                            <img th:if="${p.image != null and p.image != ''}" th:src="@{${p.image}}" alt="Post Image" style="max-width: 100px; max-height: 100px; object-fit: cover;" />
+                            <span th:if="${p.image == null or p.image == ''}" class="text-muted"><em>Không có ảnh</em></span>
+                        </td>
+                        <td> <span th:text="${commentsMap.get(p.postId) != null ? #lists.size(commentsMap.get(p.postId)) : 0}"></span>
+                            <a th:href="@{/posts/{postId}/manage-comments(postId=${p.postId})}" class="btn btn-outline-info btn-sm ms-2" title="Quản lý bình luận">
+                                <i class="fas fa-comments"></i> QL
+                            </a>
+                        </td>
+                        <td>
+                            <form th:action="@{/posts/{postId}/delete(postId=${p.postId}, page=${currentPage}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}"
+                                  method="post" style="display:inline-block; margin: 0;"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Xoá bài viết">
+                                    <i class="fas fa-trash-alt"></i> Xoá
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${posts == null or #lists.isEmpty(posts)}">
+                        <td colspan="7" class="text-center">Không có bài viết nào.</td> </tr>
+                </tbody>
+            </table>
+        </div>
 
-                    <li class="page-item" th:each="i : ${#numbers.sequence(1, counter)}" th:classappend="${i == currentPage} ? 'active'">
-                        <a class="page-link" th:href="@{/posts(page=${i}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}" th:text="${i}"></a>
-                    </li>
+        <nav aria-label="Page navigation" th:if="${counter != null and counter > 0}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/posts(page=1, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}" tabindex="-1" aria-disabled="true">Đầu</a>
+                </li>
 
-                    <li class="page-item" th:classappend="${currentPage == counter} ? 'disabled'">
-                        <a class="page-link" th:href="@{/posts(page=${currentPage + 1}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}">Tiếp</a>
-                    </li>
+                <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/posts(page=${currentPage - 1}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}">Trước</a>
+                </li>
 
-                    <li class="page-item" th:classappend="${currentPage == counter} ? 'disabled'">
-                        <a class="page-link" th:href="@{/posts(page=${counter}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}">Cuối</a>
-                    </li>
-                </ul>
-            </nav>
-        </main>
+                <li class="page-item" th:each="i : ${#numbers.sequence( (currentPage - 2 > 0 ? currentPage - 2 : 1) , (currentPage + 2 < counter ? currentPage + 2 : counter) )}" 
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/posts(page=${i}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}" th:text="${i}"></a>
+                </li>
 
-        <div th:replace="~{base :: footer}"></div>
-        <script th:src="@{/js/main.js}"></script>
-    </body>
+                <li class="page-item" th:classappend="${currentPage == counter} ? 'disabled'">
+                    <a class="page-link" th:href="@{/posts(page=${currentPage + 1}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}">Tiếp</a>
+                </li>
+
+                <li class="page-item" th:classappend="${currentPage == counter} ? 'disabled'">
+                    <a class="page-link" th:href="@{/posts(page=${counter}, content=${params.get('content')}, fromDate=${params.get('fromDate')}, toDate=${params.get('toDate')})}">Cuối</a>
+                </li>
+            </ul>
+        </nav>
+    </main>
+
+    <div th:replace="~{base :: footer}"></div>
+    <script th:src="@{/js/main.js}"></script>
+</body>
 </html>

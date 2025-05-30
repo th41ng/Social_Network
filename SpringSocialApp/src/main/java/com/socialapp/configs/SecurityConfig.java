@@ -58,10 +58,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/login", "/api/user").permitAll() 
                 .requestMatchers("/api/**").permitAll()
+<<<<<<< HEAD
                 .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") 
                 .requestMatchers("/surveys/**", "/Notification/**").hasAnyRole("ADMIN", "LECTURER") 
                 .requestMatchers("/**").hasRole("ADMIN") 
                 .anyRequest().authenticated() 
+=======
+                .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") // Chỉ ADMIN và LECTURER được vào
+                .requestMatchers("/surveys/**", "/Notification/**").hasAnyRole("ADMIN","LECTURER") // LECTURER truy cập vào survey và notification
+                .requestMatchers("/**").hasRole("ADMIN") // ADMIN có toàn quyền trên mọi endpoint khác
+                .anyRequest().authenticated() // Các yêu cầu khác cần xác thực
+>>>>>>> 00f3219d3c9476f99752aaa53ac9cc2fc6e9e12c
                 )
                 .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class) // Thêm JWT Filter
                 .formLogin(form -> form
