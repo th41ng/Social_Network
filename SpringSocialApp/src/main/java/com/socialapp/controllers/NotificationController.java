@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.controllers;
 
 import com.socialapp.pojo.Event;
@@ -67,7 +63,7 @@ public class NotificationController {
         if (page < 1) {
             page = 1;
         }
-        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+      
         params.put("page", String.valueOf(page));
 
         List<EventNotification> event_notification = this.eventNotificationService.getNotifications(params);
@@ -87,7 +83,7 @@ public class NotificationController {
     public String showAddNotificationForm(@RequestParam Map<String, String> params, Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        String username = auth.getName();  // Lấy username hiện tại
+        String username = auth.getName();  
         User currentUser = userService.getUserByUsername(username);
         if (currentUser == null) {
             System.out.println("User không tồn tại!");
@@ -96,21 +92,15 @@ public class NotificationController {
             System.out.println("User username: " + currentUser.getUsername());
         }
         int adminId = currentUser.getId();
-
-        // Lấy danh sách sự kiện từ database
         List<Event> events = eventService.getAvailableEvents(params);
-
-        // Lấy danh sách nhóm từ database
         List<UserGroups> groups = userGroupService.getAllGroups(params);
-
         List<User> recievedUser = userService.getAllUsers(params);
 
-        // Thêm vào model để truyền sang view
         model.addAttribute("notification", new EventNotification());
         model.addAttribute("events", events);
         model.addAttribute("groups", groups);
         model.addAttribute("recievedUser", recievedUser);
-        model.addAttribute("adminId", adminId); // Thêm adminId tự động
+        model.addAttribute("adminId", adminId); 
 
         return "add_update_notification";
     }
@@ -124,21 +114,21 @@ public class NotificationController {
             @RequestParam(value = "groupId", required = false) Integer groupId,
             Model model) {
         try {
-            // Lấy admin từ adminId
+          
             User admin = userService.getUserById(adminId);
             if (admin == null) {
                 throw new IllegalArgumentException("Admin không hợp lệ.");
             }
             notification.setAdmin(admin);
 
-            // Lấy event từ eventId
+          
             Event event = eventService.getEventById(eventId);
             if (event == null) {
                 throw new IllegalArgumentException("Sự kiện không hợp lệ.");
             }
             notification.setEvent(event);
 
-            // Xử lý receiverUserId
+        
             if (receiverUserId != null) {
                 User receiverUser = userService.getUserById(receiverUserId);
                 if (receiverUser == null) {
@@ -146,10 +136,9 @@ public class NotificationController {
                 }
                 notification.setReceiverUser(receiverUser);
             } else {
-                notification.setReceiverUser(null); // Hoặc giữ nguyên giá trị mặc định
+                notification.setReceiverUser(null); 
             }
 
-            // Xử lý groupId
             if (groupId != null) {
                 UserGroups group = userGroupService.getGroupById(groupId);
                 if (group == null) {
@@ -157,19 +146,17 @@ public class NotificationController {
                 }
                 notification.setGroup(group);
             } else {
-                notification.setGroup(null); // Hoặc giữ nguyên giá trị mặc định
+                notification.setGroup(null); 
             }
-
-            // Thiết lập thời gian gửi
+         
             notification.setSentAt(new Date());
 
-            // Lưu thông báo
             eventNotificationService.addOrUpdateNotification(notification);
 
             return "redirect:/?categoryId=3";
         } catch (Exception e) {
             model.addAttribute("error", "Có lỗi xảy ra khi thêm thông báo: " + e.getMessage());
-            return "add_update_notification"; // Trả về form nếu lỗi
+            return "add_update_notification"; 
         }
     }
 
@@ -177,23 +164,20 @@ public class NotificationController {
     public String showEditNotificationForm(
             @PathVariable("id") Integer id,
             Model model) {
-        // Lấy thông báo cần sửa
         EventNotification notification = this.eventNotificationService.getNotificationById(id);
         if (notification == null) {
             throw new IllegalArgumentException("Không tìm thấy thông báo với ID: " + id);
         }
 
-        // Lấy danh sách sự kiện, nhóm, và người dùng
         List<Event> events = eventService.getAvailableEvents(null);
         List<UserGroups> groups = userGroupService.getAllGroups(null);
         List<User> recievedUser = userService.getAllUsers(null);
 
-        // Thêm dữ liệu vào model
         model.addAttribute("notification", notification);
         model.addAttribute("events", events);
         model.addAttribute("groups", groups);
         model.addAttribute("recievedUser", recievedUser);
-        model.addAttribute("adminId", notification.getAdmin().getId()); // Giữ admin hiện tại
+        model.addAttribute("adminId", notification.getAdmin().getId()); 
 
         return "edit_notification";
     }
@@ -213,18 +197,15 @@ public class NotificationController {
                 throw new IllegalArgumentException("Không tìm thấy thông báo với ID: " + id);
             }
 
-            // Cập nhật thông tin cơ bản
             existingNotification.setTitle(notification.getTitle());
             existingNotification.setContent(notification.getContent());
 
-            // Cập nhật sự kiện
             Event event = eventService.getEventById(eventId);
             if (event == null) {
                 throw new IllegalArgumentException("Sự kiện không hợp lệ.");
             }
             existingNotification.setEvent(event);
 
-            // Cập nhật người nhận
             if (receiverUserId != null) {
                 User receiverUser = userService.getUserById(receiverUserId);
                 if (receiverUser == null) {
@@ -235,7 +216,6 @@ public class NotificationController {
                 existingNotification.setReceiverUser(null);
             }
 
-            // Cập nhật nhóm
             if (groupId != null) {
                 UserGroups group = userGroupService.getGroupById(groupId);
                 if (group == null) {
@@ -246,10 +226,8 @@ public class NotificationController {
                 existingNotification.setGroup(null);
             }
 
-            // Cập nhật thời gian gửi
             existingNotification.setSentAt(new Date());
 
-            // Lưu thông báo
             eventNotificationService.addOrUpdateNotification(existingNotification);
 
             return "redirect:/?categoryId=3";

@@ -17,4 +17,8 @@ public interface EmailService {
     
     // Gửi email mã xác thực
     void sendVerifyEmail(String to, String subject, String body);
+    
+    void sendNotiEmailtoUser(String to, String subject, String body);
+    
+    void sendNotiEmailtoGroup(String to, String subject, String body);
 }

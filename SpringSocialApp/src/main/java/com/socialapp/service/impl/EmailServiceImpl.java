@@ -46,5 +46,15 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Override
+    public void sendNotiEmailtoUser(String to, String subject, String body) {
+      sendEmail(to, subject, body);
+    }
+
+    @Override
+    public void sendNotiEmailtoGroup(String to, String subject, String body) {
+       sendEmail(to, subject, body);
+    }
+
    
 }

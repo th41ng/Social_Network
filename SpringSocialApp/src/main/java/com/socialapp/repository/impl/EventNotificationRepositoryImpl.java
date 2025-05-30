@@ -1,8 +1,11 @@
 package com.socialapp.repository.impl;
 
+import com.socialapp.controllers.ApiReactionController;
 import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.GroupMembers;
+import com.socialapp.pojo.User;
 import com.socialapp.repository.EventNotificationRepository;
+import com.socialapp.service.EmailService;
 import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -15,15 +18,19 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository
 @Transactional
 public class EventNotificationRepositoryImpl implements EventNotificationRepository {
-
+  private static final Logger logger = LoggerFactory.getLogger(ApiReactionController.class);
     public static final int PAGE_SIZE = 5;
-
+    @Autowired
+    private EmailService emailService;
     @Autowired
     private LocalSessionFactoryBean factory;
 
@@ -60,12 +67,73 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
     @Override
     public EventNotification addOrUpdateNotification(EventNotification notification) {
         Session session = this.factory.getObject().getCurrentSession();
+
+        // Add or update the notification
         if (notification.getNotificationId() == null) {
-            session.persist(notification);  // Insert đối tượng mới
+            session.persist(notification);
         } else {
-            session.merge(notification);  // Update đối tượng hiện tại
+            session.merge(notification);
         }
+
+        // Gửi thông báo qua email
+        try {
+            // Gửi email đến người dùng cá nhân (nếu có)
+            if (notification.getReceiverUser() != null) {
+                String recipientEmail = notification.getReceiverUser().getEmail();
+                emailService.sendNotiEmailtoUser(
+                        recipientEmail,
+                        "Thông báo sự kiện",
+                        String.format(
+                                "Xin chào %s,\n\n"
+                                + "Bạn có một thông báo mới về sự kiện: %s.\n\n"
+                                + "Vui lòng đăng nhập vào hệ thống để xem chi tiết.\n\n"
+                                + "Trân trọng,\nĐội ngũ hỗ trợ.",
+                                notification.getReceiverUser().getFullName(),
+                                notification.getTitle()
+                        )
+                );
+            }
+
+            // Gửi email đến các thành viên trong nhóm (nếu có)
+            if (notification.getGroup() != null && notification.getGroupId() != null) {
+                List<String> groupEmails = getEmailsByGroupId(notification.getGroupId());
+                for (String email : groupEmails) {
+                    emailService.sendNotiEmailtoUser(
+                            email,
+                            "Thông báo sự kiện",
+                            String.format(
+                                    "Xin chào,\n\n"
+                                    + "Bạn có một thông báo mới về sự kiện: %s.\n\n"
+                                    + "Vui lòng đăng nhập vào hệ thống để xem chi tiết.\n\n"
+                                    + "Trân trọng,\nĐội ngũ hỗ trợ.",
+                                    notification.getTitle()
+                            )
+                    );
+                }
+            }
+        } catch (Exception e) {
+            // Log lỗi nếu việc gửi email thất bại
+            logger.error("Gửi thông báo qua email thất bại.", e);
+        }
+
         return notification;
+    }
+
+    /**
+     * Helper method to get a list of emails for a given group ID.
+     */
+    private List<String> getEmailsByGroupId(Integer groupId) {
+        try {
+            Session session = this.factory.getObject().getCurrentSession();
+            return session.createQuery(
+                    "SELECT u.email FROM User u JOIN GroupMembers gm ON u.id = gm.id "
+                    + "WHERE gm.group.groupId = :groupId", String.class
+            ).setParameter("groupId", groupId).getResultList();
+        } catch (Exception e) {
+            // Log lỗi nếu truy vấn thất bại và trả về danh sách trống
+            logger.error("Không thể lấy danh sách email cho groupId: " + groupId, e);
+            return Collections.emptyList();
+        }
     }
 
     @Override
@@ -97,8 +165,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
 
         // Set query parameters
         query.setParameter("userId", userId);
-        query.setParameter("groupIds", userGroupIds.isEmpty() ? List.of(-1) : userGroupIds); 
-       
+        query.setParameter("groupIds", userGroupIds.isEmpty() ? List.of(-1) : userGroupIds);
 
         // Apply pagination if needed
         if (params != null && params.containsKey("page")) {
