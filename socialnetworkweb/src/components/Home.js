@@ -358,33 +358,38 @@ const Home = () => {
         setEditingComment(null);
     }, []);
 
-    const handleUpdateComment = useCallback(async (commentId, content, postId) => {
-        setIsSubmitting(true);
-        const result = await handleAuthAction(
-            () => authApis().put(endpoints['update-comment'](commentId), { content: content }),
-            "Có lỗi xảy ra khi cập nhật bình luận.",
-            "Vui lòng đăng nhập để cập nhật bình luận."
-        );
-        setIsSubmitting(false);
-        if (result && result.status === 200 && result.data) {
-            const updatedCommentFromServer = result.data;
-            setPosts(currentPosts => currentPosts.map(p => {
-                if (p.postId === postId) {
-                    return {
-                        ...p,
-                        comments: p.comments.map(c =>
-                            c.commentId === commentId
-                                ? { ...updatedCommentFromServer, userId: updatedCommentFromServer.userId || editingComment?.userId } // Thêm optional chaining
-                                : c
-                        )
-                    };
-                }
-                return p;
-            }));
-            alert("Cập nhật bình luận thành công!");
-            closeEditCommentModalHandler(); // Gọi hàm đã memoize
-        }
-    }, [handleAuthAction, editingComment, closeEditCommentModalHandler]); // Thêm closeEditCommentModalHandler và editingComment
+  const handleUpdateComment = useCallback(async (commentId, content, postId) => {
+    setIsSubmitting(true);
+    const result = await handleAuthAction(
+        () => authApis().put(endpoints['update-comment'](commentId), { content: content }),
+        "Có lỗi xảy ra khi cập nhật bình luận.",
+        "Vui lòng đăng nhập để cập nhật bình luận."
+    );
+    setIsSubmitting(false);
+
+    if (result && result.status === 200 && result.data) {
+        const updatedCommentFromServer = result.data;
+
+        // Tìm comment trong post đã sửa và giữ lại reactions cũ
+        setPosts(currentPosts => currentPosts.map(p => {
+            if (p.postId === postId) {
+                return {
+                    ...p,
+                    comments: p.comments.map(c =>
+                        c.commentId === commentId
+                            ? { ...updatedCommentFromServer, reactions: c.reactions || {} } // Giữ lại reactions cũ
+                            : c
+                    )
+                };
+            }
+            return p;
+        }));
+
+        alert("Cập nhật bình luận thành công!");
+        closeEditCommentModalHandler(); // Gọi hàm đã được memoize
+    }
+}, [handleAuthAction, editingComment, closeEditCommentModalHandler]);
+
 
 
     // --- Load More ---

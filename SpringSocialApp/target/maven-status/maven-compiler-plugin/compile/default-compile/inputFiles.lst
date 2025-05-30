@@ -7,7 +7,6 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\Sec
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\ThymeleafConfig.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\UserRole.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\configs\WebAppContextConfigs.java
-C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\AdminController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiCategoryController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiCommentController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiEventController.java
@@ -18,7 +17,6 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiReactionController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiSurveyController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\ApiUserController.java
-C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\AuthController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\EventController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\GroupController.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\controllers\IndexController.java
@@ -54,7 +52,6 @@ C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Period
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Post.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\QuestionType.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Reaction.java
-C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\StatisticsScheduler.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\Survey.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\SurveyOption.java
 C:\DangHoangDanh\BTL_WEB\SpringSocialApp\src\main\java\com\socialapp\pojo\SurveyQuestion.java
