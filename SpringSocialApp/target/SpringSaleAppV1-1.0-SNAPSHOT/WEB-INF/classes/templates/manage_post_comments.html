@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title th:text="'Quản lý bình luận cho bài viết #' + ${post.postId}"></title>
+    <th:block th:replace="~{base :: bootstrap}"></th:block>
+</head>
+<body>
+    <div th:replace="~{base :: header}"></div>
+
+    <main class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/posts}">Quản lý bài viết</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="'Bình luận cho bài viết #' + ${post.postId}"></li>
+            </ol>
+        </nav>
+
+        <h2>Quản lý bình luận cho bài viết: "<span th:text="${#strings.abbreviate(post.content, 50)}"></span>"</h2>
+        <p><strong>ID bài viết:</strong> <span th:text="${post.postId}"></span></p>
+        <p><strong>Người đăng:</strong> <span th:text="${post.userId != null ? post.userId.fullName : 'N/A'}"></span></p>
+        <hr/>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <h4>Danh sách bình luận</h4>
+        <div class="table-responsive" th:if="${comments != null and not #lists.isEmpty(comments)}">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID Bình luận</th>
+                        <th>Người bình luận</th>
+                        <th>Nội dung</th>
+                        <th>Ngày bình luận</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="comment : ${comments}">
+                        <td th:text="${comment.commentId}"></td>
+                        <td th:text="${comment.userId != null ? comment.userId.fullName : 'N/A'}"></td>
+                        <td th:text="${#strings.abbreviate(comment.content, 150)}"></td>
+                        <td th:text="${comment.createdAt != null ? #dates.format(comment.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                        <td>
+                            <form th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.postId}, commentId=${comment.commentId})}"
+                                  method="post" style="display:inline-block;"
+                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                                <button type="submit" class="btn btn-danger btn-sm" title="Xóa bình luận">
+                                    <i class="fas fa-trash-alt"></i> Xoá
+                                </button>
+                            </form>
+                            </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${comments == null or #lists.isEmpty(comments)}">
+            <p class="text-muted">Bài viết này chưa có bình luận nào.</p>
+        </div>
+        
+        <div class="mt-3">
+            <a th:href="@{/posts(page=${param.page != null ? param.page[0] : '1'}, content=${param.content != null ? param.content[0] : ''}, fromDate=${param.fromDate != null ? param.fromDate[0] : ''}, toDate=${param.toDate != null ? param.toDate[0] : ''})}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại danh sách bài viết
+            </a>
+        </div>
+
+    </main>
+
+    <div th:replace="~{base :: footer}"></div>
+</body>
+</html>

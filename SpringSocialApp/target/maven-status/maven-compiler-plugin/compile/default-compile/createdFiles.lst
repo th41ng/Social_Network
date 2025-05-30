@@ -106,7 +106,9 @@ com\socialapp\pojo\DailyPlatformSummary.class
 com\socialapp\repository\ReactionRepository.class
 com\socialapp\repository\impl\SurveyQuestionRepositoryImpl.class
 com\socialapp\pojo\SurveyOption.class
+com\socialapp\service\CommentApiService.class
 com\socialapp\service\EventNotificationService.class
+com\socialapp\service\impl\CommentApiServiceImpl.class
 com\socialapp\service\impl\EmailServiceImpl.class
 com\socialapp\controllers\MemberController.class
 com\socialapp\repository\QuestionTypeRepository.class

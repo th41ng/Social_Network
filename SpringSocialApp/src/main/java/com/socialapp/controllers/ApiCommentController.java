@@ -1,9 +1,9 @@
-// src/main/java/com/socialapp/controllers/ApiCommentController.java
+
 package com.socialapp.controllers;
 
 import com.socialapp.dto.CommentDTO;
 import com.socialapp.pojo.User;
-import com.socialapp.service.CommentService;
+import com.socialapp.service.CommentApiService; 
 import com.socialapp.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api") 
+@RequestMapping("/api")
 @CrossOrigin
 public class ApiCommentController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiCommentController.class);
 
     @Autowired
-    private CommentService commentService; 
+    private CommentApiService commentApiService; 
 
     @Autowired
-    private UserService userService;     
+    private UserService userService;
 
-    // Helper method để lấy username từ Principal (có thể copy từ ApiPostController)
+    // Helper method để lấy username từ Principal
     private String getUsernameFromPrincipal(Object principal) {
         if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
@@ -43,7 +43,7 @@ public class ApiCommentController {
     @PutMapping("/comments/{commentId}")
     public ResponseEntity<?> updateComment(
             @PathVariable("commentId") Integer commentId,
-            @RequestBody Map<String, String> payload, // Nhận content từ body: {"content": "new content"}
+            @RequestBody Map<String, String> payload,
             Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal().toString())) {
@@ -60,11 +60,14 @@ public class ApiCommentController {
         }
         User currentUser = userService.getUserByUsername(username);
         if (currentUser == null) {
+           
+            logger.error("Critical: User object not found in database for authenticated username: {}", username);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi thông tin người dùng hệ thống."));
         }
 
         try {
-            CommentDTO updatedComment = commentService.updateComment(commentId, content.trim(), currentUser);
+            
+            CommentDTO updatedComment = commentApiService.updateCommentApi(commentId, content.trim(), currentUser);
             logger.info("Comment ID {} updated successfully by user {}", commentId, username);
             return ResponseEntity.ok(updatedComment);
         } catch (EntityNotFoundException e) {
@@ -89,19 +92,28 @@ public class ApiCommentController {
         }
 
         String username = getUsernameFromPrincipal(authentication.getPrincipal());
-         if (username == null) {
+        if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Thông tin xác thực không hợp lệ."));
         }
         User currentUser = userService.getUserByUsername(username);
         if (currentUser == null) {
+            logger.error("Critical: User object not found in database for authenticated username: {}", username);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi thông tin người dùng hệ thống."));
         }
 
         try {
-            boolean deleted = commentService.deleteComment(commentId, currentUser);
-            logger.info("Comment ID {} deleted successfully by user {}", commentId, username);
-            return ResponseEntity.noContent().build(); // 204 No Content
            
+            boolean deleted = commentApiService.deleteCommentApi(commentId, currentUser);
+          
+            if (deleted) {
+                logger.info("Comment ID {} marked as deleted successfully by user {}", commentId, username);
+                return ResponseEntity.noContent().build(); 
+            } else {
+               
+                logger.warn("Comment ID {} was not deleted by user {}, but no exception was thrown.", commentId, username);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Không thể xóa bình luận."));
+            }
+
         } catch (EntityNotFoundException e) {
             logger.warn("Comment not found for deletion (ID: {}): {}", commentId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
@@ -113,4 +125,6 @@ public class ApiCommentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi máy chủ khi xóa bình luận."));
         }
     }
+
+  
 }
