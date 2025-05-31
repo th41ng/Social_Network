@@ -6,7 +6,7 @@ import { MyUserContext, MyDispatchContext } from "../../configs/Contexts";
 
 const Header = () => {
     const [categories, setCategories] = useState([]);
-    const user = useContext(MyUserContext); // Lấy thông tin người dùng
+    const user = useContext(MyUserContext); 
     const dispatch = useContext(MyDispatchContext);
     const navigate = useNavigate();
 

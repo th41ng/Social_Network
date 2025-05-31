@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.socialapp.pojo;
 
 import jakarta.persistence.Basic;
@@ -22,10 +18,6 @@ import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- *
- * @author DELL G15
- */
 @Entity
 @Table(name = "events")
 @NamedQueries({
@@ -68,9 +60,6 @@ public class Event implements Serializable {
     @Column(name = "location")
     private String location;
 
-    //@Column(name = "is_deleted")
-    //private boolean isDeleted; // Trường xóa mềm
-    //QUan hệ
     @OneToOne(mappedBy = "event", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private EventNotification eventNotification;
 
@@ -78,7 +67,6 @@ public class Event implements Serializable {
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id", insertable = false, updatable = false, nullable = false)
     private User admin;
 
-    //Kế thúc
     public Event() {
     }
 
@@ -176,44 +164,30 @@ public class Event implements Serializable {
         return "com.dht.pojo.Event[ event_id=" + event_id + " ]";
     }
 
-    /**
-     * @return the eventNotification
-     */
+
     public EventNotification getEventNotification() {
         return eventNotification;
     }
 
-    /**
-     * @param eventNotification the eventNotification to set
-     */
     public void setEventNotification(EventNotification eventNotification) {
         this.eventNotification = eventNotification;
     }
 
-    /**
-     * @return the serialVersionUID
-     */
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    /**
-     * @param aSerialVersionUID the serialVersionUID to set
-     */
+
     public static void setSerialVersionUID(long aSerialVersionUID) {
         serialVersionUID = aSerialVersionUID;
     }
 
-    /**
-     * @return the admin
-     */
+
     public User getAdmin() {
         return admin;
     }
 
-    /**
-     * @param admin the admin to set
-     */
     public void setAdmin(User admin) {
         this.admin = admin;
     }

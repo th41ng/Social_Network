@@ -14,16 +14,16 @@ public class EmailConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587); // Nếu dùng SSL, đổi thành 465
-        mailSender.setUsername("nguyenlethanhthang@gmail.com");  // Thay bằng email của bạn
-        mailSender.setPassword("rote wmxz wern qnac");  // Thay bằng mật khẩu ứng dụng
+        mailSender.setPort(587); 
+        mailSender.setUsername("nguyenlethanhthang@gmail.com");  
+        mailSender.setPassword("rote wmxz wern qnac");  
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.ssl.trust", "smtp.gmail.com"); // Thêm nếu cần
-        props.put("mail.debug", "true"); // Log chi tiết gửi email
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com"); 
+        props.put("mail.debug", "true"); 
 
         return mailSender;
     }

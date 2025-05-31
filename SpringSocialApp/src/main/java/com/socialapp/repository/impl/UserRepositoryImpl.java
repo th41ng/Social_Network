@@ -89,7 +89,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         if (u != null && UserRole.ROLE_LECTURER.equals(u.getRole())) {
             s.merge(u);
-            String defaultPassword = "ou@123"; // Nên thay bằng biến cấu hình
+            String defaultPassword = "ou@123"; 
             u.setStudentId(null);
             // Gửi email thông báo
             emailService.sendEmailtoLecturer(
@@ -112,7 +112,6 @@ public class UserRepositoryImpl implements UserRepository {
         if (user != null) {
             user.setIsVerified(true);
             s.merge(user);
-            // Gửi email thông báo xác nhận
             emailService.sendEmailtoStudent(
                     user.getEmail(),
                     "Tài khoản của bạn đã được xác nhận",
@@ -153,7 +152,6 @@ public class UserRepositoryImpl implements UserRepository {
                 query.setParameter("email", "%" + params.get("email") + "%");
             }
         }
-// Phân trang
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setFirstResult((page - 1) * PAGE_SIZE);
@@ -211,7 +209,6 @@ public class UserRepositoryImpl implements UserRepository {
         Session s = getCurrentSession();
         User user = this.getUserById(userId);
         if (user != null) {
-            // Thay đổi trạng thái isLocked
             user.setIsLocked(!user.getIsLocked());
             s.merge(user);
         }

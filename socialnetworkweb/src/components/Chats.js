@@ -7,10 +7,9 @@ import { Form, Button, ListGroup, InputGroup, Image } from "react-bootstrap";
 const Chats = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const user = useContext(MyUserContext); // Lấy thông tin người dùng
+  const user = useContext(MyUserContext); 
   const chatRef = ref(db, "chats");
 
-  // Lấy dữ liệu tin nhắn từ Firebase
   useEffect(() => {
     const unsubscribe = onValue(chatRef, (snapshot) => {
       const data = snapshot.val();
@@ -18,17 +17,14 @@ const Chats = () => {
       for (let id in data) {
         loadedMessages.push({ id, ...data[id] });
       }
-      // Sắp xếp tin nhắn theo thời gian
       setMessages(
         loadedMessages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0))
       );
     });
 
-    // Cleanup listener khi component bị unmount
     return () => unsubscribe();
   }, []);
 
-  // Gửi tin nhắn
   const sendMessage = async (e) => {
     e.preventDefault();
     if (newMessage.trim() === "") return;
@@ -37,12 +33,12 @@ const Chats = () => {
       content: newMessage,
       timestamp: serverTimestamp(),
       sender: user?.username || "Ẩn danh",
-      avatar: user?.avatar || "https://via.placeholder.com/50", // URL ảnh đại diện
+      avatar: user?.avatar || "https://via.placeholder.com/50",
     };
 
     try {
       await push(chatRef, messageData);
-      setNewMessage(""); // Xóa nội dung sau khi gửi
+      setNewMessage(""); 
     } catch (error) {
       console.error("Lỗi khi gửi tin nhắn:", error);
     }

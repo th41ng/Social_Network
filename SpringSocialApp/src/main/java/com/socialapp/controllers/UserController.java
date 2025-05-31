@@ -85,20 +85,17 @@ public class UserController {
             throw new IllegalArgumentException("User không tồn tại với ID: " + id);
         }
 
-        // Cập nhật thông tin cơ bản
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
         existingUser.setFullName(user.getFullName());
         existingUser.setRole(user.getRole());
         existingUser.setIsVerified(user.getIsVerified());
         existingUser.setIsLocked(user.getIsLocked());
-        // Mã hóa mật khẩu nếu thay đổi
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             existingUser.setPassword(encodedPassword);
         }
 
-        // Xử lý avatar
         if (avatarFile != null && !avatarFile.isEmpty()) {
             Map<String, Object> res = cloudinary.uploader().upload(avatarFile.getBytes(), ObjectUtils.asMap(
                     "resource_type", "image"
@@ -107,7 +104,6 @@ public class UserController {
             existingUser.setAvatar(avatarUrl);
         }
 
-        // Xử lý coverImage
         if (coverImageFile != null && !coverImageFile.isEmpty()) {
             Map<String, Object> res = cloudinary.uploader().upload(coverImageFile.getBytes(), ObjectUtils.asMap(
                     "resource_type", "image"
@@ -116,17 +112,15 @@ public class UserController {
             existingUser.setCoverImage(coverImageUrl);
         }
 
-        // Lưu vào database
         userService.updateUser(existingUser);
 
         return "redirect:/?categoryId=5";
     }
 
-    // Thêm phương thức để xử lý việc xác nhận 0 thành 1
     @PostMapping("/{userId}/verify")
     public String verifyUser(@PathVariable("userId") int userId) {
         userService.verifyStudent(userId);
-        return "redirect:/?categoryId=5"; // Chuyển hướng lại trang html
+        return "redirect:/?categoryId=5"; 
     }
 
     @PostMapping("/banUser/{userId}")
@@ -139,7 +133,7 @@ public class UserController {
     public String addUserForm(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("roles", UserRole.values());
-        return "add_user"; // Tên file html: user_add.html
+        return "add_user"; 
     }
 
     @PostMapping(path = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -150,14 +144,12 @@ public class UserController {
         try {
             User user = this.userService.register(params, avatar, coverImage);
             logger.info("Đăng ký thành công người dùng mới: {}", user.getUsername());
-            // Gửi thông báo thành công
             model.addAttribute("successMessage", "Người dùng đã được đăng ký thành công!");
-            return "redirect:/Users/add"; // Quay lại trang /Users/add
+            return "redirect:/Users/add"; 
         } catch (Exception e) {
             logger.error("Đã xảy ra lỗi khi đăng ký người dùng mới: {}", e.getMessage());
-            // Gửi thông báo lỗi
             model.addAttribute("errorMessage", "Đã xảy ra lỗi: " + e.getMessage());
-            return "redirect:/?categoryId=5"; // Quay lại trang hiện tại với thông báo lỗi
+            return "redirect:/?categoryId=5"; 
         }
     }
 }

@@ -53,9 +53,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional // Các thao tác ghi/xóa/cập nhật nên có @Transactional ở tầng service
+    @Transactional 
     public boolean deleteUser(int id) {
-        // Gọi phương thức deleteUser của repository (nay đã trả về boolean)
         return this.userRepository.deleteUser(id);
     }
 
@@ -72,7 +71,7 @@ public class UserServiceImpl implements UserService {
         }
 
         Set<GrantedAuthority> authorities = new HashSet<>();
-        authorities.add(new SimpleGrantedAuthority(u.getRole().name())); // Sử dụng Enum
+        authorities.add(new SimpleGrantedAuthority(u.getRole().name())); 
         System.out.println("Found user: " + u.getUsername());
         return new org.springframework.security.core.userdetails.User(
                 u.getUsername(), u.getPassword(), authorities);
@@ -86,7 +85,7 @@ public class UserServiceImpl implements UserService {
         user.setStudentId(params.get("studentId"));
         user.setUsername(params.get("username"));
         user.setPassword(this.passwordEncoder.encode(params.get("password")));
-        user.setRole(UserRole.valueOf(params.get("role"))); // Sử dụng Enum
+        user.setRole(UserRole.valueOf(params.get("role"))); 
         user.setCreatedAt(new Date());
         user.setLastPasswordChange(null);
         user.setIsVerified(false);
@@ -154,7 +153,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> getAllUsersWithPagination(Map<String, String> params, Pageable pageable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override

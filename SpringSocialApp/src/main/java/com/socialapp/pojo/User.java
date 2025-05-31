@@ -40,7 +40,7 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(EnumType.STRING) // Lưu giá trị Enum dưới dạng chuỗi
+    @Enumerated(EnumType.STRING) 
     @Column(name = "role", nullable = false)
     private UserRole role;
 
@@ -279,16 +279,12 @@ public class User implements Serializable {
         return "com.socialapp.pojo.User[ id=" + id + " ]";
     }
 
-    /**
-     * @return the username
-     */
+ 
     public String getUsername() {
         return username;
     }
 
-    /**
-     * @param username the username to set
-     */
+  
     public void setUsername(String username) {
         this.username = username;
     }

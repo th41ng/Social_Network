@@ -13,7 +13,6 @@
         <a th:href="@{/Event/listEvent}" class="btn btn-info mb-3">Quản lý sự kiện</a>
         <a th:href="@{/Group/listGroup}" class="btn btn-info mb-3">Quản lý nhóm</a>
 
-        <!-- Bộ lọc -->
         <form class="row g-3 mb-3" method="get" th:action="@{/Notification/listNotification}">
             <div class="col-md-4">
                 <input type="text" class="form-control" name="title" placeholder="Tìm theo tiêu đề" 
@@ -25,7 +24,6 @@
             </div>
         </form>
 
-        <!-- Danh sách thông báo sự kiện -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
@@ -74,13 +72,11 @@
 
         <nav aria-label="Page navigation" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
-                <!-- Previous Page Link -->
                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                     <a class="page-link" 
                        th:href="@{/Notification/listNotification(page=${currentPage - 1}, title=${params['title']})}">Trước</a>
                 </li>
 
-                <!-- Page Numbers -->
                 <li class="page-item" 
                     th:each="i : ${#numbers.sequence(1, totalPages)}" 
                     th:classappend="${i == currentPage} ? 'active'">
@@ -89,7 +85,6 @@
                        th:text="${i}"></a>
                 </li>
 
-                <!-- Next Page Link -->
                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                     <a class="page-link" 
                        th:href="@{/Notification/listNotification(page=${currentPage + 1}, title=${params['title']})}">Sau</a>

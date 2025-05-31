@@ -43,7 +43,6 @@ public class GroupMembers implements Serializable{
     @Column(name = "group_member_id")
     private Integer groupMemberId;
 
-    // Make sure this is marked with insertable=false, updatable=false
     @Column(name = "group_id", nullable = false, insertable = false, updatable = false)
     private Integer groupId;
 
@@ -54,7 +53,6 @@ public class GroupMembers implements Serializable{
     @Temporal(TemporalType.TIMESTAMP)
     private Date joinedAt;
 
-    // Relationships
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "group_id", referencedColumnName = "group_id", nullable = false)
@@ -65,11 +63,9 @@ public class GroupMembers implements Serializable{
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
     
-    // Constructor mặc định
     public GroupMembers() {
     }
 
-    // Constructor đầy đủ tham số
     public GroupMembers(Integer groupMemberId, Integer groupId, Integer userId, Date joinedAt) {
         this.groupMemberId = groupMemberId;
         this.groupId = groupId;
@@ -77,8 +73,7 @@ public class GroupMembers implements Serializable{
         this.joinedAt = joinedAt;
     }
 
-    
-    
+ 
      @Override
     public int hashCode() {
         int hash = 0;
@@ -104,102 +99,70 @@ public class GroupMembers implements Serializable{
     }
     
     
-    
-   
-    /**
-     * @return the serialVersionUID
-     */
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
 
-    /**
-     * @param aSerialVersionUID the serialVersionUID to set
-     */
+  
     public static void setSerialVersionUID(long aSerialVersionUID) {
         serialVersionUID = aSerialVersionUID;
     }
 
-    /**
-     * @return the groupMemberId
-     */
+  
     public Integer getGroupMemberId() {
         return groupMemberId;
     }
 
-    /**
-     * @param groupMemberId the groupMemberId to set
-     */
+ 
     public void setGroupMemberId(Integer groupMemberId) {
         this.groupMemberId = groupMemberId;
     }
 
-    /**
-     * @return the groupId
-     */
     public Integer getGroupId() {
         return groupId;
     }
 
-    /**
-     * @param groupId the groupId to set
-     */
+   
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
 
-    /**
-     * @return the userId
-     */
+  
     public Integer getUserId() {
         return userId;
     }
 
-    /**
-     * @param userId the userId to set
-     */
+   
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    /**
-     * @return the joinedAt
-     */
     public Date getJoinedAt() {
         return joinedAt;
     }
 
-    /**
-     * @param joinedAt the joinedAt to set
-     */
+   
     public void setJoinedAt(Date joinedAt) {
         this.joinedAt = joinedAt;
     }
 
-    /**
-     * @return the group
-     */
+ 
     public UserGroups getGroup() {
         return group;
     }
 
-    /**
-     * @param group the group to set
-     */
+  
     public void setGroup(UserGroups group) {
         this.group = group;
     }
 
-    /**
-     * @return the user
-     */
+  
     public User getUser() {
         return user;
     }
 
-    /**
-     * @param user the user to set
-     */
+
     public void setUser(User user) {
         this.user = user;
     }

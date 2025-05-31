@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, Col, Row, Container, Form, Modal } from "react-bootstrap";
+import { Alert, Button, Card, Col, Row, Container, Form, Modal, Spinner } from "react-bootstrap";
 import { authApis, endpoints } from "../configs/Apis";
 import cookie from "react-cookies";
 import MySpinner from "./layouts/MySpinner";
@@ -11,6 +11,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
+  const [updating, setUpdating] = useState(false); 
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -77,6 +78,7 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
+      setUpdating(true); 
       const form = new FormData();
       form.append("fullName", formData.fullName);
       form.append("email", formData.email);
@@ -93,6 +95,8 @@ const Profile = () => {
     } catch (err) {
       console.error("Lỗi khi cập nhật hồ sơ:", err);
       alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+    } finally {
+      setUpdating(false);  
     }
   };
 
@@ -111,7 +115,6 @@ const Profile = () => {
 
   return (
     <Container className="py-4">
-      {/* Cover Image */}
       <div
         className="mb-5"
         style={{
@@ -151,74 +154,71 @@ const Profile = () => {
         </Button>
       </div>
 
-      {/* Modal sửa thông tin hồ sơ */}
       <Modal show={showEdit} onHide={() => setShowEdit(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Sửa thông tin hồ sơ</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formFullName">
-              <Form.Label>Họ và tên</Form.Label>
-              <Form.Control
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleChange}
-                placeholder="Nhập họ và tên"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Nhập email"
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formAvatar">
-              <Form.Label>Ảnh đại diện</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                name="avatar"
-                onChange={handleFileChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formCoverImage">
-              <Form.Label>Ảnh bìa</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                name="coverImage"
-                onChange={handleFileChange}
-              />
-            </Form.Group>
-            <div className="d-grid mt-3">
-              <Button variant="warning" onClick={() => {
-                  setShowEdit(false);
-                  navigate("/reset-password");  // Đảm bảo bạn đã import useNavigate và có route reset-password
-                }}
-              >
-                Đổi mật khẩu
-              </Button>
+          {updating ? (
+            <div className="text-center">
+              <Spinner animation="border" />
             </div>
+          ) : (
+            <Form>
+              <Form.Group className="mb-3" controlId="formFullName">
+                <Form.Label>Họ và tên</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  placeholder="Nhập họ và tên"
+                />
+              </Form.Group>
 
-          </Form>
+              <Form.Group className="mb-3" controlId="formEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Nhập email"
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formAvatar">
+                <Form.Label>Ảnh đại diện</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  name="avatar"
+                  onChange={handleFileChange}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formCoverImage">
+                <Form.Label>Ảnh bìa</Form.Label>
+                <Form.Control
+                  type="file"
+                  accept="image/*"
+                  name="coverImage"
+                  onChange={handleFileChange}
+                />
+              </Form.Group>
+            </Form>
+          )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowEdit(false)}>
-            Hủy
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Lưu
-          </Button>
-        </Modal.Footer>
+        {!updating && (
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowEdit(false)}>
+              Hủy
+            </Button>
+            <Button variant="primary" onClick={handleSave}>
+              Lưu
+            </Button>
+          </Modal.Footer>
+        )}
       </Modal>
 
       {/* Posts Section */}

@@ -1,78 +1,3 @@
-<!--<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Thêm Nhóm Mới</title>
-    <th:block th:replace="base :: bootstrap"></th:block>
-</head>
-<body>
-    <div th:replace="base :: header"></div>
-
-    <main class="container mt-4">
-        <h2>Thêm Người Dùng Mới</h2>
-         Hiển thị lỗi nếu có 
-        <div th:if="${error}" class="alert alert-danger">
-            <p th:text="${error}"></p>
-        </div>
-        <form method="post" th:action="@{/Users/add}" th:object="${user}" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="avatar" class="form-label">Ảnh đại diện</label>
-                <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*" />
-            </div>
-             <div class="mb-3">
-                <label for="coverImage" class="form-label">Ảnh đại bìa</label>
-                <input type="file" class="form-control" id="coverImage" name="coverImage" accept="image/*" />
-            </div>
-            <div class="mb-3">
-                <label for="username" class="form-label">Tên đăng nhập</label>
-                <input type="text" class="form-control" id="username" th:field="*{username}" required />
-            </div>
-            <div class="mb-3">
-                <label for="studentId" class="form-label">Mã số sinh viên</label>
-                <input type="text" class="form-control" id="studentId" th:field="*{studentId}" required />
-            </div>
-            <div class="mb-3">
-                <label for="fullName" class="form-label">Họ và tên</label>
-                <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required />
-            </div>
-            <div th:if="${#fields.hasErrors('fullName')}" class="error">
-                <p th:errors="*{fullName}">Lỗi ở đây</p>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" th:field="*{email}" required />
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Mật khẩu</label>
-                <input type="password" class="form-control" id="password" th:field="*{password}" required />
-            </div>
-            <div class="mb-3">
-                <label for="role" class="form-label">Vai trò</label>
-                <select class="form-select" id="role" th:field="*{role}" required>
-                    <option value="" disabled selected>Chọn vai trò</option>
-                    <option th:each="role : ${roles}" 
-                            th:value="${role}" 
-                            th:text="${role}"></option>
-                </select>
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="isLocked" th:field="*{isLocked}">
-                <label class="form-check-label" for="isLocked">Đã khóa</label>
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="isVerified" th:field="*{isVerified}">
-                <label class="form-check-label" for="isVerified">Đã xác thực</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Thêm Người Dùng</button>
-        </form>
-    </main>
-
-
-
-    <div th:replace="base :: footer"></div>
-    <script th:src="@{/js/main.js}"></script>
-</body>
-</html>
--->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
@@ -84,7 +9,6 @@
 
     <main class="container mt-4">
         <h2>Thêm Người Dùng Mới</h2>
-        <!-- Hiển thị lỗi nếu có -->
         <div th:if="${error}" class="alert alert-danger">
             <p th:text="${error}"></p>
         </div>
@@ -105,7 +29,6 @@
                 <input type="text" class="form-control" id="username" th:field="*{username}" required />
             </div>
 
-            <!-- Trường Mã số sinh viên sẽ thay đổi hiển thị dựa trên Vai trò -->
             <div class="mb-3" id="studentIdField">
                 <label for="studentId" class="form-label">Mã số sinh viên</label>
                 <input type="text" class="form-control" id="studentId" th:field="*{studentId}"  />
@@ -164,24 +87,21 @@
             roleDropdown.addEventListener('change', function () {
                 const selectedRole = roleDropdown.value;
 
-                // Hiển thị trường "Mã số sinh viên" nếu vai trò không phải ROLE_LECTURER hoặc ROLE_ADMIN
                 if (selectedRole === 'ROLE_LECTURER' || selectedRole === 'ROLE_ADMIN') {
                     studentIdField.style.display = 'none';
                 } else {
                     studentIdField.style.display = 'block';
                 }
 
-                // Đặt mật khẩu mặc định nếu vai trò là Giảng viên
                 if (selectedRole === 'ROLE_LECTURER') {
                     passwordField.value = "ou@123";
-                    passwordField.setAttribute("readonly", true); // Ngăn chỉnh sửa mật khẩu mặc định
+                    passwordField.setAttribute("readonly", true); 
                 } else {
-                    passwordField.value = ""; // Xóa mật khẩu nếu không phải Giảng viên
-                    passwordField.removeAttribute("readonly"); // Cho phép chỉnh sửa lại
+                    passwordField.value = ""; 
+                    passwordField.removeAttribute("readonly"); 
                 }
             });
 
-            // Đặt trạng thái hiển thị ban đầu dựa trên giá trị hiện tại của dropdown
             const initialRole = roleDropdown.value;
             if (initialRole === 'ROLE_LECTURER' || initialRole === 'ROLE_ADMIN') {
                 studentIdField.style.display = 'none';
@@ -189,7 +109,6 @@
                 studentIdField.style.display = 'block';
             }
 
-            // Đặt mật khẩu mặc định nếu vai trò ban đầu là Giảng viên
             if (initialRole === 'ROLE_LECTURER') {
                 passwordField.value = "ou@123";
                 passwordField.setAttribute("readonly", true);

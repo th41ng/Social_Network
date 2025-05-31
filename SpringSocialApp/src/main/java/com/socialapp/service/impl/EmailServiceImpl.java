@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl implements EmailService {
 
     @Autowired
-    private JavaMailSender mailSender; // Inject Bean JavaMailSender
+    private JavaMailSender mailSender;
 
-    private final String fromEmail = "nguyenlethanhthang@gmail.com";  // Địa chỉ email người gửi
+    private final String fromEmail = "nguyenlethanhthang@gmail.com";  
 
     @Override
     public void sendEmailtoLecturer(String to, String subject, String body, String defaultPassword) {

@@ -49,11 +49,9 @@ public class UserGroups implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    // Constructor mặc định
     public UserGroups() {
     }
 
-    // Constructor đầy đủ tham số
     public UserGroups(Integer groupId, Integer adminId, String groupName, Date createdAt) {
         this.groupId = groupId;
         this.adminId = adminId;
@@ -61,18 +59,14 @@ public class UserGroups implements Serializable {
         this.createdAt = createdAt;
     }
 
-    // Quan hệ với User (admin_id)
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id", insertable = false, updatable = false, nullable = false)
     private User admin;
 
-    // Quan hệ với GroupMembers (group_id)
-//    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<GroupMembers> members;
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<GroupMembers> members = new ArrayList<>(); // Khởi tạo danh sách
+    private List<GroupMembers> members = new ArrayList<>(); 
 
     @Override
     public int hashCode() {
@@ -98,7 +92,6 @@ public class UserGroups implements Serializable {
         return "com.socialapp.pojo.UserGroups[ groupId=" + groupId + " ]";
     }
 
-    // Getter and Setter methods
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }

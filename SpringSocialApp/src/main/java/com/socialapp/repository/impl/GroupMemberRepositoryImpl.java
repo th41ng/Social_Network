@@ -13,9 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Repository Implementation for GroupMembers
- */
+
 @Repository
 @Transactional
 public class GroupMemberRepositoryImpl implements GroupMembersRepository {

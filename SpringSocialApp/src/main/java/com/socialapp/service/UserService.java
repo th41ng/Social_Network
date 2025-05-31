@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
+
 package com.socialapp.service;
 
 import com.socialapp.pojo.User;
@@ -13,30 +10,22 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-/**
- *
- * @author DELL G15
- */
+
 public interface UserService extends UserDetailsService {
 
     Page<User> getAllUsersWithPagination(Map<String, String> params, Pageable pageable);
 
     List<User> getAllUsers(Map<String, String> params);
 
-    // Lấy thông tin người dùng bằng tên đăng nhập
     User getUserByUsername(String username);
 
-    // Lấy thông tin người dùng bằng email
     User getUserByEmail(String email);
 
-    // Lấy thông tin người dùng bằng ID
     User getUserById(int id);
 
-    // Thay đổi thông tin người dùng
     User updateUser(User user);
 
-    // Xóa người dùng bằng ID
-    boolean deleteUser(int id); // Đã thay đổi ở lần trước, giữ nguyên là boolean
+    boolean deleteUser(int id);
 
     User register(Map<String, String> params, MultipartFile avatar, MultipartFile coverImage);
 
@@ -44,7 +33,6 @@ public interface UserService extends UserDetailsService {
 
     void verifyStudent(int userId);
 
-//    boolean verifyStudent(int userId);
     int countUsersRegisteredToday();
 
     long countUsers();

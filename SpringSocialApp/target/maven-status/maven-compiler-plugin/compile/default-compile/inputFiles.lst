@@ -30,6 +30,8 @@ E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\Su
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\SurveyResponseController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\controllers\UserController.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\dto\CommentDTO.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\dto\EventDTO.java
+E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\dto\EventNotificationDTO.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\dto\PostDTO.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\dto\SurveyClientListDTO.java
 E:\web\Social_Network\SpringSocialApp\src\main\java\com\socialapp\dto\SurveyDetailClientDTO.java

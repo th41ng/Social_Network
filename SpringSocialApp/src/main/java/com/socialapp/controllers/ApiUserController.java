@@ -7,7 +7,6 @@ import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.service.EmailService;
 import com.socialapp.service.PostApiService;
-import com.socialapp.service.PostService;
 import com.socialapp.service.UserService;
 import com.socialapp.utils.JwtUtils;
 import java.security.Principal;
@@ -62,14 +61,12 @@ public class ApiUserController {
 
             if (this.userDetailService.authenticate(u.getUsername(), u.getPassword())) {
                 User userDetail = this.userDetailService.getUserByUsername(u.getUsername());
-
-                // Kiểm tra nếu tài khoản bị khóa
+ 
                 if (userDetail.getIsLocked()) {
                     logger.warn("Tài khoản đã bị khóa: {}", u.getUsername());
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("accountLocked");
                 }
-
-                // Kiểm tra vai trò và trạng thái của người dùng
+    
                 if (userDetail.getRole() == UserRole.ROLE_ALUMNI && !userDetail.getIsVerified()) {
                     logger.warn("Người dùng ROLE_ALUMNI chưa được xác thực: {}", u.getUsername());
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("notVerified");
@@ -85,7 +82,6 @@ public class ApiUserController {
                     }
                 }
 
-                // Tạo token nếu hợp lệ
                 String token = JwtUtils.generateToken(u.getUsername());
                 logger.info("Đăng nhập thành công: {}", u.getUsername());
                 return ResponseEntity.ok().body(Collections.singletonMap("token", token));
@@ -209,11 +205,9 @@ public class ApiUserController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng!");
             }
 
-            // Cập nhật thông tin cơ bản
             user.setFullName(fullName);
             user.setEmail(email);
 
-            // Cập nhật avatar nếu có
             if (avatar != null && !avatar.isEmpty()) {
                 try {
                     Map<String, Object> avatarResult = cloudinary.uploader().upload(
@@ -228,7 +222,6 @@ public class ApiUserController {
                 }
             }
 
-            // Cập nhật ảnh bìa nếu có
             if (coverImage != null && !coverImage.isEmpty()) {
                 try {
                     Map<String, Object> coverResult = cloudinary.uploader().upload(
@@ -243,7 +236,6 @@ public class ApiUserController {
                 }
             }
 
-            // Lưu thay đổi vào database
             userDetailService.updateUser(user);
             return ResponseEntity.ok(user);
 

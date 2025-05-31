@@ -5,10 +5,8 @@ import com.socialapp.pojo.EventNotification;
 import com.socialapp.pojo.User;
 import com.socialapp.pojo.UserGroups;
 import com.socialapp.repository.impl.EventNotificationRepositoryImpl;
-import static com.socialapp.repository.impl.EventNotificationRepositoryImpl.PAGE_SIZE;
 import com.socialapp.service.CategoryService;
 import com.socialapp.service.EventNotificationService;
-import com.socialapp.service.EmailService;
 import com.socialapp.service.EventService;
 import com.socialapp.service.UserGroupService;
 import com.socialapp.service.UserService;
@@ -30,11 +28,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 
-/**
- *
- * @author DELL G15
- */
-//
+
 @RequestMapping("/Notification")
 @Controller
 @ControllerAdvice

@@ -27,7 +27,8 @@ import org.slf4j.LoggerFactory;
 @Repository
 @Transactional
 public class EventNotificationRepositoryImpl implements EventNotificationRepository {
-  private static final Logger logger = LoggerFactory.getLogger(ApiReactionController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiReactionController.class);
     public static final int PAGE_SIZE = 5;
     @Autowired
     private EmailService emailService;
@@ -49,7 +50,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                 query.setParameter("title", "%" + params.get("title") + "%");
             }
         }
-// Phân trang
+
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setFirstResult((page - 1) * PAGE_SIZE);
@@ -68,16 +69,15 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
     public EventNotification addOrUpdateNotification(EventNotification notification) {
         Session session = this.factory.getObject().getCurrentSession();
 
-        // Add or update the notification
+
         if (notification.getNotificationId() == null) {
             session.persist(notification);
         } else {
             session.merge(notification);
         }
 
-        // Gửi thông báo qua email
         try {
-            // Gửi email đến người dùng cá nhân (nếu có)
+
             if (notification.getReceiverUser() != null) {
                 String recipientEmail = notification.getReceiverUser().getEmail();
                 emailService.sendNotiEmailtoUser(
@@ -94,7 +94,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                 );
             }
 
-            // Gửi email đến các thành viên trong nhóm (nếu có)
+
             if (notification.getGroup() != null && notification.getGroupId() != null) {
                 List<String> groupEmails = getEmailsByGroupId(notification.getGroupId());
                 for (String email : groupEmails) {
@@ -112,16 +112,14 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                 }
             }
         } catch (Exception e) {
-            // Log lỗi nếu việc gửi email thất bại
+
             logger.error("Gửi thông báo qua email thất bại.", e);
         }
 
         return notification;
     }
 
-    /**
-     * Helper method to get a list of emails for a given group ID.
-     */
+
     private List<String> getEmailsByGroupId(Integer groupId) {
         try {
             Session session = this.factory.getObject().getCurrentSession();
@@ -130,7 +128,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                     + "WHERE gm.group.groupId = :groupId", String.class
             ).setParameter("groupId", groupId).getResultList();
         } catch (Exception e) {
-            // Log lỗi nếu truy vấn thất bại và trả về danh sách trống
+
             logger.error("Không thể lấy danh sách email cho groupId: " + groupId, e);
             return Collections.emptyList();
         }
@@ -141,11 +139,8 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         Session s = this.factory.getObject().getCurrentSession();
         EventNotification notification = this.getNotificationById(id);
         if (notification != null) {
-            // Soft delete by setting the isDeleted flag to true
-            //notification.setIsDeleted(true);
-            //s.merge(notification);
-            //Xóa cứng
-            s.delete(notification);  // Xóa cứng bản ghi
+
+            s.delete(notification);  
 
         }
     }
@@ -155,7 +150,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         Session session = this.factory.getObject().getCurrentSession();
         Query<EventNotification> query = session.getNamedQuery("Notis.findForUser");
 
-        // Get the user's group IDs
+
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Integer> groupQuery = builder.createQuery(Integer.class);
         Root<GroupMembers> groupRoot = groupQuery.from(GroupMembers.class);
@@ -163,7 +158,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                 .where(builder.equal(groupRoot.get("userId"), userId));
         List<Integer> userGroupIds = session.createQuery(groupQuery).getResultList();
 
-        // Set query parameters
+
         query.setParameter("userId", userId);
         query.setParameter("groupIds", userGroupIds.isEmpty() ? List.of(-1) : userGroupIds);
 

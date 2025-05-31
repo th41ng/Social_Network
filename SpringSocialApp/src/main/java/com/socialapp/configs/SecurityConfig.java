@@ -53,26 +53,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Cấu hình CORS
-                .csrf(csrf -> csrf.disable()) // Tắt CSRF
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
+                .csrf(csrf -> csrf.disable()) 
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/login", "/api/user").permitAll() // Không cần xác thực
+                .requestMatchers("/api/login", "/api/user").permitAll() 
                 .requestMatchers("/api/**").permitAll()
-                .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") // Chỉ ADMIN và LECTURER được vào
-                .requestMatchers("/surveys/**", "/Notification/**").hasAnyRole("ADMIN","LECTURER") // LECTURER truy cập vào survey và notification
-                .requestMatchers("/**").hasRole("ADMIN") // ADMIN có toàn quyền trên mọi endpoint khác
-                .anyRequest().authenticated() // Các yêu cầu khác cần xác thực
+                .requestMatchers("/").hasAnyRole("ADMIN", "LECTURER") 
+                .requestMatchers("/surveys/**", "/Notification/**").hasAnyRole("ADMIN","LECTURER") 
+                .requestMatchers("/**").hasRole("ADMIN") 
+                .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class) // Thêm JWT Filter
+                .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
-                .loginPage("/Users/login") // Trang đăng nhập
+                .loginPage("/Users/login") 
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/Users/login?error=true")
                 .permitAll()
                 )
                 .logout(logout -> logout
-                .logoutSuccessUrl("/Users/login") // Trang đăng xuất
+                .logoutSuccessUrl("/Users/login") 
                 .permitAll()
                 );
 
@@ -106,7 +106,7 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:3000/")); // frontend origin
+        config.setAllowedOrigins(List.of("http://localhost:3000/")); 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization"));

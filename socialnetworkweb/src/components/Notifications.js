@@ -35,7 +35,7 @@ const Notifications = () => {
   const fetchNotifications = useCallback(async (pageToLoad) => {
     if (pageToLoad === 1) {
       setLoading(true);
-      setCanLoadMore(true);  // reset lại trạng thái load more
+      setCanLoadMore(true); 
     } else {
       setLoadingMore(true);
     }
