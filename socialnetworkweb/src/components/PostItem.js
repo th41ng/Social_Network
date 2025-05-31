@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { Card, Button, Form, InputGroup, Dropdown, Alert } from 'react-bootstrap';
-import MySpinner from './layouts/MySpinner'; // Assuming MySpinner is in layouts
-import { MyUserContext } from '../configs/Contexts'; // For currentUser
+import MySpinner from './layouts/MySpinner';
+import { MyUserContext } from '../configs/Contexts';
 
 import '../styles/PostItem.css'
 
-// Bọc component PostItem với React.memo để tối ưu hiệu suất
+
 const PostItem = React.memo(({
     post,
     currentUser,
@@ -18,9 +18,9 @@ const PostItem = React.memo(({
     onAddComment,
     onDeleteComment,
     onOpenEditCommentModal,
-    handleAuthAction, // Pass this down if actions are initiated from PostItem directly
-    authApis, // Pass this down
-    endpoints // Pass this down
+    handleAuthAction,
+    authApis,
+    endpoints
 }) => {
     const [showComments, setShowComments] = useState(false);
     const [newCommentContent, setNewCommentContent] = useState('');
@@ -39,7 +39,7 @@ const PostItem = React.memo(({
         }
         setSubmittingComment(true);
         await onAddComment(post.postId, newCommentContent.trim());
-        setNewCommentContent(''); // Clear input after successful submission (parent should handle this state update)
+        setNewCommentContent('');
         setSubmittingComment(false);
     };
 
@@ -126,35 +126,34 @@ const PostItem = React.memo(({
                         {(Array.isArray(post.comments) && post.comments.length > 0) ? (
                             post.comments.map((comment) => (
                                 <div key={comment.commentId} className="mb-3 p-2 bg-light rounded comment-item position-relative">
-                                    {/* --- THAY ĐỔI TẠI ĐÂY --- */}
-                                    {/* Chỉ hiển thị dropdown sửa/xóa comment nếu comment KHÔNG bị khóa VÀ người dùng có quyền */}
+
                                     {currentUser && comment.userId &&
                                         (currentUser.id === comment.userId || (post && post.userId && currentUser.id === post.userId)) && // Người dùng là chủ comment HOẶC chủ bài viết
-                                        !post.commentLocked && ( // Và bài viết KHÔNG khóa bình luận
-                                        <div className="position-absolute top-0 end-0 p-1" style={{ zIndex: 5 }}>
-                                            <Dropdown>
-                                                <Dropdown.Toggle variant="link" bsPrefix="p-0" size="sm" style={{ color: '#6c757d', textDecoration: 'none', lineHeight: 1 }}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="bi bi-three-dots" viewBox="0 0 16 16">
-                                                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
-                                                    </svg>
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu align="end">
-                                                    {currentUser.id === comment.userId && // Chỉ chủ comment mới có quyền sửa
-                                                        <Dropdown.Item onClick={() => onOpenEditCommentModal(post, comment)}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-fill me-2" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" /></svg>
-                                                            Sửa
+                                        !post.commentLocked && (
+                                            <div className="position-absolute top-0 end-0 p-1" style={{ zIndex: 5 }}>
+                                                <Dropdown>
+                                                    <Dropdown.Toggle variant="link" bsPrefix="p-0" size="sm" style={{ color: '#6c757d', textDecoration: 'none', lineHeight: 1 }}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" className="bi bi-three-dots" viewBox="0 0 16 16">
+                                                            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
+                                                        </svg>
+                                                    </Dropdown.Toggle>
+                                                    <Dropdown.Menu align="end">
+                                                        {currentUser.id === comment.userId && // Chỉ chủ comment mới có quyền sửa
+                                                            <Dropdown.Item onClick={() => onOpenEditCommentModal(post, comment)}>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-pencil-fill me-2" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" /></svg>
+                                                                Sửa
+                                                            </Dropdown.Item>
+                                                        }
+                                                        {/* Chủ comment hoặc chủ bài viết có quyền xóa */}
+                                                        <Dropdown.Item onClick={() => onDeleteComment(post.postId, comment.commentId)} className="text-danger">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash3-fill me-2" viewBox="0 0 16 16"><path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.058ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" /></svg>
+                                                            Xóa
                                                         </Dropdown.Item>
-                                                    }
-                                                    {/* Chủ comment hoặc chủ bài viết có quyền xóa */}
-                                                    <Dropdown.Item onClick={() => onDeleteComment(post.postId, comment.commentId)} className="text-danger">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-trash3-fill me-2" viewBox="0 0 16 16"><path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.058ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" /></svg>
-                                                        Xóa
-                                                    </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </div>
-                                    )}
-                                    {/* --- KẾT THÚC THAY ĐỔI CHO DROPDOWN --- */}
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </div>
+                                        )}
+
                                     <div className="d-flex align-items-start mb-1">
                                         <img src={comment.userAvatar || "https://via.placeholder.com/30?text=U"} alt={`${comment.userFullName || 'User'}'s avatar`} width="30" height="30" className="rounded-circle me-2 mt-1" />
                                         <div className="flex-grow-1">
@@ -172,12 +171,11 @@ const PostItem = React.memo(({
                                                 </div>
                                             )}
                                             <div className="mt-1 comment-action-buttons">
-                                                 {/* --- THAY ĐỔI TẠI ĐÂY --- */}
-                                                {/* Thêm disabled={post.commentLocked} cho các nút reaction của comment */}
+
                                                 <Button variant="link" size="sm" className="p-0 me-2 text-decoration-none reaction-button-comment" onClick={() => onCommentReaction(post.postId, comment.commentId, 'like')} disabled={post.commentLocked}>Thích</Button>
                                                 <Button variant="link" size="sm" className="p-0 me-2 text-decoration-none reaction-button-comment" onClick={() => onCommentReaction(post.postId, comment.commentId, 'haha')} disabled={post.commentLocked}>Haha</Button>
                                                 <Button variant="link" size="sm" className="p-0 text-decoration-none reaction-button-comment" onClick={() => onCommentReaction(post.postId, comment.commentId, 'heart')} disabled={post.commentLocked}>Tim</Button>
-                                                {/* --- KẾT THÚC THAY ĐỔI CHO REACTION BUTTONS --- */}
+
                                             </div>
                                         </div>
                                     </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Thêm Sự Kiện</title>
+    <head>
+        <title>Thêm Sự Kiện</title>
     <th:block th:replace="base :: bootstrap"></th:block>
 </head>
 <body>
@@ -10,15 +10,12 @@
     <main class="container mt-4">
         <h2>Thêm Sự Kiện</h2>
 
-        <!-- Hiển thị lỗi nếu có -->
         <div th:if="${error}" class="alert alert-danger">
             <p th:text="${error}"></p>
         </div>
 
         <form th:action="@{/Event/add}" method="post" th:object="${event}">
-            <!-- Ẩn adminId -->
-            <input  name="adminId" th:value="${adminId}" />
-
+            <input type="hidden" name="adminId" th:value="${adminId}" />
             <div class="mb-3">
                 <label for="title" class="form-label">Tiêu Đề Sự Kiện</label>
                 <input type="text" id="title" name="title" class="form-control" th:field="*{title}" required>

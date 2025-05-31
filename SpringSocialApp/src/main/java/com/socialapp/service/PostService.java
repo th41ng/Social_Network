@@ -26,5 +26,5 @@ public interface PostService {
     
     void deletePost(int postId, User currentUser);
     
-    long countPosts(Map<String, String> params); // Thêm params vào countPosts để hỗ trợ phân trang và lọc
+    long countPosts(Map<String, String> params); 
 }

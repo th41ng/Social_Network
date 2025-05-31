@@ -5,17 +5,17 @@ import com.socialapp.repository.QuestionTypeRepository;
 import com.socialapp.service.QuestionTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; 
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-@Service // Đánh dấu đây là một Spring Bean ở tầng Service
+@Service
 public class QuestionTypeServiceImpl implements QuestionTypeService {
 
     @Autowired
-    private QuestionTypeRepository questionTypeRepository; 
+    private QuestionTypeRepository questionTypeRepository;
 
     @Override
-    @Transactional(readOnly = true) //  chỉ đọc, tối ưu hơn cho các thao tác lấy dữ liệu
+    @Transactional(readOnly = true)
     public List<QuestionType> getQuestionTypes() {
         return this.questionTypeRepository.findAll();
     }

@@ -1,7 +1,6 @@
 package com.socialapp.repository.impl;
 
 import com.socialapp.pojo.PeriodicSummaryStats;
-// import com.socialapp.pojo.PeriodicSummaryStats.PeriodType; // Không cần cho phương thức này
 import com.socialapp.repository.PeriodicStatsRepository;
 import java.util.List;
 import org.hibernate.Session;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PeriodicStatsRepositoryImpl implements PeriodicStatsRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(PeriodicStatsRepositoryImpl.class); // Khởi tạo logger
+    private static final Logger logger = LoggerFactory.getLogger(PeriodicStatsRepositoryImpl.class);
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -27,7 +26,7 @@ public class PeriodicStatsRepositoryImpl implements PeriodicStatsRepository {
     @Override
     public List<PeriodicSummaryStats> getAllPeriodicStats() {
         Session session = getCurrentSession();
-        // CẬP NHẬT DÒNG HQL Ở ĐÂY
+
         String hql = "FROM PeriodicSummaryStats ORDER BY summaryYear DESC, summaryMonth DESC, calculatedAt DESC";
         logger.info("Executing HQL for getAllPeriodicStats: {}", hql);
 
@@ -36,16 +35,16 @@ public class PeriodicStatsRepositoryImpl implements PeriodicStatsRepository {
 
         logger.info("PeriodicStatsRepositoryImpl: getAllPeriodicStats() found {} records.", (results != null ? results.size() : "null"));
         if (results != null) {
-            // Log chi tiết một vài bản ghi đầu tiên để kiểm tra (ví dụ 5 bản ghi)
+
             int count = 0;
             for (PeriodicSummaryStats stat : results) {
-                logger.debug("Repo fetched stat: ID={}, Year={}, Month={}, Quarter={}, Type={}, CalculatedAt={}", // Thêm CalculatedAt vào log
-                             stat.getSummaryId(),
-                             stat.getSummaryYear(),
-                             stat.getSummaryMonth(),
-                             stat.getSummaryQuarter(),
-                             stat.getPeriodType(),
-                             stat.getCalculatedAt()); // Log giá trị CalculatedAt
+                logger.debug("Repo fetched stat: ID={}, Year={}, Month={}, Quarter={}, Type={}, CalculatedAt={}",
+                        stat.getSummaryId(),
+                        stat.getSummaryYear(),
+                        stat.getSummaryMonth(),
+                        stat.getSummaryQuarter(),
+                        stat.getPeriodType(),
+                        stat.getCalculatedAt());
                 count++;
                 if (count >= 5 && results.size() > 5) {
                     logger.debug("Repo fetched stat: ... and {} more records.", results.size() - count);

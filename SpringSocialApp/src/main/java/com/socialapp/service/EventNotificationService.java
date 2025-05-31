@@ -1,7 +1,6 @@
 
 package com.socialapp.service;
 
-import com.socialapp.pojo.Event;
 import com.socialapp.pojo.EventNotification;
 import java.util.List;
 import java.util.Map;

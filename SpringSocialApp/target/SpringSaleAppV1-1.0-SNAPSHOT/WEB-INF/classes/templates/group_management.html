@@ -42,7 +42,7 @@
                         <td>
                             <a th:href="@{/Group/edit/{id}(id=${group.groupId})}" class="btn btn-warning btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteGroup(\'' + @{/api/delete/{groupId}(id=${group.groupId})} + '\')'">
+                                    th:onclick="'deleteGroup(\'' + @{/api/groups/delete/{id}(id=${group.groupId})} + '\')'">
                                 Xoá
                             </button>
                             <a th:href="@{/Group/listMember(groupId=${group.groupId})}" class="btn btn-primary btn-sm">Xem thành viên</a>

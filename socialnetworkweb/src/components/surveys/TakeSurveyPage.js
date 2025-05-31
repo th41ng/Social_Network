@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Form, Button, Spinner, Alert, Container} from 'react-bootstrap';
-import Apis, { authApis, endpoints } from '../../configs/Apis'; // Đảm bảo đường dẫn này chính xác
-import { MyUserContext } from '../../configs/Contexts'; // Đảm bảo đường dẫn này chính xác
+import Apis, { authApis, endpoints } from '../../configs/Apis'; 
+import { MyUserContext } from '../../configs/Contexts'; 
 
 const TakeSurveyPage = () => {
     const { surveyId } = useParams();
     const [surveyDetails, setSurveyDetails] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null); // Dùng chung cho lỗi fetch và lỗi validation
+    const [error, setError] = useState(null); 
     const [answers, setAnswers] = useState({});
     const [submitting, setSubmitting] = useState(false);
-    const [unansweredQuestionIds, setUnansweredQuestionIds] = useState([]); // State mới để lưu ID các câu hỏi bắt buộc chưa trả lời
+    const [unansweredQuestionIds, setUnansweredQuestionIds] = useState([]); 
 
     const currentUser = useContext(MyUserContext);
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ const TakeSurveyPage = () => {
         const fetchSurveyDetails = async () => {
             setLoading(true);
             setError(null);
-            setUnansweredQuestionIds([]); // Reset khi tải lại
+            setUnansweredQuestionIds([]); 
             try {
                 const api = currentUser ? authApis() : Apis;
                 const response = await api.get(endpoints['survey_detail'](surveyId));
@@ -45,7 +45,7 @@ const TakeSurveyPage = () => {
                         errorMsg = err.response.data.error || err.response.data.message;
                     }
                 }
-                setError(errorMsg); // Lỗi này là lỗi fetch
+                setError(errorMsg); 
             } finally {
                 setLoading(false);
             }
@@ -59,10 +59,10 @@ const TakeSurveyPage = () => {
             ...prevAnswers,
             [questionId]: value
         }));
-        if (error) { // Xóa lỗi validation cũ khi người dùng bắt đầu sửa
+        if (error) { 
             setError(null);
         }
-        if (unansweredQuestionIds.includes(questionId)) { // Xóa highlight lỗi cho câu hỏi cụ thể
+        if (unansweredQuestionIds.includes(questionId)) { 
             setUnansweredQuestionIds(prev => prev.filter(id => id !== questionId));
         }
     };
@@ -75,8 +75,8 @@ const TakeSurveyPage = () => {
             return;
         }
 
-        setUnansweredQuestionIds([]); // Reset danh sách câu hỏi lỗi trước mỗi lần submit
-        setError(null); // Xóa lỗi chung trước khi submit
+        setUnansweredQuestionIds([]); 
+        setError(null); 
 
         if (surveyDetails && surveyDetails.questions) {
             const requiredQuestionsData = surveyDetails.questions.filter(q => q.isRequired === true);
@@ -105,7 +105,7 @@ const TakeSurveyPage = () => {
 
             if (unansweredMessages.length > 0) {
                 setError(`Vui lòng trả lời các câu hỏi bắt buộc sau:\n- ${unansweredMessages.join('\n- ')}`);
-                setUnansweredQuestionIds(unansweredIds); // Lưu ID các câu hỏi lỗi để highlight
+                setUnansweredQuestionIds(unansweredIds); 
                 setSubmitting(false);
                 return;
             }
@@ -151,7 +151,7 @@ const TakeSurveyPage = () => {
             if (err.response && err.response.data && (err.response.data.error || err.response.data.message)) {
                 errorMsg = err.response.data.error || err.response.data.message;
             }
-            setError(errorMsg); // Lỗi từ server khi submit
+            setError(errorMsg); 
         } finally {
             setSubmitting(false);
         }
@@ -159,14 +159,11 @@ const TakeSurveyPage = () => {
 
     const renderQuestion = (question) => {
         const answerValue = answers[question.questionId] || '';
-        const isInvalid = unansweredQuestionIds.includes(question.questionId); // Kiểm tra câu hỏi có đang bị lỗi không
+        const isInvalid = unansweredQuestionIds.includes(question.questionId); 
 
-        // Thêm prop isInvalid cho Form.Control hoặc Form.Check nếu React-Bootstrap hỗ trợ
-        // Hoặc bạn có thể tự thêm class CSS để custom style
-        // Ví dụ: className={isInvalid ? 'is-invalid' : ''} (cần CSS tương ứng)
 
         return (
-            <Form.Group className={isInvalid ? 'question-error-highlight' : ''}> {/* Thêm class để highlight nếu muốn */}
+            <Form.Group className={isInvalid ? 'question-error-highlight' : ''}> 
                 {(() => {
                     switch (question.questionType) {
                         case 'Multiple Choice':
@@ -181,7 +178,7 @@ const TakeSurveyPage = () => {
                                         checked={answerValue === opt.optionId.toString()}
                                         onChange={(e) => handleAnswerChange(question.questionId, e.target.value)}
                                         name={`question-${question.questionId}`}
-                                        isInvalid={isInvalid && !answerValue} // Highlight nếu bắt buộc, lỗi và chưa có giá trị
+                                        isInvalid={isInvalid && !answerValue} 
                                     />
                                 ))
                             ) : <p className="text-muted small">Câu hỏi trắc nghiệm này hiện không có lựa chọn nào.</p>;
@@ -193,7 +190,7 @@ const TakeSurveyPage = () => {
                                     value={answerValue}
                                     onChange={(e) => handleAnswerChange(question.questionId, e.target.value)}
                                     placeholder="Nhập câu trả lời của bạn..."
-                                    isInvalid={isInvalid} // Highlight nếu lỗi
+                                    isInvalid={isInvalid} 
                                 />
                             );
                         case 'TEXT_INPUT':
@@ -203,7 +200,7 @@ const TakeSurveyPage = () => {
                                     value={answerValue}
                                     onChange={(e) => handleAnswerChange(question.questionId, e.target.value)}
                                     placeholder="Nhập câu trả lời ngắn..."
-                                    isInvalid={isInvalid} // Highlight nếu lỗi
+                                    isInvalid={isInvalid} 
                                 />
                             );
                         default:
@@ -214,7 +211,7 @@ const TakeSurveyPage = () => {
         );
     };
 
-    // --- LOGIC RENDER ĐÃ ĐƯỢC SẮP XẾP LẠI ---
+    
     if (loading) {
         return (
             <div className="text-center my-5">
@@ -224,32 +221,30 @@ const TakeSurveyPage = () => {
         );
     }
 
-    // Lỗi fetch nghiêm trọng, không có surveyDetails
+    
     if (!surveyDetails && error) {
         return <Alert variant="danger" className="m-3 text-center">{error}</Alert>;
     }
 
-    // Không có surveyDetails (sau khi loading xong và không có lỗi fetch nghiêm trọng)
+    
     if (!surveyDetails) {
         return <Alert variant="warning" className="m-3 text-center">Không tìm thấy thông tin khảo sát.</Alert>;
     }
     
-    // surveyDetails đã có, nhưng người dùng không thể trả lời
-    // Thông báo này nên được ưu tiên hơn lỗi validation nếu có
+    
     if (surveyDetails.canRespond === false) {
         return <Alert variant="info" className="m-3 text-center">Bạn không thể thực hiện khảo sát này (có thể đã hết hạn, bạn đã làm rồi, hoặc khảo sát không còn hoạt động).</Alert>;
     }
 
-    // Nếu đến đây, surveyDetails có và người dùng có thể trả lời. Hiển thị form.
-    // Lỗi validation (biến `error`) sẽ được hiển thị bên trong Card.Body.
+    
     return (
-        <Container className="my-4"> {/* Thêm Container cho khoảng cách và căn giữa tốt hơn */}
+        <Container className="my-4"> 
             <Card className="shadow-sm">
                 <Card.Header as="h3" className="bg-primary text-white text-center">{surveyDetails.title}</Card.Header>
                 <Card.Body>
                     {surveyDetails.description && <Card.Text className="mb-4 fst-italic text-center">{surveyDetails.description}</Card.Text>}
                     
-                    {/* Hiển thị lỗi (validation hoặc lỗi submit từ server) */}
+                   
                     {error && (
                         <Alert variant="danger" onClose={() => { setError(null); setUnansweredQuestionIds([]); }} dismissible>
                             {error.split('\n').map((line, i) => (<React.Fragment key={i}>{line}<br/></React.Fragment>))}
@@ -261,7 +256,7 @@ const TakeSurveyPage = () => {
                             <Card 
                                 key={question.questionId} 
                                 className={`mb-4 ${unansweredQuestionIds.includes(question.questionId) ? 'border-danger shadow-danger' : ''}`}
-                                id={`question-card-${question.questionId}`} // Thêm ID để có thể scroll tới
+                                id={`question-card-${question.questionId}`} 
                             >
                                 <Card.Header className={`${unansweredQuestionIds.includes(question.questionId) ? 'text-danger' : ''}`}>
                                     <strong>Câu {index + 1}:</strong> {question.questionText}
@@ -275,7 +270,7 @@ const TakeSurveyPage = () => {
                         <Button 
                             type="submit" 
                             variant="success" 
-                            disabled={submitting} // Chỉ disable khi đang submitting
+                            disabled={submitting} 
                             className="w-100 py-2 mt-3"
                         >
                             {submitting ? <><Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> Đang gửi...</> : "Gửi Phản Hồi"}

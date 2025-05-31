@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext } from "react"; // useRef không còn được dùng trực tiếp trong Home
+import { useEffect, useState, useCallback, useContext } from "react"; 
 import { Alert, Button, Col, Row } from "react-bootstrap";
 import Apis, { endpoints, authApis } from "../configs/Apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -6,9 +6,9 @@ import cookie from "react-cookies";
 import MySpinner from "./layouts/MySpinner";
 import { MyUserContext, MyDispatchContext } from "../configs/Contexts";
 
-// Import the new components
+
 import CreatePostForm from "./CreatePostForm";
-import PostItem from "./PostItem"; // Đảm bảo PostItem được React.memo nếu bạn muốn tối ưu hóa tối đa
+import PostItem from "./PostItem"; 
 import EditPostModal from "./EditPostModal";
 import EditCommentModal from "./EditCommentModal";
 
@@ -31,7 +31,7 @@ const Home = () => {
     const [editingComment, setEditingComment] = useState(null);
     const [showEditCommentModal, setShowEditCommentModal] = useState(false);
 
-    // --- useEffects ---
+   
     useEffect(() => {
         const token = cookie.load("token");
         if (!token && !currentUser) {
@@ -54,12 +54,12 @@ const Home = () => {
         }
     }, [nav, currentUser, dispatch]);
 
-    const keyword = q.get("kw"); // Trích xuất keyword để dùng trong dependency của loadPosts
+    const keyword = q.get("kw"); 
 
     const loadPosts = useCallback(async (pageToLoad, isNewSearch = false) => {
         if (!isNewSearch && !canLoadMore && pageToLoad > 1) return;
-        // Guard `loadingPosts` đã được comment out trong code gốc, giữ nguyên
-        // if (loadingPosts && !isNewSearch && pageToLoad > 1) return;
+       
+       
 
 
         setLoadingPosts(true);
@@ -68,8 +68,8 @@ const Home = () => {
             const params = new URLSearchParams();
             params.append('page', pageToLoad.toString());
 
-            // const currentKw = q.get("kw"); // Sử dụng keyword từ bên ngoài
-            if (keyword) { // Sử dụng keyword đã trích xuất
+            
+            if (keyword) { 
                 params.append('kw', keyword);
             }
             const fullUrl = `${url}?${params.toString()}`;
@@ -81,9 +81,9 @@ const Home = () => {
                     if (pageToLoad === 1 || isNewSearch) setPosts([]);
                 } else {
                     setPosts(prev => (pageToLoad === 1 || isNewSearch) ? fetchedPosts : [...prev, ...fetchedPosts]);
-                    setCanLoadMore(true); // Cho phép tải thêm nếu có kết quả
+                    setCanLoadMore(true); 
                 }
-            } else { // Trường hợp res.data không phải mảng hoặc không có
+            } else { 
                 setCanLoadMore(false);
                 if (pageToLoad === 1 || isNewSearch) setPosts([]);
             }
@@ -93,7 +93,7 @@ const Home = () => {
         } finally {
             setLoadingPosts(false);
         }
-    }, [keyword, canLoadMore]); // Dependencies: keyword và canLoadMore
+    }, [keyword, canLoadMore]); 
 
 
     useEffect(() => {
@@ -102,19 +102,15 @@ const Home = () => {
                 loadPosts(currentPage, currentPage === 1 && keyword !== null);
             }
         }
-    }, [currentPage, currentUser, loadPosts, keyword]); // Thêm loadPosts và keyword (nếu loadPosts dùng nó)
+    }, [currentPage, currentUser, loadPosts, keyword]); 
 
     useEffect(() => {
         setCurrentPage(1);
-        setCanLoadMore(true); // Reset canLoadMore khi tìm kiếm mới
-        // if (cookie.load("token") && currentUser) { // loadPosts sẽ được gọi bởi useEffect ở trên khi currentPage đổi thành 1
-        //     loadPosts(1, true);
-        // }
-        // useEffect trên sẽ tự gọi loadPosts(1, true) do currentPage thay đổi và keyword có thể thay đổi
-    }, [keyword, currentUser]); // Chỉ chạy khi keyword hoặc currentUser thay đổi
+        setCanLoadMore(true); 
+      
+    }, [keyword, currentUser]); 
 
-
-    // --- Helper Functions ---
+    
     const formatDate = useCallback((dateStr) => {
         if (!dateStr) return "Không rõ thời gian";
         const date = new Date(dateStr);
@@ -173,7 +169,7 @@ const Home = () => {
         }
     }, [currentUser, dispatch, nav]);
 
-    // --- Post Actions ---
+    
     const handlePostReactionClick = useCallback(async (postId, reactionType) => {
         const result = await handleAuthAction(
             () => authApis().post(endpoints['post-reactions'](postId), { type: reactionType }),
@@ -232,17 +228,17 @@ const Home = () => {
         if (result && result.status === 200 && result.data && result.data.postId) {
             const updatedPostFromServer = result.data;
             setPosts(currentPosts => currentPosts.map(p =>
-                p.postId === editingPost?.postId // Thêm optional chaining phòng trường hợp editingPost là null
+                p.postId === editingPost?.postId 
                     ? { ...updatedPostFromServer, userId: updatedPostFromServer.userId || editingPost?.userId }
                     : p
             ));
             alert("Cập nhật bài viết thành công!");
-            closeEditPostModalHandler(); // Gọi hàm đã được memoize
+            closeEditPostModalHandler(); 
         }
-    }, [handleAuthAction, editingPost, closeEditPostModalHandler]); // Thêm closeEditPostModalHandler vào dependencies
+    }, [handleAuthAction, editingPost, closeEditPostModalHandler]); 
 
     const handleToggleCommentLock = useCallback(async (postId) => {
-        const currentPost = posts.find(p => p.postId === postId); // posts có thể thay đổi
+        const currentPost = posts.find(p => p.postId === postId); 
         if (!currentPost || !currentUser || currentUser.id !== currentPost.userId) {
             alert("Bạn không có quyền thực hiện hành động này.");
             return;
@@ -268,10 +264,10 @@ const Home = () => {
             ));
             alert(`Đã ${actionMessage} bình luận thành công!`);
         }
-    }, [posts, currentUser, handleAuthAction]); // Thêm posts, currentUser
+    }, [posts, currentUser, handleAuthAction]); 
 
 
-    // --- Comment Actions ---
+   
     const handleCommentReactionClick = useCallback(async (postId, commentId, reactionType) => {
         const result = await handleAuthAction(
             () => authApis().post(endpoints['comment-reactions'](commentId), { type: reactionType }),
@@ -368,14 +364,14 @@ const Home = () => {
     if (result && result.status === 200 && result.data) {
         const updatedCommentFromServer = result.data;
 
-        // Tìm comment trong post đã sửa và giữ lại reactions cũ
+        
         setPosts(currentPosts => currentPosts.map(p => {
             if (p.postId === postId) {
                 return {
                     ...p,
                     comments: p.comments.map(c =>
                         c.commentId === commentId
-                            ? { ...updatedCommentFromServer, reactions: c.reactions || {} } // Giữ lại reactions cũ
+                            ? { ...updatedCommentFromServer, reactions: c.reactions || {} } 
                             : c
                     )
                 };
@@ -384,20 +380,20 @@ const Home = () => {
         }));
 
         alert("Cập nhật bình luận thành công!");
-        closeEditCommentModalHandler(); // Gọi hàm đã được memoize
+        closeEditCommentModalHandler(); 
     }
 }, [handleAuthAction, editingComment, closeEditCommentModalHandler]);
 
 
 
-    // --- Load More ---
+ 
     const loadMore = useCallback(() => {
         if (!loadingPosts && canLoadMore) {
             setCurrentPage(prevPage => prevPage + 1);
         }
     }, [loadingPosts, canLoadMore]);
 
-    // --- Render Logic ---
+
     if (!currentUser && cookie.load("token")) {
         return <div className="text-center mt-5"><MySpinner /><p>Đang tải dữ liệu người dùng...</p></div>;
     }
@@ -405,7 +401,7 @@ const Home = () => {
         return <div className="text-center mt-5"><MySpinner /><p>Đang kiểm tra đăng nhập...</p></div>;
     }
 
-    if (loadingPosts && currentPage === 1 && posts.length === 0 && !keyword) { // Sử dụng keyword
+    if (loadingPosts && currentPage === 1 && posts.length === 0 && !keyword) { 
         return <div className="text-center mt-5"><MySpinner /></div>;
     }
 
@@ -442,9 +438,9 @@ const Home = () => {
                             onAddComment={handleAddComment}
                             onDeleteComment={handleDeleteComment}
                             onOpenEditCommentModal={openEditCommentModalHandler}
-                            authApis={authApis} // Truyền xuống nếu PostItem cần gọi API trực tiếp (ít phổ biến hơn)
-                            endpoints={endpoints} // Tương tự
-                            handleAuthAction={handleAuthAction} // Truyền xuống nếu PostItem tự xử lý auth
+                            authApis={authApis} 
+                            endpoints={endpoints} 
+                            handleAuthAction={handleAuthAction} 
                         />
                     ))}
                 </Col>

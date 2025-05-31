@@ -17,8 +17,8 @@ public interface PlatformStatsService {
     void generateDailySummary();
 
     List<DailyPlatformSummary> getAllSummaries();
-    
-     void generatePeriodicSummaries();
-    
-     List<PeriodicSummaryStats> getAllPeriodicSummaries();
+
+    void generatePeriodicSummaries();
+
+    List<PeriodicSummaryStats> getAllPeriodicSummaries();
 }

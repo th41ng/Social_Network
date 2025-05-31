@@ -52,7 +52,6 @@ public class PostServiceImpl implements PostService {
         return this.postRepository.countPostsCreatedToday();
     }
 
-    // === PHƯƠNG THỨC DELETEPOST ĐÃ ĐƯỢC CẬP NHẬT VỚI KIỂM TRA QUYỀN ===
     @Override
     public void deletePost(int postId, User currentUser) {
         Post post = this.postRepository.getPostById(postId);
@@ -81,8 +80,7 @@ public class PostServiceImpl implements PostService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền xóa bài viết này.");
         }
     }
-    
-    // === CẬP NHẬT COUNTPOSTS ĐỂ HỖ TRỢ PHÂN TRANG ===
+
     @Override
     public long countPosts(Map<String, String> params) {
         return this.postRepository.countPosts(params);

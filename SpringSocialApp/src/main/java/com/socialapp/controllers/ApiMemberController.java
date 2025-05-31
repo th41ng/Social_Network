@@ -28,15 +28,15 @@ public class ApiMemberController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/delete/{MemberId}")
-    public ResponseEntity<Void> deleteMember(@PathVariable("MemberId") int id) {
+    @DeleteMapping("/members/delete/{MemberId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable("MemberId") int MemberId) {
         try {
-            logger.info("Đang cố gắng xoá thành viên với ID: {}", id);
-            groupMemberService.deleteMember(id);
-            logger.info("Đã xoá thành công thành viên với ID: {}", id);
+            logger.info("Đang cố gắng xoá thành viên với ID: {}", MemberId);
+            groupMemberService.deleteMember(MemberId);
+            logger.info("Đã xoá thành công thành viên với ID: {}", MemberId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            logger.error("Đã xảy ra lỗi khi xoá thành viên với ID {}: ", id, e);
+            logger.error("Đã xảy ra lỗi khi xoá thành viên với ID {}: ", MemberId, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

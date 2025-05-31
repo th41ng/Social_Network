@@ -1,10 +1,10 @@
-package com.socialapp.pojo; // Đảm bảo package này đúng với cấu trúc dự án của bạn
+package com.socialapp.pojo; 
 
 import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
- * @author DELL G15 (hoặc tên của bạn)
+ * @author DELL G15 
  */
 @Entity
 @Table(name = "question_types")
@@ -24,7 +24,7 @@ public class QuestionType implements Serializable {
     private Integer typeId;
 
     @Basic(optional = false)
-    @Column(name = "type_name", length = 100) // Giả sử độ dài tối đa là 100
+    @Column(name = "type_name", length = 100) 
     private String typeName;
 
     
@@ -57,13 +57,7 @@ public class QuestionType implements Serializable {
         this.typeName = typeName;
     }
 
-    // public Set<SurveyQuestion> getSurveyQuestionSet() {
-    //     return surveyQuestionSet;
-    // }
-
-    // public void setSurveyQuestionSet(Set<SurveyQuestion> surveyQuestionSet) {
-    //     this.surveyQuestionSet = surveyQuestionSet;
-    // }
+    
 
     @Override
     public int hashCode() {

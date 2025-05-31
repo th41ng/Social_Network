@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import jakarta.persistence.TypedQuery; // Sử dụng TypedQuery cho HQL
+import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  * @author DELL G15
  */
 @Repository
-@Transactional // Đảm bảo annotation này được áp dụng ở class hoặc ở phương thức service gọi đến
+@Transactional
 public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
 
     @Autowired
@@ -54,40 +54,35 @@ public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
         if (response != null) {
             session.remove(response);
         } else {
-            
+
             System.err.println("SurveyResponse not found with ID: " + responseId + " for deletion.");
-           
+
         }
     }
 
     @Override
     public List<SurveyResponse> getResponsesByQuestionId(int questionId) {
         Session session = this.factory.getObject().getCurrentSession();
-        // Sử dụng HQL với LEFT JOIN FETCH để tải SurveyQuestion và SurveyOptions của nó
-        // DISTINCT là quan trọng để tránh các bản ghi SurveyResponse bị trùng lặp nếu một SurveyQuestion có nhiều SurveyOptions
-        String hql = "SELECT DISTINCT sr FROM SurveyResponse sr " +
-                     "LEFT JOIN FETCH sr.questionId q " +        
-                     "LEFT JOIN FETCH q.surveyOptions " +         
-                     "WHERE q.questionId = :questionId";       
+
+        String hql = "SELECT DISTINCT sr FROM SurveyResponse sr "
+                + "LEFT JOIN FETCH sr.questionId q "
+                + "LEFT JOIN FETCH q.surveyOptions "
+                + "WHERE q.questionId = :questionId";
 
         TypedQuery<SurveyResponse> query = session.createQuery(hql, SurveyResponse.class);
         query.setParameter("questionId", questionId);
         return query.getResultList();
     }
-    
-    
+
     @Override
     public List<SurveyResponse> getResponsesBySurveyIdAndUserId(int surveyId, int userId) {
         Session session = this.factory.getObject().getCurrentSession();
-        // Sử dụng HQL để truy vấn
-        // sr.surveyId.surveyId -> SurveyResponse.surveyId (Survey object) -> Survey.surveyId (Integer ID)
-        // sr.userId.id       -> SurveyResponse.userId (User object)    -> User.id (Integer ID)
+
         String hql = "FROM SurveyResponse sr WHERE sr.surveyId.surveyId = :surveyIdParam AND sr.userId.id = :userIdParam";
         TypedQuery<SurveyResponse> query = session.createQuery(hql, SurveyResponse.class);
         query.setParameter("surveyIdParam", surveyId);
         query.setParameter("userIdParam", userId);
         return query.getResultList();
     }
-    
-    
+
 }

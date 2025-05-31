@@ -16,8 +16,8 @@ import ResetPassword from "./components/ResetPassword";
 import Profile from "./components/Profile";
 import SurveyListPage from './components/surveys/SurveyListPage'; 
 import TakeSurveyPage from './components/surveys/TakeSurveyPage'; 
-import cookie from 'react-cookies'; // Thêm cookie
-import { authApis, endpoints } from './configs/Apis'; // Thêm Apis và endpoints
+import cookie from 'react-cookies'; 
+import { authApis, endpoints } from './configs/Apis'; 
 
 const App = () => {
   const [user, dispatch] = useReducer(MyUserReducer, null);
@@ -25,7 +25,7 @@ const App = () => {
   useEffect(() => {
     const fetchCurrentUserOnLoad = async () => {
       const token = cookie.load('token');
-      // Chỉ fetch khi có token và user chưa được load vào context
+     
       if (token && !user) {
         try {
           console.log("App.js: Attempting to fetch current user with token...");
@@ -35,17 +35,17 @@ const App = () => {
         } catch (ex) {
           console.error("App.js: Error auto-logging in:", ex);
           if (ex.response && ex.response.status === 401) {
-            // Token không hợp lệ hoặc đã hết hạn
-            cookie.remove('token'); // Xóa token hỏng
-            dispatch({ type: 'logout' }); // Dispatch logout để xóa user khỏi context
-            // Không cần điều hướng từ đây, các trang con hoặc ProtectedRoute sẽ xử lý
+           
+            cookie.remove('token'); 
+            dispatch({ type: 'logout' }); 
+          
           }
         }
       }
     };
 
     fetchCurrentUserOnLoad();
-  }, [dispatch, user]); // Thêm `user` vào dependency array để tránh gọi lại không cần thiết nếu user đã được set.
+  }, [dispatch, user]); 
 
   return (
     <MyUserContext.Provider value={user}>

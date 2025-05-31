@@ -28,15 +28,15 @@ public class ApiGroupController {
     private UserGroupService userGroupService;
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/delete/{GroupId}")
-    public ResponseEntity<Void> deleteNotification(@PathVariable("GroupId") int id) {
+    @DeleteMapping("/groups/delete/{GroupId}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable("GroupId") int GroupId) {
         try {
-            logger.info("Đang cố gắng xoá nhóm với ID: {}", id);
-            userGroupService.deleteGroup(id);
-            logger.info("Đã xoá thành công nhóm với ID: {}", id);
+            logger.info("Đang cố gắng xoá nhóm với ID: {}", GroupId);
+            userGroupService.deleteGroup(GroupId);
+            logger.info("Đã xoá thành công nhóm với ID: {}", GroupId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            logger.error("Đã xảy ra lỗi khi xoá nhóm với ID {}: ", id, e);
+            logger.error("Đã xảy ra lỗi khi xoá nhóm với ID {}: ", GroupId, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

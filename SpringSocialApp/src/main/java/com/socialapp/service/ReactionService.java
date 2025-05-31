@@ -22,7 +22,6 @@ public interface ReactionService {
 
     List<Reaction> getReactionsByCommentId(int commentId);
 
-    // Trả về Map<String, Long> là số lượng reactions mới của đối tượng (post hoặc comment)
     Map<String, Long> handlePostReaction(Integer postId, Integer userId, String reactionType);
 
     Map<String, Long> handleCommentReaction(Integer commentId, Integer userId, String reactionType);

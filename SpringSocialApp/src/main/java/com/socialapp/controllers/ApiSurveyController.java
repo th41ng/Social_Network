@@ -3,9 +3,9 @@ package com.socialapp.controllers;
 import com.socialapp.dto.SurveyClientListDTO;
 import com.socialapp.dto.SurveyDetailClientDTO;
 import com.socialapp.dto.SurveyResponseSubmitDTO;
-import com.socialapp.pojo.User; // Survey POJO không còn được trả về trực tiếp từ các endpoint client này
-import com.socialapp.service.SurveyApiService; // Service chính cho các endpoint này
-import com.socialapp.service.SurveyService;    // Vẫn có thể giữ lại cho các chức năng admin như DELETE
+import com.socialapp.pojo.User; 
+import com.socialapp.service.SurveyApiService; 
+import com.socialapp.service.SurveyService;   
 import com.socialapp.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -22,25 +22,22 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/surveys") // Base path chung cho tất cả API liên quan đến Survey
+@RequestMapping("/api/surveys") 
 @CrossOrigin
 public class ApiSurveyController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiSurveyController.class);
 
     @Autowired
-    private SurveyApiService surveyApiService; // Service chính cho các endpoint trả về DTO cho client
+    private SurveyApiService surveyApiService; 
 
     @Autowired
-    private SurveyService surveyService;    // Có thể vẫn dùng cho các hoạt động admin (ví dụ: DELETE)
+    private SurveyService surveyService;   
 
     @Autowired
     private UserService userService;
 
-    /**
-     * Lấy danh sách các khảo sát cho client (trả về DTO).
-     * Path: GET /api/surveys
-     */
+    
     @GetMapping
     public ResponseEntity<?> listSurveysForClient(
             @RequestParam(required = false) Map<String, String> params,
@@ -63,10 +60,7 @@ public class ApiSurveyController {
         }
     }
 
-    /**
-     * Lấy chi tiết một khảo sát cụ thể cho client trả lời (trả về DTO).
-     * Path: GET /api/surveys/{surveyId}
-     */
+   
     @GetMapping("/{surveyId}")
     public ResponseEntity<?> getSurveyDetailsForClient(
             @PathVariable("surveyId") int surveyId,
@@ -95,10 +89,7 @@ public class ApiSurveyController {
         }
     }
 
-    /**
-     * Client gửi các phản hồi cho một khảo sát.
-     * Path: POST /api/surveys/{surveyId}/responses
-     */
+  
     @PostMapping("/{surveyId}/responses") 
     public ResponseEntity<?> submitClientSurveyResponses(
             @PathVariable("surveyId") int surveyId,
@@ -130,7 +121,7 @@ public class ApiSurveyController {
             if (success) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Cảm ơn bạn đã hoàn thành khảo sát!"));
             } else {
-                // Service nên ném exception thay vì trả về false cho trường hợp lỗi có thể dự đoán được
+               
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Không thể xử lý phản hồi của bạn do dữ liệu không hợp lệ hoặc lỗi đã xảy ra."));
             }
         } catch (EntityNotFoundException e) {
@@ -148,32 +139,22 @@ public class ApiSurveyController {
         }
     }
     
-    /**
-     * Endpoint để admin xóa khảo sát (ví dụ, nếu vẫn cần API cho admin).
-     * Path: DELETE /api/surveys/{surveyId}
-     * Lưu ý: HTTP method DELETE khác với GET nên có thể cùng path variable.
-     */
     @DeleteMapping("/delete/{surveyId}")
     public ResponseEntity<Void> deleteSurveyByAdmin(@PathVariable(value = "surveyId") int id, Authentication authentication) {
-        // QUAN TRỌNG: Cần thêm logic kiểm tra quyền ADMIN của người dùng `authentication` ở đây!
-        // Ví dụ:
-        // if (!isAdmin(authentication)) {
-        //    logger.warn("User không có quyền admin cố gắng xóa survey ID: {}", id);
-        //    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        // }
-        User currentUser = getCurrentUserFromAuthentication(authentication); // Để log hoặc kiểm tra thêm nếu cần
+       
+        User currentUser = getCurrentUserFromAuthentication(authentication); 
         String usernameForLog = currentUser != null ? currentUser.getUsername() : "unknown_admin_attempt";
 
         try {
             logger.info("Admin action (user: {}): Attempting to delete survey with ID: {}", usernameForLog, id);
-            this.surveyService.deleteSurvey(id); // Vẫn dùng SurveyService cũ cho việc này (giả sử nó xử lý POJO)
+            this.surveyService.deleteSurvey(id);
             logger.info("Admin action (user: {}): Successfully deleted survey with ID: {}", usernameForLog, id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (EntityNotFoundException e){ // Có thể service của bạn ném lỗi này nếu không tìm thấy
+        } catch (EntityNotFoundException e){ 
              logger.warn("Admin action (user: {}): Survey with ID: {} not found for deletion. Error: {}",usernameForLog, id, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } 
-        catch (Exception e) { // Bắt các lỗi chung khác
+        catch (Exception e) {
             logger.error("Admin action (user: {}): Error deleting survey with ID: {}. Details: ", usernameForLog, id, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

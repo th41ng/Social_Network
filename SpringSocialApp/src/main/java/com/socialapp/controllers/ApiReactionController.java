@@ -75,7 +75,7 @@ public class ApiReactionController {
         } catch (IllegalArgumentException e) {
             logger.warn("Bad request for post {} reaction: {}", postId, e.getMessage(), e);
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        } catch (EntityNotFoundException e) { // <<<< SỬ DỤNG jakarta.persistence.EntityNotFoundException
+        } catch (EntityNotFoundException e) { 
             logger.warn("Entity not found for post reaction (postId: {}): {}", postId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Post not found."));
         } catch (Exception e) {
@@ -127,7 +127,7 @@ public class ApiReactionController {
         } catch (IllegalArgumentException e) {
             logger.warn("Bad request for comment {} reaction: {}", commentId, e.getMessage(), e);
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        } catch (EntityNotFoundException e) { // <<<< SỬ DỤNG jakarta.persistence.EntityNotFoundException
+        } catch (EntityNotFoundException e) { 
             logger.warn("Entity not found for comment reaction (commentId: {}): {}", commentId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Comment not found."));
         } catch (UnsupportedOperationException e) {

@@ -38,6 +38,6 @@ public class SurveyResponseServiceImpl implements SurveyResponseService{
     
      @Override
     public List<SurveyResponse> getResponsesByQuestionId(int questionId) {
-        return surveyResponseRepository.getResponsesByQuestionId(questionId);  // Gọi repository để lấy phản hồi theo câu hỏi
+        return surveyResponseRepository.getResponsesByQuestionId(questionId);  
     }
 }

@@ -40,7 +40,7 @@ public class SurveyResponse implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date responseAt;
 
-    // Thêm cột để lưu câu trả lời tự luận
+   
     @Column(name = "response_text")
     private String responseText;
 

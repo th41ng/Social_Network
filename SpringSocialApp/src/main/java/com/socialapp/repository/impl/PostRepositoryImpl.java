@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 @Transactional
 public class PostRepositoryImpl implements PostRepository {
 
-    private static final int PAGE_SIZE = 5; // Kích thước trang mặc định
+    private static final int PAGE_SIZE = 5; 
     private static final Logger logger = LoggerFactory.getLogger(PostRepositoryImpl.class);
 
     @Autowired
@@ -33,28 +33,25 @@ public class PostRepositoryImpl implements PostRepository {
         return this.factory.getObject().getCurrentSession();
     }
 
-    // Phương thức private để xây dựng các predicates dựa trên params
     private List<Predicate> buildPredicates(Map<String, String> params, CriteriaBuilder b, Root<Post> root) {
         List<Predicate> predicates = new ArrayList<>();
 
         if (params != null) {
-            // Lọc theo nội dung (param name: "content")
+
             String content = params.get("content");
             if (content != null && !content.isEmpty()) {
                 predicates.add(b.like(root.get("content"), "%" + content + "%"));
             }
 
-            // Lọc theo userId (param name: "userId")
             String userIdStr = params.get("userId");
             if (userIdStr != null && !userIdStr.isEmpty()) {
                 try {
-                    predicates.add(b.equal(root.get("userId").get("id"), Integer.parseInt(userIdStr)));
+                    predicates.add(b.equal(root.get("userId").get("id"), Integer.valueOf(userIdStr)));
                 } catch (NumberFormatException e) {
                     logger.warn("Invalid userId format: {}", userIdStr);
                 }
             }
 
-            // Lọc theo ngày fromDate (param name: "fromDate")
             String fromDateStr = params.get("fromDate");
             if (fromDateStr != null && !fromDateStr.isEmpty()) {
                 try {
@@ -64,7 +61,6 @@ public class PostRepositoryImpl implements PostRepository {
                 }
             }
 
-            // Lọc theo ngày toDate (param name: "toDate")
             String toDateStr = params.get("toDate");
             if (toDateStr != null && !toDateStr.isEmpty()) {
                 try {
@@ -75,7 +71,6 @@ public class PostRepositoryImpl implements PostRepository {
             }
         }
 
-        // Luôn lọc các bài viết chưa bị xóa mềm
         predicates.add(b.equal(root.get("isDeleted"), false));
 
         return predicates;
@@ -92,9 +87,8 @@ public class PostRepositoryImpl implements PostRepository {
         List<Predicate> predicates = buildPredicates(params, b, root);
         q.where(predicates.toArray(new Predicate[0]));
 
-        // Sắp xếp
         if (params != null && params.get("orderBy") != null && !params.get("orderBy").isEmpty()) {
-            // Ví dụ: orderBy=createdAt, orderDir=asc/desc
+
             String orderByField = params.get("orderBy");
             String orderDir = params.getOrDefault("orderDir", "desc").toLowerCase();
             if ("asc".equals(orderDir)) {
@@ -103,20 +97,21 @@ public class PostRepositoryImpl implements PostRepository {
                 q.orderBy(b.desc(root.get(orderByField)));
             }
         } else {
-            q.orderBy(b.desc(root.get("createdAt"))); // Mặc định sắp xếp theo ngày tạo giảm dần
+            q.orderBy(b.desc(root.get("createdAt")));
         }
 
         Query<Post> query = s.createQuery(q);
 
-        // Phân trang
         if (params != null && params.containsKey("page")) {
             int page = 1;
             try {
                 page = Integer.parseInt(params.get("page"));
-                if (page < 1) page = 1; // Đảm bảo trang không nhỏ hơn 1
+                if (page < 1) {
+                    page = 1;
+                }
             } catch (NumberFormatException e) {
                 logger.warn("Invalid page number in params: '{}'. Defaulting to page 1.", params.get("page"));
-                // Giữ page = 1 nếu có lỗi
+
             }
             query.setFirstResult((page - 1) * PAGE_SIZE);
             query.setMaxResults(PAGE_SIZE);
@@ -126,14 +121,14 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public long countPosts(Map<String, String> params) { // Chấp nhận params
+    public long countPosts(Map<String, String> params) {
         Session session = getCurrentSession();
         CriteriaBuilder b = session.getCriteriaBuilder();
         CriteriaQuery<Long> cq = b.createQuery(Long.class);
         Root<Post> root = cq.from(Post.class);
         cq.select(b.count(root));
 
-        List<Predicate> predicates = buildPredicates(params, b, root); // Tái sử dụng logic predicates
+        List<Predicate> predicates = buildPredicates(params, b, root);
         cq.where(predicates.toArray(new Predicate[0]));
 
         Query<Long> query = session.createQuery(cq);
@@ -145,7 +140,7 @@ public class PostRepositoryImpl implements PostRepository {
     public Post getPostById(int id) {
         Session s = getCurrentSession();
         Post post = s.get(Post.class, id);
-        // Trả về null nếu không tìm thấy hoặc đã bị xóa mềm
+
         return (post != null && !post.getIsDeleted()) ? post : null;
     }
 
@@ -155,7 +150,7 @@ public class PostRepositoryImpl implements PostRepository {
         if (post.getPostId() == null) {
             s.persist(post);
         } else {
-            s.merge(post); // Hoặc s.update(post) tùy theo cấu hình cascade và trạng thái của entity
+            s.merge(post);
         }
         return post;
     }
@@ -163,9 +158,9 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public void deletePost(int id) {
         Session s = getCurrentSession();
-        Post post = this.getPostById(id); // Sử dụng getPostById đã kiểm tra isDeleted
+        Post post = this.getPostById(id);
         if (post != null) {
-            post.setIsDeleted(true); // Thực hiện xóa mềm
+            post.setIsDeleted(true);
             s.merge(post);
         }
     }
@@ -179,8 +174,8 @@ public class PostRepositoryImpl implements PostRepository {
         q.select(root);
 
         q.where(
-            b.equal(root.get("userId").get("id"), userId), // Giả định Post có trường userId là đối tượng User với trường id
-            b.equal(root.get("isDeleted"), false)
+                b.equal(root.get("userId").get("id"), userId),
+                b.equal(root.get("isDeleted"), false)
         );
         q.orderBy(b.desc(root.get("createdAt")));
 
@@ -197,10 +192,9 @@ public class PostRepositoryImpl implements PostRepository {
         q.select(root);
 
         q.where(
-            b.equal(root.get("postId").get("postId"), postId) // Giả định Comment có trường postId là đối tượng Post với trường postId
-            // Có thể thêm điều kiện  b.equal(root.get("isDeleted"), false) nếu comment cũng có xóa mềm
+                b.equal(root.get("postId").get("postId"), postId)
         );
-        q.orderBy(b.asc(root.get("createdAt"))); // Sắp xếp comment theo thời gian tạo
+        q.orderBy(b.asc(root.get("createdAt")));
 
         Query<Comment> query = s.createQuery(q);
         return query.getResultList();
@@ -209,9 +203,9 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public int countPostsCreatedToday() {
         Session session = getCurrentSession();
-        // Đảm bảo truy vấn này cũng chỉ đếm các bài viết chưa bị xóa
+
         Query<Long> query = session.createQuery(
-            "SELECT COUNT(p.postId) FROM Post p WHERE p.isDeleted = false AND DATE(p.createdAt) = CURRENT_DATE", Long.class);
+                "SELECT COUNT(p.postId) FROM Post p WHERE p.isDeleted = false AND DATE(p.createdAt) = CURRENT_DATE", Long.class);
         Long count = query.getSingleResult();
         return count != null ? count.intValue() : 0;
     }

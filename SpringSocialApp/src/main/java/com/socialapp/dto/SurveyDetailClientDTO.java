@@ -4,15 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class SurveyDetailClientDTO {
+
     private Integer surveyId;
     private String title;
     private String description;
     private LocalDateTime expiresAt;
     private List<SurveyQuestionClientDTO> questions;
-    private Boolean canRespond; // Client có thể trả lời khảo sát này không? (Dựa trên status, expiry, đã trả lời chưa)
+    private Boolean canRespond;
 
-    // Constructors, Getters and Setters
-    public SurveyDetailClientDTO() {}
+    public SurveyDetailClientDTO() {
+    }
 
     public Integer getSurveyId() {
         return surveyId;

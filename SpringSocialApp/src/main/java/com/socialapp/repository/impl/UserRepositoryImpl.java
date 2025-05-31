@@ -1,7 +1,6 @@
 package com.socialapp.repository.impl;
 
 import com.socialapp.configs.UserRole;
-import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.EmailService;
@@ -91,7 +90,6 @@ public class UserRepositoryImpl implements UserRepository {
             s.merge(u);
             String defaultPassword = "ou@123"; 
             u.setStudentId(null);
-            // Gửi email thông báo
             emailService.sendEmailtoLecturer(
                     u.getEmail(),
                     "Thông báo đăng ký tài khoản",

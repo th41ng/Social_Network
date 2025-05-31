@@ -30,7 +30,7 @@ public class CommentApiServiceImpl implements CommentApiService {
     @Autowired
     private CommentService commentService;
 
-    // Helper method to convert Comment POJO to CommentDTO
+   
     private CommentDTO convertToDTO(Comment comment) {
         if (comment == null) {
             return null;
@@ -121,7 +121,7 @@ public class CommentApiServiceImpl implements CommentApiService {
 
         if (commentToDelete.getIsDeleted() != null && commentToDelete.getIsDeleted()) {
             logger.info("API deleteComment: Comment ID {} was already soft-deleted. User {}.", commentId, currentUser.getUsername());
-            return true; // Coi như thành công nếu đã xóa mềm
+            return true; 
         }
 
         // Kiểm tra quyền: người viết comment hoặc chủ bài viết

@@ -2,7 +2,6 @@
 package com.socialapp.service;
 
 import com.socialapp.pojo.User;
-import jakarta.mail.Multipart;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;

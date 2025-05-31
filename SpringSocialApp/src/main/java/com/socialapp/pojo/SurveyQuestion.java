@@ -2,7 +2,6 @@ package com.socialapp.pojo;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
-// THAY ĐỔI IMPORT: Từ Set/HashSet sang List/ArrayList
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,9 +14,7 @@ import java.util.Objects;
 @Table(name = "survey_questions")
 @NamedQueries({
     @NamedQuery(name = "SurveyQuestion.findAll", query = "SELECT sq FROM SurveyQuestion sq"),
-    @NamedQuery(name = "SurveyQuestion.findById", query = "SELECT sq FROM SurveyQuestion sq WHERE sq.questionId = :questionId"),
-    // @NamedQuery(name = "SurveyQuestion.findBySurveyId", query = "SELECT sq FROM SurveyQuestion sq WHERE sq.surveyId = :surveyId")
-})
+    @NamedQuery(name = "SurveyQuestion.findById", query = "SELECT sq FROM SurveyQuestion sq WHERE sq.questionId = :questionId"),})
 public class SurveyQuestion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,36 +43,29 @@ public class SurveyQuestion implements Serializable {
     @ManyToOne(optional = false)
     private QuestionType typeId;
 
-    // --- THAY ĐỔI QUAN TRỌNG Ở ĐÂY ---
-    // Chuyển từ Set<SurveyOption> sang List<SurveyOption>
-    // Khởi tạo bằng ArrayList để Spring MVC có thể "auto-grow" khi binding indexed parameters
     @OneToMany(mappedBy = "questionId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    // @OrderColumn(name = "option_order_in_question") // TÙY CHỌN: Nếu bạn muốn duy trì thứ tự của các option trong DB
+
     private List<SurveyOption> surveyOptions = new ArrayList<>();
 
     public SurveyQuestion() {
-        // surveyOptions đã được khởi tạo tại dòng khai báo trường ở trên.
-        // Nếu bạn muốn, có thể tường minh khởi tạo ở đây:
-        // if (this.surveyOptions == null) {
-        //     this.surveyOptions = new ArrayList<>();
-        // }
+
     }
 
     public SurveyQuestion(Integer questionId) {
-        // this(); // Gọi constructor mặc định nếu bạn khởi tạo surveyOptions trong constructor mặc định
+
         this.questionId = questionId;
-        // surveyOptions sẽ được khởi tạo từ khai báo trường.
+
     }
 
     public SurveyQuestion(Integer questionId, Survey surveyId, String questionText, Boolean isRequired, Integer questionOrder, QuestionType typeId) {
-        // this(); // Gọi constructor mặc định
+
         this.questionId = questionId;
         this.surveyId = surveyId;
         this.questionText = questionText;
         this.isRequired = isRequired;
         this.questionOrder = questionOrder;
         this.typeId = typeId;
-        // surveyOptions sẽ được khởi tạo từ khai báo trường.
+
     }
 
     // Getters and Setters
@@ -119,7 +109,6 @@ public class SurveyQuestion implements Serializable {
         this.questionOrder = questionOrder;
     }
 
-    // --- CẬP NHẬT GETTER VÀ SETTER CHO surveyOptions ---
     public List<SurveyOption> getSurveyOptions() {
         return surveyOptions;
     }

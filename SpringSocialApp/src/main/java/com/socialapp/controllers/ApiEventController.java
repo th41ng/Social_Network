@@ -30,15 +30,15 @@ public class ApiEventController {
     private EventService eventService;
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/delete/{EventId}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable("EventId") int id) {
+    @DeleteMapping("/events/delete/{EventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable("EventId") int EventId) {
         try {
-            logger.info("Đang cố gắng xoá sự kiện với ID: {}", id);
-            eventService.deleteEvent(id);
-            logger.info("Đã xoá thành công sự kiện với ID: {}", id);
+            logger.info("Đang cố gắng xoá sự kiện với ID: {}", EventId);
+            eventService.deleteEvent(EventId);
+            logger.info("Đã xoá thành công sự kiện với ID: {}", EventId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            logger.error("Đã xảy ra lỗi khi xoá sự kiện với ID {}: ", id, e);
+            logger.error("Đã xảy ra lỗi khi xoá sự kiện với ID {}: ", EventId, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -41,10 +41,7 @@
                 </select>
                 <a th:href="@{/Group/add}" class="btn btn-warning btn-sm">Tạo mới 1 nhóm</a>
             </div>
-            <div class="mb-3">
-                <label for="adminId" class="form-label">Người gửi</label>
-                <input type="hidden "class="form-control" id="adminId" name="adminId" th:value="${adminId}" readonly />
-            </div>
+            <input type="hidden" name="adminId" th:value="${adminId}" />
             <button type="submit" class="btn btn-primary">Thêm Thông Báo</button>
         </form>
     </main>

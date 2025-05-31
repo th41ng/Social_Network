@@ -22,6 +22,7 @@ const Chats = () => {
       );
     });
 
+    
     return () => unsubscribe();
   }, []);
 
@@ -33,7 +34,7 @@ const Chats = () => {
       content: newMessage,
       timestamp: serverTimestamp(),
       sender: user?.username || "Ẩn danh",
-      avatar: user?.avatar || "https://via.placeholder.com/50",
+      avatar: user?.avatar || "https://via.placeholder.com/50", 
     };
 
     try {

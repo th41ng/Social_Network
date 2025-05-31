@@ -58,7 +58,7 @@ public class EventNotification implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date sentAt;
 
-    // Quan hệ
+    
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
@@ -79,7 +79,7 @@ public class EventNotification implements Serializable {
     @JoinColumn(name = "event_id", referencedColumnName = "event_id")
     private Event event;
 
-    // Các getter, setter khác
+   
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }

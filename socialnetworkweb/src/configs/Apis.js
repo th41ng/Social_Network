@@ -1,4 +1,4 @@
-// src/configs/Apis.js
+
 import axios from "axios";
 import cookie from 'react-cookies';
 

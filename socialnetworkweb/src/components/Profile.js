@@ -11,7 +11,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
-  const [updating, setUpdating] = useState(false); 
+  const [updating, setUpdating] = useState(false); // State cho trạng thái cập nhật
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -78,7 +78,7 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      setUpdating(true); 
+      setUpdating(true); // Bắt đầu trạng thái cập nhật
       const form = new FormData();
       form.append("fullName", formData.fullName);
       form.append("email", formData.email);
@@ -96,7 +96,7 @@ const Profile = () => {
       console.error("Lỗi khi cập nhật hồ sơ:", err);
       alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
     } finally {
-      setUpdating(false);  
+      setUpdating(false); // Kết thúc trạng thái cập nhật
     }
   };
 
@@ -115,6 +115,7 @@ const Profile = () => {
 
   return (
     <Container className="py-4">
+      {/* Cover Image */}
       <div
         className="mb-5"
         style={{
@@ -154,6 +155,7 @@ const Profile = () => {
         </Button>
       </div>
 
+      {/* Modal sửa thông tin hồ sơ */}
       <Modal show={showEdit} onHide={() => setShowEdit(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Sửa thông tin hồ sơ</Modal.Title>

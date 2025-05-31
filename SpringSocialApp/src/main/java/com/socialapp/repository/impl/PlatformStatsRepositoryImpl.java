@@ -3,7 +3,6 @@ package com.socialapp.repository.impl;
 import com.socialapp.pojo.DailyPlatformSummary;
 import com.socialapp.repository.PlatformStatsRepository;
 import java.time.LocalDateTime;
-import java.sql.Timestamp;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,7 +17,7 @@ public class PlatformStatsRepositoryImpl implements PlatformStatsRepository {
     private SessionFactory sessionFactory;
 
     private Session getCurrentSession() {
-        // Helper method để lấy session hiện tại, tránh lặp code
+
         return sessionFactory.getCurrentSession();
     }
 
@@ -34,7 +33,6 @@ public class PlatformStatsRepositoryImpl implements PlatformStatsRepository {
         String hql = "SELECT COUNT(s.id) FROM DailyPlatformSummary s WHERE s.summaryDate = :date";
         Query<Long> query = session.createQuery(hql, Long.class);
 
-        // Truyền trực tiếp LocalDateTime, không cần convert sang Timestamp
         query.setParameter("date", dateTime);
 
         Long count = query.uniqueResult();
@@ -55,7 +53,6 @@ public class PlatformStatsRepositoryImpl implements PlatformStatsRepository {
         String hql = "FROM DailyPlatformSummary s WHERE s.summaryDate = :date";
         Query<DailyPlatformSummary> query = session.createQuery(hql, DailyPlatformSummary.class);
 
-        // Truyền trực tiếp LocalDateTime, không cần convert sang Timestamp
         query.setParameter("date", summaryDate);
 
         return query.uniqueResult();
@@ -79,13 +76,13 @@ public class PlatformStatsRepositoryImpl implements PlatformStatsRepository {
     public Long sumNewUsersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         Session session = getCurrentSession();
         String hql = "SELECT SUM(s.newUsersRegisteredToday) FROM DailyPlatformSummary s "
-                + "WHERE s.summaryDate >= :startDate AND s.summaryDate < :endDate"; // Sử dụng >= và < để bao gồm ngày bắt đầu và không bao gồm ngày kết thúc
+                + "WHERE s.summaryDate >= :startDate AND s.summaryDate < :endDate";
         Query<Long> query = session.createQuery(hql, Long.class);
         query.setParameter("startDate", startDate);
-        query.setParameter("endDate", endDate); // endDate là ngày BẮT ĐẦU của ngày tiếp theo
+        query.setParameter("endDate", endDate);
 
         Long result = query.uniqueResult();
-        return result != null ? result : 0L; // Trả về 0 nếu không có dữ liệu
+        return result != null ? result : 0L;
     }
 
     @Override
@@ -95,9 +92,9 @@ public class PlatformStatsRepositoryImpl implements PlatformStatsRepository {
                 + "WHERE s.summaryDate >= :startDate AND s.summaryDate < :endDate";
         Query<Long> query = session.createQuery(hql, Long.class);
         query.setParameter("startDate", startDate);
-        query.setParameter("endDate", endDate); // endDate là ngày BẮT ĐẦU của ngày tiếp theo
+        query.setParameter("endDate", endDate);
 
         Long result = query.uniqueResult();
-        return result != null ? result : 0L; // Trả về 0 nếu không có dữ liệu
+        return result != null ? result : 0L;
     }
 }

@@ -95,15 +95,15 @@ public class ApiUserController {
         }
     }
 
-    @DeleteMapping("/delete/{UserId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("UserId") int id) {
+    @DeleteMapping("/users/delete/{UserId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("UserId") int UserId) {
         try {
-            logger.info("Đang cố gắng xoá người dùng với ID: {}", id);
-            userDetailService.deleteUser(id);
-            logger.info("Đã xoá thành công người dùng với ID: {}", id);
+            logger.info("Đang cố gắng xoá người dùng với ID: {}", UserId);
+            userDetailService.deleteUser(UserId);
+            logger.info("Đã xoá thành công người dùng với ID: {}", UserId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            logger.error("Đã xảy ra lỗi khi xoá người dùng với ID {}: {}", id, e.getMessage());
+            logger.error("Đã xảy ra lỗi khi xoá người dùng với ID {}: {}", UserId, e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -221,6 +221,7 @@ public class ApiUserController {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi tải lên ảnh avatar!");
                 }
             }
+
 
             if (coverImage != null && !coverImage.isEmpty()) {
                 try {

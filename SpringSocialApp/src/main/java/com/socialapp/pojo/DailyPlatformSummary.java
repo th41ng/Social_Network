@@ -52,7 +52,7 @@ public class DailyPlatformSummary {
     }
 
     public long getTotalUsers() {
-        return (this.totalUsers != null) ? this.totalUsers.longValue() : 0L; // Trả về 0 nếu null
+        return (this.totalUsers != null) ? this.totalUsers : 0L; 
     }
 
     public void setTotalUsers(Long totalUsers) {

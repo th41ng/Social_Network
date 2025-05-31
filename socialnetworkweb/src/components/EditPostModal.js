@@ -1,4 +1,4 @@
-// src/components/EditPostModal.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import MySpinner from './layouts/MySpinner';
@@ -9,8 +9,8 @@ const EditPostModal = ({
     postToEdit,
     onUpdatePost,
     isSubmitting,
-    authApis, // Pass if needed for direct API calls, or handle in parent
-    endpoints // Pass if needed
+    authApis, 
+    endpoints
 }) => {
     const [editText, setEditText] = useState("");
     const [editImageFile, setEditImageFile] = useState(null);
@@ -32,23 +32,23 @@ const EditPostModal = ({
         if (file) {
             setEditImageFile(file);
             setEditImagePreview(URL.createObjectURL(file));
-            setIsRequestingImageRemoval(false); // If new image is selected, don't remove old one by default
+            setIsRequestingImageRemoval(false); 
         } else {
-            // If file selection is cancelled, revert to original/current state
+            
             setEditImageFile(null);
             setEditImagePreview(isRequestingImageRemoval ? null : (postToEdit ? postToEdit.image : null));
         }
     };
 
     const toggleImageRemoval = () => {
-        if (isRequestingImageRemoval) { // If currently set to remove, undo it
+        if (isRequestingImageRemoval) { 
             setIsRequestingImageRemoval(false);
-            setEditImagePreview(postToEdit.image || null); // Show original image
-        } else { // If not set to remove, set it
+            setEditImagePreview(postToEdit.image || null); 
+        } else { 
             setIsRequestingImageRemoval(true);
-            setEditImagePreview(null); // Clear preview
+            setEditImagePreview(null); 
         }
-        setEditImageFile(null); // Clear any newly selected file
+        setEditImageFile(null); 
         if (editImageInputRef.current) {
             editImageInputRef.current.value = "";
         }
@@ -76,7 +76,7 @@ const EditPostModal = ({
         } else if (isRequestingImageRemoval && postToEdit.image) {
             formData.append("removeCurrentImage", "true");
         }
-        // The actual API call will be handled by onUpdatePost passed from Home.js
+       
         onUpdatePost(formData);
     };
 
@@ -107,7 +107,7 @@ const EditPostModal = ({
                         <Form.Control type="file" accept="image/*" ref={editImageInputRef}
                             onChange={handleImageChange} disabled={isSubmitting} />
 
-                        {postToEdit.image && ( // Show remove option only if there was an original image
+                        {postToEdit.image && ( 
                             <Button
                                 variant="link" size="sm"
                                 className={`p-0 mt-1 d-block text-center ${isRequestingImageRemoval ? 'text-danger fw-bold' : 'text-muted'}`}

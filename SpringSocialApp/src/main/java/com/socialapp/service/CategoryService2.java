@@ -12,5 +12,6 @@ import java.util.List;
  * @author DELL G15
  */
 public interface CategoryService2 {
+
     List<Category2> getCategories2();
 }

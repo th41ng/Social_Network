@@ -9,8 +9,8 @@ import com.socialapp.repository.PostRepository;
 import com.socialapp.repository.ReactionRepository;
 import com.socialapp.repository.UserRepository;
 import com.socialapp.service.ReactionService;
-import org.slf4j.Logger; // SỬ DỤNG SLF4J LOGGER
-import org.slf4j.LoggerFactory; // SỬ DỤNG SLF4J LOGGER
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,6 @@ import java.util.Optional;
 @Service
 public class ReactionServiceImpl implements ReactionService {
 
-    // === THÊM LOGGER ===
     private static final Logger logger = LoggerFactory.getLogger(ReactionServiceImpl.class);
 
     @Autowired
@@ -33,9 +32,9 @@ public class ReactionServiceImpl implements ReactionService {
     private UserRepository userRepository;
 
     @Autowired
-    private PostRepository postRepository; // Vẫn giữ lại, có thể cần cho các logic khác
+    private PostRepository postRepository;
 
-    @Autowired // BỎ (required = false) ĐỂ SPRING BÁO LỖI NGAY NẾU KHÔNG TÌM THẤY BEAN
+    @Autowired
     private CommentRepository commentRepository;
 
     @Override
@@ -88,7 +87,7 @@ public class ReactionServiceImpl implements ReactionService {
     public Map<String, Long> handleCommentReaction(Integer commentId, Integer userId, String reactionType) {
         logger.info("Xử lý reaction cho commentId: {}, userId: {}, loại: {}", commentId, userId, reactionType);
 
-        if (commentRepository == null) { // Kiểm tra này vẫn hữu ích dù đã bỏ required=false
+        if (commentRepository == null) {
             logger.error("CommentRepository chưa được inject. Không thể xử lý reaction cho comment.");
             throw new UnsupportedOperationException("Chức năng reaction cho comment yêu cầu CommentRepository phải được cấu hình.");
         }
@@ -105,16 +104,13 @@ public class ReactionServiceImpl implements ReactionService {
             throw new IllegalArgumentException("Comment not found with ID: " + commentId);
         }
 
-        // === KIỂM TRA QUAN TRỌNG: Comment có được liên kết với Post không? ===
-        Post postOfComment = comment.getPostId(); // Lấy đối tượng Post từ Comment
+        Post postOfComment = comment.getPostId();
         if (postOfComment == null) {
             logger.error("NGHIÊM TRỌNG: Comment ID {} không được liên kết với bất kỳ Post nào (comment.getPostId() trả về null). Không thể xử lý reaction.", commentId);
-            // Lỗi này chỉ ra vấn đề toàn vẹn dữ liệu hoặc lỗi trong logic tạo/lấy comment.
-            // Ném ra một lỗi cụ thể hơn để dễ dàng xác định từ log.
+
             throw new IllegalStateException("Comment ID " + commentId + " không có thông tin bài viết hợp lệ (post_id is null). Không thể xử lý reaction.");
         }
         logger.debug("Comment ID {} thuộc về Post ID {}", commentId, postOfComment.getPostId());
-        // === KẾT THÚC KIỂM TRA ===
 
         Optional<Reaction> existingReactionOpt = reactionRepository.findByUserAndComment(user, comment);
 
@@ -134,19 +130,18 @@ public class ReactionServiceImpl implements ReactionService {
             logger.info("User {} đang thêm reaction mới '{}' vào Comment {}", userId, reactionType, commentId);
             Reaction newReaction = new Reaction();
             newReaction.setUserId(user);
-            newReaction.setPostId(postOfComment); // Sử dụng postOfComment đã được kiểm tra
+            newReaction.setPostId(postOfComment);
             newReaction.setCommentId(comment);
             newReaction.setReactionType(reactionType);
             newReaction.setCreatedAt(new Date());
             reactionRepository.addOrUpdateReaction(newReaction);
         }
-        
+
         Map<String, Long> updatedReactions = reactionRepository.countReactionsByCommentId(commentId);
         logger.info("Số lượng reactions đã cập nhật cho Comment {}: {}", commentId, updatedReactions);
         return updatedReactions;
     }
 
-    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
     @Override
     public Reaction addOrUpdateReaction(Reaction reaction) {
         return this.reactionRepository.addOrUpdateReaction(reaction);
