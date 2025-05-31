@@ -31,7 +31,7 @@ public class ApiNotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/deleteNotification/{notificationId}")
+    @DeleteMapping("/delete/{notificationId}")
     public ResponseEntity<Void> deleteNotification(@PathVariable("notificationId") int id) {
         try {
             logger.info("Đang cố gắng xoá sự kiện với ID: {}", id);

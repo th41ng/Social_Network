@@ -153,7 +153,7 @@ public class ApiSurveyController {
      * Path: DELETE /api/surveys/{surveyId}
      * Lưu ý: HTTP method DELETE khác với GET nên có thể cùng path variable.
      */
-    @DeleteMapping("/{surveyId}")
+    @DeleteMapping("/delete/{surveyId}")
     public ResponseEntity<Void> deleteSurveyByAdmin(@PathVariable(value = "surveyId") int id, Authentication authentication) {
         // QUAN TRỌNG: Cần thêm logic kiểm tra quyền ADMIN của người dùng `authentication` ở đây!
         // Ví dụ:

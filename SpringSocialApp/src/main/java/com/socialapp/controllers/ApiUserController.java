@@ -95,8 +95,8 @@ public class ApiUserController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") int id) {
+    @DeleteMapping("/delete/{UserId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("UserId") int id) {
         try {
             logger.info("Đang cố gắng xoá người dùng với ID: {}", id);
             userDetailService.deleteUser(id);

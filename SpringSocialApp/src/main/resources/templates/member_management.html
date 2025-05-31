@@ -31,7 +31,7 @@
                         <td>
 
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteMember(\'' + @{/api/deleteMember/{id}(id=${member.groupMemberId})} + '\')'">
+                                    th:onclick="'deleteMember(\'' + @{/api/delete/{MemberId}(id=${member.groupMemberId})} + '\')'">
                                 Xoá
                             </button>
                             

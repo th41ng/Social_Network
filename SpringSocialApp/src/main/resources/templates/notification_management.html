@@ -56,7 +56,7 @@
                         <td>
                             <a th:href="@{/Notification/editNotification/{id}(id=${notification.notificationId})}" class="btn btn-primary btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteNotification(\'' + @{/api/deleteNotification/{id}(id=${notification.notificationId})} + '\')'">
+                                    th:onclick="'deleteNotification(\'' + @{/api/delete/{id}(id=${notification.notificationId})} + '\')'">
                                 Xoá
                             </button>
 

@@ -118,8 +118,8 @@ com\socialapp\service\impl\QuestionTypeServiceImpl.class
 com\socialapp\controllers\ApiCommentController.class
 com\socialapp\filters\JwtFilter.class
 com\socialapp\service\GroupMemberService.class
-com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\repository\SurveyRepository.class
+com\socialapp\repository\impl\UserRepositoryImpl.class
 com\socialapp\controllers\ApiUserController.class
 com\socialapp\controllers\ApiCategoryController.class
 com\socialapp\controllers\ApiGroupController.class

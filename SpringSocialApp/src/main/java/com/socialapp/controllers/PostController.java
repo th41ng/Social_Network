@@ -33,7 +33,7 @@ import java.util.Map;
 public class PostController {
 
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 5;
 
     @Autowired
     private PostService postService;

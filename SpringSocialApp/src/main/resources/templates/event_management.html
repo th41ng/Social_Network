@@ -47,7 +47,7 @@
                         <td>
                             <a th:href="@{/Event/edit/{id}(id=${event.event_id})}" class="btn btn-warning btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteEvent(\'' + @{/api/deleteEvent/{id}(id=${event.event_id})} + '\')'">
+                                    th:onclick="'deleteEvent(\'' + @{/api/delete/{eventId}(id=${event.event_id})} + '\')'">
                                 Xoá
                             </button>
                         </td>

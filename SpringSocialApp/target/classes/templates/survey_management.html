@@ -87,7 +87,7 @@
                                 </button>
                             </form>
                             <button type="button" class="btn btn-danger btn-sm mb-1" title="Xoá"
-                                    th:onclick="'deleteSurvey(\'' + @{/api/surveys/{id}(id=${s.surveyId})} + '\')'">
+                                    th:onclick="'deleteSurvey(\'' + @{/api/surveys/delete/{id}(id=${s.surveyId})} + '\')'">
                                 Xoá
                             </button>
                         </td>

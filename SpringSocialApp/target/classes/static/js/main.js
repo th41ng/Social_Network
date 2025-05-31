@@ -6,7 +6,7 @@ function initializeQuestionForm() {
     if (optionsContainer) {
         currentOptionIndex = optionsContainer.querySelectorAll('.option-entry').length;
     } else {
-        currentOptionIndex = 0; // Mặc định nếu không có container (ví dụ: form mới tinh)
+        currentOptionIndex = 0; 
     }
 
     const questionTypeSelect = document.getElementById('selectedTypeId');
@@ -18,12 +18,11 @@ function initializeQuestionForm() {
             return;
         }
 
-        const currentSelectedValue = questionTypeSelect.value; // Lấy ID (value) của option được chọn
+        const currentSelectedValue = questionTypeSelect.value; 
         let isMultipleChoiceType = false;
 
         console.log("Giá trị (ID) của loại câu hỏi được chọn:", currentSelectedValue);
 
-        // ID của loại câu hỏi "Multiple Choice" là "1" (dưới dạng chuỗi vì value từ HTML select thường là chuỗi)
         const MULTIPLE_CHOICE_TYPE_ID_VALUE = "1";
         console.log("Kiểm tra với ID trắc nghiệm mục tiêu:", MULTIPLE_CHOICE_TYPE_ID_VALUE);
 
@@ -37,12 +36,8 @@ function initializeQuestionForm() {
         if (isMultipleChoiceType) {
             console.log("=> Đang HIỆN multipleChoiceOptionsSection");
             multipleChoiceSection.style.display = 'block';
-            // Logic thêm 'required' cho option đầu tiên nếu cần
             const firstOptionInput = optionsContainer.querySelector('input[name^="surveyOptions"][name$=".optionText"]');
             if (firstOptionInput && optionsContainer.querySelectorAll('.option-entry').length > 0) {
-                // Bạn có thể quyết định có nên đặt required ở đây hay không,
-                // hoặc khi thêm option mới trong hàm addOption.
-                // firstOptionInput.required = true;
             }
         } else {
             console.log("=> Đang ẨN multipleChoiceOptionsSection");
@@ -53,16 +48,14 @@ function initializeQuestionForm() {
     }
 
     if (questionTypeSelect) {
-        toggleOptionsVisibility(); // Gọi khi tải trang
+        toggleOptionsVisibility(); 
         questionTypeSelect.addEventListener('change', toggleOptionsVisibility);
     } else {
-        // console.warn("Không tìm thấy dropdown loại câu hỏi (selectedTypeId).");
     }
 }
 
-// Hàm này được gọi từ nút "Thêm lựa chọn" trong HTML
 function addOption() {
-    const optionsContainer = document.getElementById("optionsContainer"); // ID của div chứa các input option
+    const optionsContainer = document.getElementById("optionsContainer"); 
 
     if (!optionsContainer) {
         console.error("Lỗi: Không tìm thấy vùng chứa các lựa chọn (phần tử với id='optionsContainer').");
@@ -76,11 +69,9 @@ function addOption() {
     const textInput = document.createElement('input');
     textInput.type = 'text';
     textInput.classList.add('form-control');
-    // QUAN TRỌNG: Thay đổi name để Spring MVC bind đúng
     textInput.name = `surveyOptions[${currentOptionIndex}].optionText`;
     textInput.placeholder = 'Nhập lựa chọn mới';
 
-    // Xử lý 'required' cho input mới dựa trên loại câu hỏi hiện tại
     const questionTypeSelect = document.getElementById('selectedTypeId');
     if (questionTypeSelect) {
         const selectedOptionElement = questionTypeSelect.options[questionTypeSelect.selectedIndex];
@@ -92,7 +83,7 @@ function addOption() {
             }
         }
         if (isMultipleChoiceType) {
-            textInput.required = true; // Hoặc false tùy theo logic của bạn
+            textInput.required = true;
         }
     }
 
@@ -109,25 +100,19 @@ function addOption() {
     entryDiv.appendChild(removeButton);
     optionsContainer.appendChild(entryDiv);
 
-    currentOptionIndex++; // Tăng index cho option mới tiếp theo
+    currentOptionIndex++; 
 }
 
 function removeOptionEntry(button) {
     const entryDiv = button.closest('.option-entry');
     if (entryDiv) {
         entryDiv.remove();
-        // Không cần giảm currentOptionIndex ở đây vì nó dùng cho việc thêm mới.
-        // Việc xóa và để lại "lỗ hổng" index thường được Spring MVC xử lý.
+        
     }
 }
 
-// Các hàm deleteSurvey, deletePost, deleteNotification, deleteUser, verifyStudent giữ nguyên như của bạn
-
-// Gọi hàm khởi tạo khi DOM đã sẵn sàng
 document.addEventListener('DOMContentLoaded', initializeQuestionForm);
 
-// Hàm toggleMultipleChoiceOptions cũ của bạn có thể không cần nữa nếu initializeQuestionForm đã bao gồm logic đó
-// function toggleMultipleChoiceOptions() { ... } // Xem xét có cần giữ lại hay không
 
 
 

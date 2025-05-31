@@ -11,7 +11,6 @@
         <h2>Quản lý Nhóm</h2>
         <a th:href="@{/Group/add}" class="btn btn-info mb-3">Thêm nhóm</a>
 
-        <!-- Bộ lọc tìm kiếm -->
         <form class="row g-3 mb-3" method="get" th:action="@{/Group/listGroup}">
             <div class="col-md-4">
                 <input type="text" class="form-control" name="groupName" placeholder="Tìm theo tên nhóm" 
@@ -23,7 +22,6 @@
             </div>
         </form>
 
-        <!-- Danh sách nhóm -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
@@ -44,7 +42,7 @@
                         <td>
                             <a th:href="@{/Group/edit/{id}(id=${group.groupId})}" class="btn btn-warning btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteGroup(\'' + @{/api/deleteGroup/{id}(id=${group.groupId})} + '\')'">
+                                    th:onclick="'deleteGroup(\'' + @{/api/delete/{groupId}(id=${group.groupId})} + '\')'">
                                 Xoá
                             </button>
                             <a th:href="@{/Group/listMember(groupId=${group.groupId})}" class="btn btn-primary btn-sm">Xem thành viên</a>
@@ -60,13 +58,11 @@
 
         <nav aria-label="Page navigation" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
-                <!-- Previous Page Link -->
                 <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                     <a class="page-link" 
                        th:href="@{/Group/listGroup(page=${currentPage - 1}, title=${params['groupName']})}">Trước</a>
                 </li>
 
-                <!-- Page Numbers -->
                 <li class="page-item" 
                     th:each="i : ${#numbers.sequence(1, totalPages)}" 
                     th:classappend="${i == currentPage} ? 'active'">
@@ -75,7 +71,6 @@
                        th:text="${i}"></a>
                 </li>
 
-                <!-- Next Page Link -->
                 <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                     <a class="page-link" 
                        th:href="@{/Group/listGroup(page=${currentPage + 1}, title=${params['groupName']})}">Sau</a>

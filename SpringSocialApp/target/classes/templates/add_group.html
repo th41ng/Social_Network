@@ -10,13 +10,11 @@
     <main class="container mt-4">
         <h2>Thêm Nhóm Mới</h2>
 
-        <!-- Hiển thị lỗi nếu có -->
         <div th:if="${error}" class="alert alert-danger">
             <p th:text="${error}"></p>
         </div>
 
         <form th:action="@{/Group/add}" method="post" th:object="${newGroup}">
-            <!-- Ẩn adminId -->
             <input type="hidden" name="adminId" th:value="${adminId}" />
 
             <div class="mb-3">

@@ -28,8 +28,8 @@ public class ApiMemberController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/deleteMember/{id}")
-    public ResponseEntity<Void> deleteMember(@PathVariable("id") int id) {
+    @DeleteMapping("/delete/{MemberId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable("MemberId") int id) {
         try {
             logger.info("Đang cố gắng xoá thành viên với ID: {}", id);
             groupMemberService.deleteMember(id);

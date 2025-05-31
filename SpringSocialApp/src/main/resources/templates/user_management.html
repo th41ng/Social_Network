@@ -11,6 +11,7 @@
         <h2>Quản lý Người dùng</h2>
         <a th:href="@{/Users/add}" class="btn btn-info mb-3">Thêm Người dùng</a>
 
+        <!-- Bộ lọc tìm kiếm -->
         <form class="row g-3 mb-3" method="get" th:action="@{/Users/listUser}">
             <div class="col-md-4">
                 <input type="text" class="form-control" name="username" placeholder="Tìm theo tên người dùng" 
@@ -25,6 +26,7 @@
             </div>
         </form>
 
+        <!-- Danh sách người dùng -->
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
@@ -55,9 +57,10 @@
                         <td>
                             <a th:href="@{/Users/editUser/{id}(id=${user.id})}" class="btn btn-warning btn-sm">Sửa</a>
                             <button type="button" class="btn btn-danger btn-sm" title="Xoá"
-                                    th:onclick="'deleteUser(\'' + @{/api/delete/{id}(id=${user.id})} + '\')'">
+                                    th:onclick="'deleteUser(\'' + @{/api/delete/{UserId}(id=${user.id})} + '\')'">
                                 Xoá
                             </button>                 
+                            <!-- Hiển thị nút Xác thực hoặc Hủy xác thực dựa trên trạng thái isVerified -->
                             <form th:action="@{/Users/{userId}/verify(userId=${user.id})}" method="post">
                                 <button type="submit" class="btn btn-primary" 
                                         th:if="${user.role == T(com.socialapp.configs.UserRole).ROLE_ALUMNI && !user.isVerified}">
@@ -82,14 +85,15 @@
         </div>
 
 
-     
         <nav aria-label="Page navigation" th:if="${totalPages > 0}">
             <ul class="pagination justify-content-center">
+                <!-- Previous Page Link -->
                 <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
                     <a class="page-link" 
                        th:href="@{/Users/listUser(page=${currentPage - 1}, username=${params['username']}, email=${params['email']})}">Trước</a>
                 </li>
 
+                <!-- Page Numbers -->
                 <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}"
                     th:classappend="${i == currentPage ? 'active' : ''}">
                     <a class="page-link" 
@@ -97,6 +101,7 @@
                        th:text="${i}"></a>
                 </li>
 
+                <!-- Next Page Link -->
                 <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
                     <a class="page-link" 
                        th:href="@{/Users/listUser(page=${currentPage + 1}, username=${params['username']}, email=${params['email']})}">Sau</a>
@@ -105,10 +110,11 @@
         </nav>
 
 
+
+
     </main>
 
     <div th:replace="base :: footer"></div>
     <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
-

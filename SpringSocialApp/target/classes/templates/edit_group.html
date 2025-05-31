@@ -10,25 +10,18 @@
     <main class="container mt-4">
         <h2>Chỉnh Sửa Nhóm</h2>
 
-        <!-- Hiển thị lỗi nếu có -->
         <div th:if="${error}" class="alert alert-danger">
             <p th:text="${error}"></p>
         </div>
 
-        <!-- Form chỉnh sửa nhóm -->
         <form th:action="@{/Group/edit/{id}(id=${group.groupId})}" method="post" th:object="${group}">
-            <!-- Ẩn adminId -->
             <input type="hidden" name="adminId" th:value="${adminId}" />
 
-            <!-- Tên Nhóm -->
             <div class="mb-3">
                 <label for="groupName" class="form-label">Tên Nhóm</label>
                 <input type="text" id="groupName" name="groupName" class="form-control" th:field="*{groupName}" required>
             </div>
 
-           
-
-            <!-- Nút lưu thay đổi -->
             <button type="submit" class="btn btn-primary">Cập nhật</button>
         </form>
     </main>

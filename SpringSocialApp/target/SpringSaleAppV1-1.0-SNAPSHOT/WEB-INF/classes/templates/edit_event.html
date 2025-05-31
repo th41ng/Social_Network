@@ -10,23 +10,18 @@
     <main class="container mt-4">
         <h2>Sửa Sự Kiện</h2>
 
-        <!-- Hiển thị lỗi nếu có -->
         <div th:if="${error}" class="alert alert-danger">
             <p th:text="${error}"></p>
         </div>
 
-        <!-- Form sửa sự kiện -->
         <form th:action="@{/Event/edit/{id}(id=${event.event_id})}" method="post" th:object="${event}">
-            <!-- Ẩn adminId -->
             <input type="hidden" name="adminId" th:value="${adminId}" />
 
-            <!-- Tiêu đề sự kiện -->
             <div class="mb-3">
                 <label for="title" class="form-label">Tiêu Đề Sự Kiện</label>
                 <input type="text" id="title" name="title" class="form-control" th:field="*{title}" required>
             </div>
 
-            <!-- Mô tả sự kiện -->
             <div class="mb-3">
                 <label for="description" class="form-label">Mô Tả</label>
                 <textarea id="description" name="description" class="form-control" th:field="*{description}" rows="5"></textarea>
@@ -47,13 +42,11 @@
             </div>
 
 
-            <!-- Địa điểm -->
             <div class="mb-3">
                 <label for="location" class="form-label">Địa Điểm</label>
                 <input type="text" id="location" name="location" class="form-control" th:field="*{location}" required>
             </div>
 
-            <!-- Nút cập nhật -->
             <button type="submit" class="btn btn-primary">Cập Nhật Sự Kiện</button>
         </form>
     </main>

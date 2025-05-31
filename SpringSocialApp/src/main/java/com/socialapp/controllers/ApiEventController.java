@@ -30,8 +30,8 @@ public class ApiEventController {
     private EventService eventService;
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/deleteEvent/{id}")
-    public ResponseEntity<Void> deleteEvent(@PathVariable("id") int id) {
+    @DeleteMapping("/delete/{EventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable("EventId") int id) {
         try {
             logger.info("Đang cố gắng xoá sự kiện với ID: {}", id);
             eventService.deleteEvent(id);

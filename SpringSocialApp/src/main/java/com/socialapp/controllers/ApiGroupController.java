@@ -28,8 +28,8 @@ public class ApiGroupController {
     private UserGroupService userGroupService;
     private static final Logger logger = LoggerFactory.getLogger(ApiNotificationController.class);
 
-    @DeleteMapping("/deleteGroup/{id}")
-    public ResponseEntity<Void> deleteNotification(@PathVariable("id") int id) {
+    @DeleteMapping("/delete/{GroupId}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable("GroupId") int id) {
         try {
             logger.info("Đang cố gắng xoá nhóm với ID: {}", id);
             userGroupService.deleteGroup(id);

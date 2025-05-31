@@ -92,7 +92,7 @@ public class IndexController {
                     model.addAttribute("users", users);
                     model.addAttribute("totalUsers", totalUser); // Tổng số người dùng
                     model.addAttribute("currentPage", page); // Trang hiện tại
-                    model.addAttribute("totalPage", totalPage); // Tổng số trang
+                    model.addAttribute("totalPages", totalPage); // Tổng số trang
                     model.addAttribute("params", params); // Truyền params để dùng trong frontend
                     model.addAttribute("categoryId", categoryId);
                     return "user_management";
