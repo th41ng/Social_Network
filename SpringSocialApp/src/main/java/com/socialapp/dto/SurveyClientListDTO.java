@@ -3,18 +3,19 @@ package com.socialapp.dto;
 import java.time.LocalDateTime;
 
 public class SurveyClientListDTO {
+
     private Integer surveyId;
     private String title;
     private String description;
-    // private String createdByFullName; // Tùy chọn nếu muốn hiển thị người tạo
+
     private LocalDateTime createdAt;
     private LocalDateTime expiresAt;
     private Integer questionCount;
-    private Boolean isRespondedByCurrentUser; // Client đã trả lời khảo sát này chưa?
-    private String status; // Ví dụ: "ACTIVE", "EXPIRED"
+    private Boolean isRespondedByCurrentUser;
+    private String status;
 
-    // Constructors, Getters and Setters
-    public SurveyClientListDTO() {}
+    public SurveyClientListDTO() {
+    }
 
     public Integer getSurveyId() {
         return surveyId;

@@ -93,23 +93,23 @@ public class SurveyController {
     @PostMapping("/save")
     public String saveSurvey(@ModelAttribute Survey survey, RedirectAttributes redirectAttributes, Authentication authentication) {
         try {
-            // Lấy người dùng hiện tại từ Authentication
+          
             if (authentication == null || !authentication.isAuthenticated()) {
                 logger.warn("Người dùng chưa xác thực khi tạo hoặc chỉnh sửa khảo sát.");
                 redirectAttributes.addFlashAttribute("errorMessage", "Vui lòng đăng nhập để thực hiện hành động này.");
                 return "redirect:/Users/login"; 
             }
 
-            String username = authentication.getName(); // Lấy tên người dùng từ Authentication
-            User currentUser = userService.getUserByUsername(username); // Lấy thông tin người dùng từ UserService
+            String username = authentication.getName(); 
+            User currentUser = userService.getUserByUsername(username); 
 
             if (currentUser == null) {
                 logger.error("Không thể tìm thấy thông tin người dùng với username: {}", username);
                 redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy người dùng hợp lệ.");
-                return "redirect:/surveys"; // Quay lại trang danh sách khảo sát
+                return "redirect:/surveys"; 
             }
 
-            // Gán người dùng hiện tại là admin của khảo sát
+        
             survey.setAdminId(currentUser);
 
             if (survey.getSurveyId() == null) { 
@@ -120,13 +120,13 @@ public class SurveyController {
                 this.surveyService.addOrUpdateSurvey(survey);
                 redirectAttributes.addFlashAttribute("successMessage", "Thêm khảo sát mới thành công!");
                 logger.info("New survey added with ID: {}", survey.getSurveyId());
-            } else { // Cập nhật khảo sát hiện có
+            } else { 
                 Survey existingSurvey = surveyService.getSurveyById(survey.getSurveyId());
                 if (existingSurvey == null) {
                     redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy khảo sát để cập nhật.");
                     return "redirect:/surveys";
                 }
-                // Giữ lại ngày tạo gốc
+              
                 survey.setCreatedAt(existingSurvey.getCreatedAt());
 
               

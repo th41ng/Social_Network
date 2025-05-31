@@ -171,7 +171,7 @@ public class PostController {
                     currentUser.getUsername(), currentUser.getId(), postId, ex.getMessage(), ex);
             redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi không mong muốn khi cố gắng xóa bài viết.");
         }
-        return createRedirectUrlWithParams("/posts", params); // ++ Sử dụng helper để redirect với params
+        return createRedirectUrlWithParams("/posts", params); 
     }
 
     

@@ -202,7 +202,7 @@ const Profile = () => {
             <div className="d-grid mt-3">
               <Button variant="warning" onClick={() => {
                   setShowEdit(false);
-                  navigate("/reset-password");  // Đảm bảo bạn đã import useNavigate và có route reset-password
+                  navigate("/reset-password");  
                 }}
               >
                 Đổi mật khẩu

@@ -25,7 +25,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public long countSurveys(Map<String, String> params) { // Thêm triển khai
+    public long countSurveys(Map<String, String> params) { 
         return surveyRepo.countSurveys(params);
     }
 
@@ -35,7 +35,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    @Transactional // Đảm bảo có Transactional
+    @Transactional 
     public Survey addOrUpdateSurvey(Survey s) {
         return surveyRepo.addOrUpdateSurvey(s);
     }

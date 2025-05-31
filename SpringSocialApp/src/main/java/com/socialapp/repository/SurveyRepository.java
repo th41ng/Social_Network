@@ -16,7 +16,7 @@ public interface SurveyRepository {
 
     List<Survey> getSurveys(Map<String, String> params);
     
-    long countSurveys(Map<String, String> params); // Thêm phương thức này
+    long countSurveys(Map<String, String> params); 
 
     Survey getSurveyById(int id);
 

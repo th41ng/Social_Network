@@ -7,7 +7,7 @@ import { Form, Button, ListGroup, InputGroup, Image } from "react-bootstrap";
 const Chats = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const user = useContext(MyUserContext); // Lấy thông tin người dùng
+  const user = useContext(MyUserContext); 
   const chatRef = ref(db, "chats");
 
   // Lấy dữ liệu tin nhắn từ Firebase
@@ -24,7 +24,7 @@ const Chats = () => {
       );
     });
 
-    // Cleanup listener khi component bị unmount
+    
     return () => unsubscribe();
   }, []);
 
@@ -37,7 +37,7 @@ const Chats = () => {
       content: newMessage,
       timestamp: serverTimestamp(),
       sender: user?.username || "Ẩn danh",
-      avatar: user?.avatar || "https://via.placeholder.com/50", // URL ảnh đại diện
+      avatar: user?.avatar || "https://via.placeholder.com/50", 
     };
 
     try {

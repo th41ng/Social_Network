@@ -5,7 +5,6 @@
 package com.socialapp.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,18 +14,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
+
 /**
  *
  * @author DELL G15
  */
 @Entity
-@Table(name = "group_members")  
+@Table(name = "group_members")
 @NamedQueries({
     @NamedQuery(name = "GroupMembers.findAll", query = "SELECT gm FROM GroupMembers gm"),
     @NamedQuery(name = "GroupMembers.findByGroupId", query = "SELECT gm FROM GroupMembers gm WHERE gm.group.groupId = :groupId"),
@@ -34,16 +33,16 @@ import java.util.Date;
     @NamedQuery(name = "GroupMembers.findByGroupAndUserId", query = "SELECT gm FROM GroupMembers gm WHERE gm.group.groupId = :groupId AND gm.user.id = :id"),
     @NamedQuery(name = "GroupMembers.deleteByGroupAndUserId", query = "DELETE FROM GroupMembers gm WHERE gm.group.groupId = :groupId AND gm.user.id = :id")
 })
-       
-public class GroupMembers implements Serializable{
+
+public class GroupMembers implements Serializable {
+
     private static long serialVersionUID = 1L;
-    
-     @Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_member_id")
     private Integer groupMemberId;
 
-    // Make sure this is marked with insertable=false, updatable=false
     @Column(name = "group_id", nullable = false, insertable = false, updatable = false)
     private Integer groupId;
 
@@ -54,7 +53,6 @@ public class GroupMembers implements Serializable{
     @Temporal(TemporalType.TIMESTAMP)
     private Date joinedAt;
 
-    // Relationships
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "group_id", referencedColumnName = "group_id", nullable = false)
@@ -64,12 +62,10 @@ public class GroupMembers implements Serializable{
     @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
-    
-    // Constructor mặc định
+
     public GroupMembers() {
     }
 
-    // Constructor đầy đủ tham số
     public GroupMembers(Integer groupMemberId, Integer groupId, Integer userId, Date joinedAt) {
         this.groupMemberId = groupMemberId;
         this.groupId = groupId;
@@ -77,9 +73,7 @@ public class GroupMembers implements Serializable{
         this.joinedAt = joinedAt;
     }
 
-    
-    
-     @Override
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (userId != null ? userId.hashCode() : 0);
@@ -102,10 +96,7 @@ public class GroupMembers implements Serializable{
     public String toString() {
         return "com.socialapp.pojo.GroupMembers[ userId=" + groupMemberId + " ]";
     }
-    
-    
-    
-   
+
     /**
      * @return the serialVersionUID
      */

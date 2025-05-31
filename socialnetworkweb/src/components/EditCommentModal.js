@@ -1,4 +1,4 @@
-// src/components/EditCommentModal.js
+
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import MySpinner from './layouts/MySpinner';
@@ -6,7 +6,7 @@ import MySpinner from './layouts/MySpinner';
 const EditCommentModal = ({
     show,
     onHide,
-    commentToEdit, // Will be an object like { postId, commentId, content, userId }
+    commentToEdit, 
     onUpdateComment,
     isSubmitting
 }) => {
@@ -24,7 +24,7 @@ const EditCommentModal = ({
             alert("Nội dung bình luận không được để trống.");
             return;
         }
-        // The actual API call will be handled by onUpdateComment passed from Home.js
+       
         onUpdateComment(commentToEdit.commentId, editCommentText.trim(), commentToEdit.postId);
     };
 

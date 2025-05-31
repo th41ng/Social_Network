@@ -17,7 +17,6 @@ import java.util.Set;
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),})
 public class User implements Serializable {
 
-    private static long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +39,7 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(EnumType.STRING) // Lưu giá trị Enum dưới dạng chuỗi
+    @Enumerated(EnumType.STRING) 
     @Column(name = "role", nullable = false)
     private UserRole role;
 

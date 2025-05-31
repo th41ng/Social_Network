@@ -3,10 +3,11 @@ package com.socialapp.dto;
 import java.util.List;
 
 public class SurveyResponseItemDTO {
+
     private Integer questionId;
-    private Integer selectedOptionId; // Cho câu hỏi SINGLE_CHOICE
-    private List<Integer> selectedOptionIds; // Cho câu hỏi MULTIPLE_CHOICE
-    private String responseText; // Cho câu hỏi TEXT_INPUT
+    private Integer selectedOptionId;
+    private List<Integer> selectedOptionIds;
+    private String responseText;
 
     // Getters and Setters
     public Integer getQuestionId() {

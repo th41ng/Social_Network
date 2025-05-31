@@ -1,11 +1,12 @@
 package com.socialapp.dto;
 
 public class SurveyOptionClientDTO {
+
     private Integer optionId;
     private String optionText;
 
-    // Constructors, Getters and Setters
-    public SurveyOptionClientDTO() {}
+    public SurveyOptionClientDTO() {
+    }
 
     public SurveyOptionClientDTO(Integer optionId, String optionText) {
         this.optionId = optionId;

@@ -1,6 +1,5 @@
 package com.socialapp.repository.impl;
 
-import com.socialapp.pojo.SurveyOption;
 import com.socialapp.pojo.SurveyQuestion;
 import com.socialapp.repository.SurveyQuestionRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -43,21 +42,8 @@ public class SurveyQuestionRepositoryImpl implements SurveyQuestionRepository {
     @Override
     public SurveyQuestion updateSurveyQuestion(SurveyQuestion question) {
         Session session = factory.getObject().getCurrentSession();
-        // Vòng lặp xử lý options ở đây có thể không cần thiết nữa nếu controller
-        // đã chuẩn bị đầy đủ collection question.getSurveyOptions()
-        // session.merge(question) với CascadeType.ALL và orphanRemoval=true
-        // sẽ xử lý việc thêm mới, cập nhật và xóa options.
-        /*
-    for (SurveyOption option : question.getSurveyOptions()) {
-        if (option.getOptionId() != null) { // Option đã tồn tại
-            session.merge(option);
-        } else { // Option mới
-            option.setQuestionId(question); // Đảm bảo liên kết
-            session.persist(option);
-        }
-    }
-         */
-        session.merge(question); // Cập nhật câu hỏi và cascade tới các options
+
+        session.merge(question);
         return question;
     }
 
@@ -90,10 +76,9 @@ public class SurveyQuestionRepositoryImpl implements SurveyQuestionRepository {
         CriteriaBuilder cb = session.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<SurveyQuestion> root = cq.from(SurveyQuestion.class);
-        cq.select(cb.count(root));  // Đếm số câu hỏi
+        cq.select(cb.count(root));
 
-        // Thay đổi ở đây: Tham chiếu đúng vào tên thuộc tính 'surveyId' trong lớp SurveyQuestion
-        cq.where(cb.equal(root.get("surveyId").get("surveyId"), surveyId)); 
+        cq.where(cb.equal(root.get("surveyId").get("surveyId"), surveyId));
 
         return session.createQuery(cq).getSingleResult();
     }

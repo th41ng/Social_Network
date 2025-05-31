@@ -10,7 +10,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
-import jakarta.persistence.TypedQuery; // Sử dụng TypedQuery cho HQL
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -18,14 +18,14 @@ public class SurveyOptionRepositoryImpl implements SurveyOptionRepository {
     @Override
     public SurveyOption updateSurveyOption(SurveyOption option) {
         Session session = factory.getObject().getCurrentSession();
-        session.merge(option);  // Cập nhật lựa chọn
+        session.merge(option);  
         return option;
     }
 
     @Override
     public SurveyOption addSurveyOption(SurveyOption option) {
         Session session = factory.getObject().getCurrentSession();
-        session.persist(option);  // Thêm mới lựa chọn
+        session.persist(option);  
         return option;
     }
 
@@ -34,7 +34,7 @@ public class SurveyOptionRepositoryImpl implements SurveyOptionRepository {
         Session session = factory.getObject().getCurrentSession();
         SurveyOption option = session.get(SurveyOption.class, optionId);
         if (option != null) {
-            session.remove(option);  // Xóa lựa chọn
+            session.remove(option);  
         } else {
             throw new IllegalArgumentException("SurveyOption not found with ID: " + optionId);
         }
@@ -43,6 +43,6 @@ public class SurveyOptionRepositoryImpl implements SurveyOptionRepository {
     @Override
     public SurveyOption getSurveyOptionById(int optionId) {
         Session session = factory.getObject().getCurrentSession();
-        return session.get(SurveyOption.class, optionId);  // Lấy lựa chọn theo ID
+        return session.get(SurveyOption.class, optionId);  
     }
 }

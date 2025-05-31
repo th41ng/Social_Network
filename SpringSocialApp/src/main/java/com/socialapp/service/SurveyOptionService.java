@@ -14,7 +14,7 @@ public interface SurveyOptionService {
 
     SurveyOption addSurveyOption(SurveyOption option);
 
-    SurveyOption updateSurveyOption(SurveyOption option);  // Phương thức sửa lựa chọn
+    SurveyOption updateSurveyOption(SurveyOption option);
 
     void deleteSurveyOption(int optionId);
 

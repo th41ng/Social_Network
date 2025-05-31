@@ -6,7 +6,6 @@ package com.socialapp.service;
 
 import com.socialapp.pojo.QuestionType;
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *

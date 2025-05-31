@@ -6,11 +6,10 @@ public class SurveyQuestionClientDTO {
 
     private Integer questionId;
     private String questionText;
-    private String questionType; // Ví dụ: "SINGLE_CHOICE", "MULTIPLE_CHOICE", "TEXT_INPUT"
+    private String questionType;
     private Boolean isRequired;
-    private List<SurveyOptionClientDTO> options; // Chỉ có giá trị cho câu hỏi dạng lựa chọn
+    private List<SurveyOptionClientDTO> options;
 
-    // Constructors, Getters and Setters
     public SurveyQuestionClientDTO() {
     }
 

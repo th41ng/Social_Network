@@ -1,29 +1,31 @@
+// Chỉ số cho lựa chọn câu hỏi tiếp theo.
 let currentOptionIndex = 0;
 
-
+// Khởi tạo form câu hỏi, ẩn/hiện lựa chọn trắc nghiệm.
 function initializeQuestionForm() {
     const optionsContainer = document.getElementById('optionsContainer');
     if (optionsContainer) {
         currentOptionIndex = optionsContainer.querySelectorAll('.option-entry').length;
     } else {
-        currentOptionIndex = 0; // Mặc định nếu không có container (ví dụ: form mới tinh)
+        currentOptionIndex = 0;
     }
 
     const questionTypeSelect = document.getElementById('selectedTypeId');
     const multipleChoiceSection = document.getElementById('multipleChoiceOptionsSection');
 
+    // Ẩn/hiện phần lựa chọn tùy theo loại câu hỏi.
     function toggleOptionsVisibility() {
         if (!questionTypeSelect || !multipleChoiceSection) {
             console.warn("toggleOptionsVisibility: Không tìm thấy các phần tử cần thiết (selectedTypeId hoặc multipleChoiceOptionsSection).");
             return;
         }
 
-        const currentSelectedValue = questionTypeSelect.value; // Lấy ID (value) của option được chọn
+        const currentSelectedValue = questionTypeSelect.value;
         let isMultipleChoiceType = false;
 
         console.log("Giá trị (ID) của loại câu hỏi được chọn:", currentSelectedValue);
 
-        // ID của loại câu hỏi "Multiple Choice" là "1" (dưới dạng chuỗi vì value từ HTML select thường là chuỗi)
+
         const MULTIPLE_CHOICE_TYPE_ID_VALUE = "1";
         console.log("Kiểm tra với ID trắc nghiệm mục tiêu:", MULTIPLE_CHOICE_TYPE_ID_VALUE);
 
@@ -37,12 +39,10 @@ function initializeQuestionForm() {
         if (isMultipleChoiceType) {
             console.log("=> Đang HIỆN multipleChoiceOptionsSection");
             multipleChoiceSection.style.display = 'block';
-            // Logic thêm 'required' cho option đầu tiên nếu cần
+
             const firstOptionInput = optionsContainer.querySelector('input[name^="surveyOptions"][name$=".optionText"]');
             if (firstOptionInput && optionsContainer.querySelectorAll('.option-entry').length > 0) {
-                // Bạn có thể quyết định có nên đặt required ở đây hay không,
-                // hoặc khi thêm option mới trong hàm addOption.
-                // firstOptionInput.required = true;
+
             }
         } else {
             console.log("=> Đang ẨN multipleChoiceOptionsSection");
@@ -56,13 +56,13 @@ function initializeQuestionForm() {
         toggleOptionsVisibility(); // Gọi khi tải trang
         questionTypeSelect.addEventListener('change', toggleOptionsVisibility);
     } else {
-        // console.warn("Không tìm thấy dropdown loại câu hỏi (selectedTypeId).");
+
     }
 }
 
-// Hàm này được gọi từ nút "Thêm lựa chọn" trong HTML
+// Thêm một lựa chọn mới vào form.
 function addOption() {
-    const optionsContainer = document.getElementById("optionsContainer"); // ID của div chứa các input option
+    const optionsContainer = document.getElementById("optionsContainer");
 
     if (!optionsContainer) {
         console.error("Lỗi: Không tìm thấy vùng chứa các lựa chọn (phần tử với id='optionsContainer').");
@@ -76,11 +76,11 @@ function addOption() {
     const textInput = document.createElement('input');
     textInput.type = 'text';
     textInput.classList.add('form-control');
-    // QUAN TRỌNG: Thay đổi name để Spring MVC bind đúng
+
     textInput.name = `surveyOptions[${currentOptionIndex}].optionText`;
     textInput.placeholder = 'Nhập lựa chọn mới';
 
-    // Xử lý 'required' cho input mới dựa trên loại câu hỏi hiện tại
+
     const questionTypeSelect = document.getElementById('selectedTypeId');
     if (questionTypeSelect) {
         const selectedOptionElement = questionTypeSelect.options[questionTypeSelect.selectedIndex];
@@ -92,7 +92,7 @@ function addOption() {
             }
         }
         if (isMultipleChoiceType) {
-            textInput.required = true; // Hoặc false tùy theo logic của bạn
+            textInput.required = true;
         }
     }
 
@@ -109,34 +109,29 @@ function addOption() {
     entryDiv.appendChild(removeButton);
     optionsContainer.appendChild(entryDiv);
 
-    currentOptionIndex++; // Tăng index cho option mới tiếp theo
+    currentOptionIndex++;
 }
 
+// Xóa một lựa chọn khỏi form.
 function removeOptionEntry(button) {
     const entryDiv = button.closest('.option-entry');
     if (entryDiv) {
         entryDiv.remove();
-        // Không cần giảm currentOptionIndex ở đây vì nó dùng cho việc thêm mới.
-        // Việc xóa và để lại "lỗ hổng" index thường được Spring MVC xử lý.
+
     }
 }
 
-// Các hàm deleteSurvey, deletePost, deleteNotification, deleteUser, verifyStudent giữ nguyên như của bạn
 
-// Gọi hàm khởi tạo khi DOM đã sẵn sàng
+
+// Khởi tạo form câu hỏi khi trang tải xong.
 document.addEventListener('DOMContentLoaded', initializeQuestionForm);
 
-// Hàm toggleMultipleChoiceOptions cũ của bạn có thể không cần nữa nếu initializeQuestionForm đã bao gồm logic đó
-// function toggleMultipleChoiceOptions() { ... } // Xem xét có cần giữ lại hay không
 
 
 
 
 
-
-
-
-
+// --- Các hàm xóa chung ---
 
 
 function deleteSurvey(fullUrl) {
@@ -246,6 +241,8 @@ function deleteUser(fullUrl) {
     }
 }
 
+
+// --- Các hàm cập nhật trạng thái ---
 function banUser(fullUrl) {
     console.log("ban user URL:", fullUrl);
     if (confirm("Bạn có chắc chắn muốn cấm user này không?")) {
@@ -277,34 +274,33 @@ function verifyStudent(fullUrl) {
     }
 }
 
+
+// Xóa câu hỏi khảo sát và chuyển hướng.
 function deleteSurveyQuestion(deleteUrl, surveyIdForRedirect) {
     if (confirm("Bạn có chắc chắn muốn xóa câu hỏi này không?")) {
         fetch(deleteUrl, {
             method: "DELETE",
             headers: {
-                // Nếu bạn sử dụng Spring Security và CSRF protection, bạn cần thêm CSRF token:
-                // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content'),
-                // (Đảm bảo bạn có thẻ meta CSRF trong HTML)
+
             }
         })
                 .then(response => {
                     if (response.ok) {
-                        return response.text(); // Mong đợi phản hồi dạng text đơn giản (ví dụ: "success")
+                        return response.text();
                     }
-                    // Nếu server trả về lỗi (ví dụ 404, 500), cố gắng đọc text lỗi
+
                     return response.text().then(text => {
                         throw new Error(text || "Lỗi không xác định từ server. Status: " + response.status);
                     });
                 })
                 .then(textData => {
-                    // Xử lý dựa trên nội dung text trả về từ controller
+
                     if (textData.toLowerCase().includes("success")) {
-                        alert("Xóa câu hỏi thành công!"); // Thông báo tùy chọn
-                        // Chuyển hướng về trang danh sách câu hỏi của survey đó
-                        // Đảm bảo đường dẫn context path (/SpringSocialApp) là đúng
+                        alert("Xóa câu hỏi thành công!");
+
                         window.location.href = `/SpringSocialApp/questions/${surveyIdForRedirect}`;
                     } else {
-                        // textData có thể là "error_not_found" hoặc "error_deleting"
+
                         alert("Xóa câu hỏi thất bại: " + textData);
                     }
                 })
@@ -313,42 +309,38 @@ function deleteSurveyQuestion(deleteUrl, surveyIdForRedirect) {
                     alert("Xóa câu hỏi thất bại! " + error.message);
                 });
     }
-    return false; // Ngăn chặn hành vi mặc định của thẻ <a> nếu dùng với href="#"
+    return false;
 }
 
-/**
- * Lọc bảng thống kê chu kỳ dựa trên loại chu kỳ được chọn.
- * @param {string} periodTypeToShow - Loại chu kỳ để hiển thị ('all', 'monthly', 'quarterly', 'yearly').
- * @param {HTMLElement} clickedButton - Nút đã được nhấp (để cập nhật class 'active').
- */
+// Lọc bảng thống kê chu kỳ
 function filterPeriodicStats(periodTypeToShow, clickedButton) {
     const table = document.getElementById('periodicStatsTable');
     if (!table)
-        return; // Không làm gì nếu không có bảng
+        return;
 
     const tbody = table.getElementsByTagName('tbody')[0];
     const rows = tbody.getElementsByTagName('tr');
-    const noStatsRow = document.getElementById('noPeriodicStatsRow'); // Dòng thông báo khi không có dữ liệu sau lọc
-    const initialNoStatsRow = tbody.querySelector('tr[th\\:if*="isEmpty(periodicStats)"]'); // Dòng thông báo ban đầu
+    const noStatsRow = document.getElementById('noPeriodicStatsRow');
+    const initialNoStatsRow = tbody.querySelector('tr[th\\:if*="isEmpty(periodicStats)"]');
     let visibleRowCount = 0;
 
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        // Bỏ qua dòng thông báo "không có dữ liệu" đặc biệt
+
         if (row.id === 'noPeriodicStatsRow' || (initialNoStatsRow && row === initialNoStatsRow)) {
             continue;
         }
 
         const rowPeriodType = row.getAttribute('data-period-type');
         if (periodTypeToShow === 'all' || rowPeriodType === periodTypeToShow) {
-            row.style.display = ''; // Hiện dòng
+            row.style.display = '';
             visibleRowCount++;
         } else {
-            row.style.display = 'none'; // Ẩn dòng
+            row.style.display = 'none';
         }
     }
 
-    // Cập nhật trạng thái active cho các nút
+
     const buttons = document.querySelectorAll('.btn-group[aria-label="Lọc thống kê chu kỳ"] .btn');
     buttons.forEach(button => {
         button.classList.remove('active', 'btn-primary');
@@ -360,7 +352,7 @@ function filterPeriodicStats(periodTypeToShow, clickedButton) {
     }
 
 
-    // Hiện/ẩn dòng "Không có thống kê" tùy chỉnh
+
     if (noStatsRow) {
         if (visibleRowCount === 0 && !(initialNoStatsRow && initialNoStatsRow.style.display !== 'none')) {
             let message = "Không có dữ liệu phù hợp với bộ lọc.";
@@ -377,7 +369,7 @@ function filterPeriodicStats(periodTypeToShow, clickedButton) {
             noStatsRow.style.display = 'none';
         }
     }
-    // Ẩn dòng thông báo ban đầu nếu có dòng dữ liệu được hiển thị
+
     if (initialNoStatsRow) {
         if (visibleRowCount > 0) {
             initialNoStatsRow.style.display = 'none';
@@ -387,13 +379,13 @@ function filterPeriodicStats(periodTypeToShow, clickedButton) {
     }
 }
 
-// Sửa đổi/Thêm vào cuối hàm DOMContentLoaded của bạn
+// Khởi tạo các chức năng khi trang tải xong
 document.addEventListener('DOMContentLoaded', function () {
-    initializeQuestionForm(); // Hàm cũ của bạn cho form câu hỏi
+    initializeQuestionForm();
 
-    // Thêm logic cho trang thống kê
+
     if (document.getElementById('periodicStatsTable')) {
-        // Tìm nút "Tất cả" và kích hoạt bộ lọc ban đầu
+
         const allButton = document.querySelector('.btn-group[aria-label="Lọc thống kê chu kỳ"] button');
         if (allButton) {
             filterPeriodicStats('all', allButton);

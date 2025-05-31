@@ -51,20 +51,20 @@ public class Post implements Serializable {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
-    @Column(name = "image") // Thêm trường image để lưu URL hình ảnh
+    @Column(name = "image") //  trường image lưu URL hình ảnh
     private String image;
 
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @JsonIgnore 
     @ManyToOne(optional = false)
     private User userId;
-//    @JsonIgnore
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "postId")
     @JsonIgnore
     private Set<Comment> commentSet;
 
-    // Thêm MultipartFile để nhận file ảnh
+    //  MultipartFile nhận file ảnh
     @Transient
     private MultipartFile imageFile;
     

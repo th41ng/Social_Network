@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -70,54 +69,54 @@ public class SurveyApiServiceImpl implements SurveyApiService {
 
         if (question.getSurveyOptions() != null && !question.getSurveyOptions().isEmpty()) {
             dto.setOptions(
-                question.getSurveyOptions().stream()
-                    .map(this::convertToSurveyOptionClientDTO)
-                    .filter(java.util.Objects::nonNull)
-                    .collect(Collectors.toList())
+                    question.getSurveyOptions().stream()
+                            .map(this::convertToSurveyOptionClientDTO)
+                            .filter(java.util.Objects::nonNull)
+                            .collect(Collectors.toList())
             );
         }
         return dto;
     }
 
     private boolean hasUserResponded(Integer surveyId, Integer userId) {
-        if (userId == null || surveyId == null) return false;
+        if (userId == null || surveyId == null) {
+            return false;
+        }
         List<SurveyResponse> responses = surveyResponseRepository.getResponsesBySurveyIdAndUserId(surveyId, userId);
         return responses != null && !responses.isEmpty();
     }
 
-private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User currentUser) {
-    if (survey == null) {
-        return null;
+    private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User currentUser) {
+        if (survey == null) {
+            return null;
+        }
+        SurveyClientListDTO dto = new SurveyClientListDTO();
+        dto.setSurveyId(survey.getSurveyId());
+        dto.setTitle(survey.getTitle());
+        dto.setDescription(survey.getDescription());
+
+        if (survey.getCreatedAt() != null) {
+            dto.setCreatedAt(survey.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        }
+
+        long questionCount = surveyQuestionRepository.countQuestionsBySurveyId(survey.getSurveyId());
+        dto.setQuestionCount((int) questionCount);
+
+        Boolean isActiveFromDb = survey.getIsActive();
+        if (isActiveFromDb != null && isActiveFromDb) {
+            dto.setStatus("ACTIVE");
+        } else {
+            dto.setStatus("INACTIVE");
+        }
+
+        if (currentUser != null && survey.getSurveyId() != null) {
+            dto.setIsRespondedByCurrentUser(hasUserResponded(survey.getSurveyId(), currentUser.getId()));
+        } else {
+            dto.setIsRespondedByCurrentUser(false);
+        }
+
+        return dto;
     }
-    SurveyClientListDTO dto = new SurveyClientListDTO();
-    dto.setSurveyId(survey.getSurveyId());
-    dto.setTitle(survey.getTitle());
-    dto.setDescription(survey.getDescription());
-
-    if (survey.getCreatedAt() != null) {
-        dto.setCreatedAt(survey.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-    }
-
-    // Thêm logic để đếm số câu hỏi
-    long questionCount = surveyQuestionRepository.countQuestionsBySurveyId(survey.getSurveyId());
-    dto.setQuestionCount((int) questionCount);  // Đặt số câu hỏi vào DTO
-
-    Boolean isActiveFromDb = survey.getIsActive();
-    if (isActiveFromDb != null && isActiveFromDb) {
-        dto.setStatus("ACTIVE");
-    } else {
-        dto.setStatus("INACTIVE");
-    }
-
-    if (currentUser != null && survey.getSurveyId() != null) {
-        dto.setIsRespondedByCurrentUser(hasUserResponded(survey.getSurveyId(), currentUser.getId()));
-    } else {
-        dto.setIsRespondedByCurrentUser(false);
-    }
-
-    return dto;
-}
-
 
     private SurveyDetailClientDTO convertToSurveyDetailClientDTO(Survey survey, User currentUser) {
         if (survey == null) {
@@ -131,10 +130,10 @@ private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User cur
         List<SurveyQuestion> questionsForSurvey = surveyQuestionRepository.getQuestionsBySurveyId(survey.getSurveyId());
         if (questionsForSurvey != null) {
             dto.setQuestions(
-                questionsForSurvey.stream()
-                    .map(this::convertToSurveyQuestionClientDTO)
-                    .filter(java.util.Objects::nonNull)
-                    .collect(Collectors.toList())
+                    questionsForSurvey.stream()
+                            .map(this::convertToSurveyQuestionClientDTO)
+                            .filter(java.util.Objects::nonNull)
+                            .collect(Collectors.toList())
             );
         }
 
@@ -142,18 +141,16 @@ private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User cur
         Boolean isActiveFromDb = survey.getIsActive();
 
         if (isActiveFromDb != null && isActiveFromDb) {
-             if (currentUser != null && survey.getSurveyId() != null) {
+            if (currentUser != null && survey.getSurveyId() != null) {
                 canRespond = !hasUserResponded(survey.getSurveyId(), currentUser.getId());
             } else if (currentUser == null) {
                 canRespond = true;
             }
         } else {
-            canRespond = false; // Không thể trả lời nếu survey không active
+            canRespond = false;
         }
         dto.setCanRespond(canRespond);
-        // Bạn cũng có thể muốn set status cho SurveyDetailClientDTO nếu nó có trường đó
-        // String statusForDetail = (isActiveFromDb != null && isActiveFromDb) ? "ACTIVE" : "INACTIVE";
-        // if (dto has setStatus method) dto.setStatus(statusForDetail);
+
         return dto;
     }
 
@@ -162,9 +159,9 @@ private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User cur
     public List<SurveyClientListDTO> getActiveSurveysForClient(Map<String, String> params, User currentUser) {
         List<Survey> surveys = surveyRepository.getSurveys(params);
         return surveys.stream()
-            .map(survey -> convertToSurveyClientListDTO(survey, currentUser))
-            .filter(java.util.Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(survey -> convertToSurveyClientListDTO(survey, currentUser))
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -175,12 +172,7 @@ private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User cur
             logger.warn("Client attempted to access non-existent survey ID {}", surveyId);
             throw new EntityNotFoundException("Survey not found with ID: " + surveyId);
         }
-        // Sau khi có isActive, bạn có thể muốn kiểm tra nếu survey không active thì không cho xem chi tiết
-        // hoặc hiển thị thông báo phù hợp
-        // if (survey.getIsActive() == null || !survey.getIsActive()) {
-        //     logger.warn("Client attempted to access inactive survey ID {}", surveyId);
-        //     throw new IllegalStateException("Survey is not active: " + surveyId); // Hoặc trả về DTO với trạng thái phù hợp
-        // }
+
         return convertToSurveyDetailClientDTO(survey, currentUser);
     }
 
@@ -199,11 +191,10 @@ private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User cur
             logger.warn("User {} attempt to respond to inactive survey ID {}", (currentUser != null ? currentUser.getUsername() : "anonymous"), surveyId);
             throw new IllegalStateException("Survey is not active and cannot be responded to: " + surveyId);
         }
-        
+
         if (currentUser == null) {
             logger.warn("Anonymous user attempt to respond to survey ID {}", surveyId);
-            // Nếu bạn quyết định không cho người dùng ẩn danh, hãy throw lỗi ở đây
-            // throw new SecurityException("User must be logged in to respond.");
+
         } else {
             if (hasUserResponded(survey.getSurveyId(), currentUser.getId())) {
                 logger.warn("User {} (ID: {}) already responded to survey ID {}.", currentUser.getUsername(), currentUser.getId(), surveyId);
@@ -262,7 +253,7 @@ private SurveyClientListDTO convertToSurveyClientListDTO(Survey survey, User cur
             } else {
                 String questionTypeStr = question.getTypeId() != null ? question.getTypeId().getTypeName() : "UNKNOWN";
                 logger.warn("No valid response provided for question ID {} (type: {}) in survey ID {} by user {}",
-                    question.getQuestionId(), questionTypeStr, surveyId, (currentUser != null ? currentUser.getUsername() : "anonymous"));
+                        question.getQuestionId(), questionTypeStr, surveyId, (currentUser != null ? currentUser.getUsername() : "anonymous"));
             }
         }
         logger.info("User {} (ID: {}) successfully submitted responses for survey ID {}", (currentUser != null ? currentUser.getUsername() : "anonymous"), (currentUser != null ? currentUser.getId() : "N/A"), surveyId);

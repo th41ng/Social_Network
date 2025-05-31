@@ -5,17 +5,8 @@
     <th:block th:replace="~{base :: bootstrap}"></th:block>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* CSS để làm nổi bật nút active (tùy chọn) */
-        .btn-group > .btn.active {
-            z-index: 1; /* Đảm bảo nút active nổi lên trên */
-        }
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 60vh; /* Adjust height as needed */
-            width: 80vw;  /* Adjust width as needed */
-            margin-bottom: 2rem;
-        }
+        .btn-group > .btn.active { z-index: 1; }
+        .chart-container { position: relative; margin: auto; height: 60vh; width: 80vw; margin-bottom: 2rem; }
     </style>
 </head>
 <body>
@@ -23,7 +14,6 @@
 
     <main class="container mt-4">
         <h2>Thống kê nền tảng hàng ngày</h2>
-
         <div class="chart-container mb-5">
             <canvas id="dailyStatsChart"></canvas>
         </div>
@@ -42,10 +32,10 @@
                 <tbody>
                     <tr th:each="s : ${stats}">
                         <td th:text="${s.lastCalculatedAt != null ? #temporals.format(s.lastCalculatedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></td>
-                        <td th:text="${s.totalUsers != null ? s.totalUsers : '0'}"></td>
-                        <td th:text="${s.totalPosts != null ? s.totalPosts : '0'}"></td>
-                        <td th:text="${s.newUsersRegisteredToday != null ? s.newUsersRegisteredToday : '0'}"></td>
-                        <td th:text="${s.newPostsCreatedToday != null ? s.newPostsCreatedToday : '0'}"></td>
+                        <td th:text="${s.totalUsers ?: '0'}"></td>
+                        <td th:text="${s.totalPosts ?: '0'}"></td>
+                        <td th:text="${s.newUsersRegisteredToday ?: '0'}"></td>
+                        <td th:text="${s.newPostsCreatedToday ?: '0'}"></td>
                     </tr>
                     <tr th:if="${stats == null or #lists.isEmpty(stats)}">
                         <td colspan="5" class="text-center">Chưa có thống kê hàng ngày nào.</td>
@@ -55,7 +45,6 @@
         </div>
 
         <h2>Thống kê theo chu kỳ</h2>
-
         <div class="chart-container mb-3">
             <canvas id="periodicStatsChart"></canvas>
         </div>
@@ -93,7 +82,8 @@
                         <td th:text="${p.newPostsCount}"></td>
                         <td th:text="${p.calculatedAt != null ? #temporals.format(p.calculatedAt, 'dd/MM/yyyy HH:mm:ss') : 'N/A'}"></td>
                     </tr>
-                    <tr id="noPeriodicStatsRow" style="display: none;"> <td colspan="5" class="text-center"></td>
+                    <tr id="noPeriodicStatsRow" style="display: none;"> 
+                        <td colspan="5" class="text-center"></td>
                     </tr>
                     <tr th:if="${periodicStats == null or #lists.isEmpty(periodicStats)}">
                          <td colspan="5" class="text-center">Chưa có thống kê theo chu kỳ nào.</td>
@@ -104,205 +94,112 @@
     </main>
 
     <div th:replace="~{base :: footer}"></div>
-    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/main.js}"></script> 
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-        const dailyStatsData = /*[[${stats}]]*/ [];
-        const periodicStatsData = /*[[${periodicStats}]]*/ [];
-        let periodicChartInstance = null; // To hold the chart instance for updates
+    /*<![CDATA[*/
+    
+    const dailyStatsData = /*[[${stats}]]*/ [];
+    const periodicStatsData = /*[[${periodicStats}]]*/ [];
+    let periodicChartInstance = null; 
 
-        // --- Daily Stats Chart ---
-        if (dailyStatsData && dailyStatsData.length > 0) {
-            const dailyLabels = dailyStatsData.map(s => {
-                const date = new Date(s.lastCalculatedAt);
-                return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }); // Format as DD/MM
-            }).reverse(); // Reverse to show oldest to newest
+    // --- Biểu đồ Thống kê Hàng ngày ---
+    if (dailyStatsData && dailyStatsData.length > 0) {
+        const dailyLabels = dailyStatsData.map(s => new Date(s.lastCalculatedAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })).reverse();
+        const newUsersToday = dailyStatsData.map(s => s.newUsersRegisteredToday || 0).reverse();
+        const newPostsToday = dailyStatsData.map(s => s.newPostsCreatedToday || 0).reverse();
+        const dailyCtx = document.getElementById('dailyStatsChart').getContext('2d');
+        new Chart(dailyCtx, {
+            type: 'line',
+            data: { labels: dailyLabels, datasets: [
+                { label: 'Người dùng mới', data: newUsersToday, borderColor: 'rgb(75, 192, 192)', tension: 0.1 },
+                { label: 'Bài viết mới', data: newPostsToday, borderColor: 'rgb(255, 99, 132)', tension: 0.1 }
+            ]},
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { title: { display: true, text: 'Thống kê mới hàng ngày' } } }
+        });
+    } else {
+        const dailyChartCanvas = document.getElementById('dailyStatsChart');
+        if (dailyChartCanvas) dailyChartCanvas.parentElement.innerHTML = '<p class="text-center">Không có dữ liệu thống kê hàng ngày.</p>';
+    }
 
-            const newUsersToday = dailyStatsData.map(s => s.newUsersRegisteredToday || 0).reverse();
-            const newPostsToday = dailyStatsData.map(s => s.newPostsCreatedToday || 0).reverse();
+    // --- Biểu đồ Thống kê Chu kỳ ---
+    function createOrUpdatePeriodicChart(filteredData) {
+        const periodicLabels = filteredData.map(p => {
+            if (p.periodType.toLowerCase() === 'monthly') return `${p.summaryMonth}/${p.summaryYear}`;
+            if (p.periodType.toLowerCase() === 'quarterly') return `Q${p.summaryQuarter}/${p.summaryYear}`;
+            if (p.periodType.toLowerCase() === 'yearly') return `${p.summaryYear}`;
+            return 'N/A';
+        });
+        const newUsersPeriodic = filteredData.map(p => p.newUsersCount);
+        const newPostsPeriodic = filteredData.map(p => p.newPostsCount);
+        const periodicChartCanvas = document.getElementById('periodicStatsChart');
+        const periodicCtx = periodicChartCanvas?.getContext('2d');
+        const chartContainer = periodicChartCanvas?.parentElement;
 
-            const dailyCtx = document.getElementById('dailyStatsChart').getContext('2d');
-            new Chart(dailyCtx, {
-                type: 'line',
-                data: {
-                    labels: dailyLabels,
-                    datasets: [{
-                        label: 'Người dùng mới',
-                        data: newUsersToday,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }, {
-                        label: 'Bài viết mới',
-                        data: newPostsToday,
-                        borderColor: 'rgb(255, 99, 132)',
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Thống kê mới hàng ngày'
-                        }
-                    }
-                }
+        if (periodicChartInstance) periodicChartInstance.destroy();
+        
+        const oldNoDataMessage = chartContainer?.querySelector('p.text-center');
+        if (oldNoDataMessage) oldNoDataMessage.remove();
+        
+        if (filteredData && filteredData.length > 0 && periodicCtx) {
+            if (periodicChartCanvas) periodicChartCanvas.style.display = '';
+            periodicChartInstance = new Chart(periodicCtx, {
+                type: 'bar',
+                data: { labels: periodicLabels, datasets: [
+                    { label: 'Người dùng mới theo chu kỳ', data: newUsersPeriodic, backgroundColor: 'rgba(54, 162, 235, 0.5)', borderColor: 'rgb(54, 162, 235)', borderWidth: 1 },
+                    { label: 'Bài viết mới theo chu kỳ', data: newPostsPeriodic, backgroundColor: 'rgba(255, 159, 64, 0.5)', borderColor: 'rgb(255, 159, 64)', borderWidth: 1 }
+                ]},
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } }, plugins: { title: { display: true, text: 'Thống kê mới theo chu kỳ' } } }
             });
-        } else {
-            const dailyCtx = document.getElementById('dailyStatsChart');
-            if (dailyCtx) {
-                 dailyCtx.parentElement.innerHTML = '<p class="text-center">Không có dữ liệu thống kê hàng ngày để hiển thị biểu đồ.</p>';
-            }
+        } else if (chartContainer) {
+            if (periodicChartCanvas) periodicChartCanvas.style.display = 'none';
+            const p = document.createElement('p');
+            p.className = 'text-center';
+            p.textContent = 'Không có dữ liệu thống kê chu kỳ cho bộ lọc này.';
+            chartContainer.appendChild(p);
         }
+    }
 
+    if (periodicStatsData) createOrUpdatePeriodicChart(periodicStatsData); // Vẽ biểu đồ chu kỳ ban đầu
 
-        // --- Periodic Stats Chart ---
-        function createOrUpdatePeriodicChart(filteredData) {
-            const periodicLabels = filteredData.map(p => {
-                if (p.periodType.toLowerCase() === 'monthly') return `${p.summaryMonth}/${p.summaryYear}`;
-                if (p.periodType.toLowerCase() === 'quarterly') return `Q${p.summaryQuarter}/${p.summaryYear}`;
-                if (p.periodType.toLowerCase() === 'yearly') return `${p.summaryYear}`;
-                return 'N/A';
-            });
+    // --- Lọc bảng và biểu đồ chu kỳ ---
+    window.filterPeriodicStats = function(periodType, buttonElement) {
+        document.querySelectorAll('.btn-group[aria-label="Lọc thống kê chu kỳ"] .btn').forEach(btn => {
+            btn.classList.remove('btn-primary', 'active');
+            btn.classList.add('btn-secondary');
+        });
+        buttonElement.classList.remove('btn-secondary');
+        buttonElement.classList.add('btn-primary', 'active');
 
-            const newUsersPeriodic = filteredData.map(p => p.newUsersCount);
-            const newPostsPeriodic = filteredData.map(p => p.newPostsCount);
-
-            const periodicCtx = document.getElementById('periodicStatsChart').getContext('2d');
-
-            if (periodicChartInstance) {
-                periodicChartInstance.destroy();
-            }
-
-            if (filteredData && filteredData.length > 0) {
-                periodicChartInstance = new Chart(periodicCtx, {
-                    type: 'bar', // Or 'line' if you prefer
-                    data: {
-                        labels: periodicLabels,
-                        datasets: [{
-                            label: 'Người dùng mới theo chu kỳ',
-                            data: newUsersPeriodic,
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgb(54, 162, 235)',
-                            borderWidth: 1
-                        }, {
-                            label: 'Bài viết mới theo chu kỳ',
-                            data: newPostsPeriodic,
-                            backgroundColor: 'rgba(255, 159, 64, 0.5)',
-                            borderColor: 'rgb(255, 159, 64)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        },
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Thống kê mới theo chu kỳ'
-                            }
-                        }
-                    }
-                });
-            } else {
-                 if (periodicCtx) {
-                    const container = periodicCtx.parentElement;
-                    // Clear previous content (like "no data" message) if any
-                    while (container.firstChild) {
-                        container.removeChild(container.firstChild);
-                    }
-                    // Add canvas back if it was removed
-                    if (!container.querySelector('canvas')) {
-                        const canvas = document.createElement('canvas');
-                        canvas.id = 'periodicStatsChart';
-                        container.appendChild(canvas);
-                    }
-                    // Display no data message
-                    const p = document.createElement('p');
-                    p.className = 'text-center';
-                    p.textContent = 'Không có dữ liệu thống kê theo chu kỳ để hiển thị biểu đồ cho bộ lọc này.';
-                    container.appendChild(p);
-                 }
-            }
+        const table = document.getElementById('periodicStatsTable');
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const rows = tbody.getElementsByTagName('tr');
+        const noPeriodicStatsRow = document.getElementById('noPeriodicStatsRow');
+        const noDataRowOriginal = tbody.querySelector('tr[th\\:if="${periodicStats == null or #lists.isEmpty(periodicStats)}"]');
+        let hasVisibleTableRows = false;
+        
+        for (let row of rows) {
+            if (row.id === 'noPeriodicStatsRow' || (noDataRowOriginal && row === noDataRowOriginal)) continue;
+            const rowPeriodType = row.getAttribute('data-period-type');
+            const showRow = (periodType === 'all' || rowPeriodType === periodType);
+            row.style.display = showRow ? '' : 'none';
+            if (showRow) hasVisibleTableRows = true;
         }
+        
+        const filteredChartData = (periodType === 'all') ? (periodicStatsData || []) : (periodicStatsData || []).filter(p => p.periodType.toLowerCase() === periodType);
+        createOrUpdatePeriodicChart(filteredChartData);
 
-        // Initial call to create periodic chart with all data
-        if (periodicStatsData && periodicStatsData.length > 0) {
-            createOrUpdatePeriodicChart(periodicStatsData);
-        } else {
-            const periodicCtx = document.getElementById('periodicStatsChart');
-            if (periodicCtx) {
-                 periodicCtx.parentElement.innerHTML = '<p class="text-center">Không có dữ liệu thống kê theo chu kỳ để hiển thị biểu đồ.</p>';
-            }
-        }
-
-
-        // --- Filter function for Periodic Table and Chart ---
-        window.filterPeriodicStats = function(periodType, buttonElement) {
-            // Update button active state
-            document.querySelectorAll('.btn-group > .btn').forEach(btn => {
-                btn.classList.remove('btn-primary', 'active');
-                btn.classList.add('btn-secondary');
-            });
-            buttonElement.classList.remove('btn-secondary');
-            buttonElement.classList.add('btn-primary', 'active');
-
-            const table = document.getElementById('periodicStatsTable');
-            const tbody = table.getElementsByTagName('tbody')[0];
-            const rows = tbody.getElementsByTagName('tr');
-            const noPeriodicStatsRow = document.getElementById('noPeriodicStatsRow');
-            let hasVisibleRows = false;
-            let filteredChartData = [];
-
-            for (let i = 0; i < rows.length; i++) {
-                const row = rows[i];
-                if (row.id === 'noPeriodicStatsRow' || row.getAttribute('th:if')) continue; // Skip placeholder/conditional rows
-
-                const rowPeriodType = row.getAttribute('data-period-type');
-                if (periodType === 'all' || rowPeriodType === periodType) {
-                    row.style.display = '';
-                    hasVisibleRows = true;
-                    // Find the corresponding data object for the chart
-                    const originalIndex = Array.from(rows).indexOf(row); 
-                                                                     
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-
-            // Filter original data for the chart
-            if (periodType === 'all') {
-                filteredChartData = periodicStatsData;
-            } else {
-                filteredChartData = periodicStatsData.filter(p => p.periodType.toLowerCase() === periodType);
-            }
-            createOrUpdatePeriodicChart(filteredChartData);
-
-
-            // Show/hide "no data" message for the table
-            const noDataRowOriginal = tbody.querySelector('tr[th\\:if="${periodicStats == null or #lists.isEmpty(periodicStats)}"]');
-            if (noDataRowOriginal) noDataRowOriginal.style.display = 'none'; // Hide the initial Thymeleaf "no data" row
-
-            if (!hasVisibleRows && filteredChartData.length === 0) {
+        if (noDataRowOriginal) noDataRowOriginal.style.display = 'none'; 
+        if (noPeriodicStatsRow) {
+            if (!hasVisibleTableRows) {
                 noPeriodicStatsRow.style.display = '';
-                noPeriodicStatsRow.getElementsByTagName('td')[0].textContent = `Không có thống kê ${periodType !== 'all' ? periodType : ''} nào.`;
+                noPeriodicStatsRow.getElementsByTagName('td')[0].textContent = `Không có thống kê ${periodType !== 'all' ? 'theo ' + periodType.replace('ly', '') : ''} nào.`;
             } else {
                 noPeriodicStatsRow.style.display = 'none';
             }
         }
-        /*]]>*/
+    }
+    /*]]>*/
     </script>
 </body>
 </html>

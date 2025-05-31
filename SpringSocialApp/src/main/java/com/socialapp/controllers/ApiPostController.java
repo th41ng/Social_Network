@@ -8,7 +8,7 @@ import com.socialapp.pojo.User;
 import com.socialapp.service.CommentService;
 import com.socialapp.service.PostApiService;
 import com.socialapp.service.UserService;
-import jakarta.persistence.EntityNotFoundException; 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +16,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails; 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.ZoneId; 
+import java.time.ZoneId;
 import java.util.HashMap;
-import java.util.List;   
-import java.util.Map;    
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -40,7 +40,6 @@ public class ApiPostController {
     @Autowired
     private UserService userService;
 
-    // Helper method để lấy username từ Principal một cách an toàn
     private String getUsernameFromPrincipal(Object principal) {
         if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
@@ -57,20 +56,20 @@ public class ApiPostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<?> getPostById(@PathVariable("postId") int id) { // Sửa kiểu trả về thành ResponseEntity<?>
+    public ResponseEntity<?> getPostById(@PathVariable("postId") int id) {
         PostDTO postDTO = postApiService.getPostById(id);
         if (postDTO != null) {
             return ResponseEntity.ok(postDTO);
         } else {
             logger.warn("Không tìm thấy Post với ID: {}", id);
-            // Trả về thông báo lỗi JSON thay vì chỉ notFound().build()
+
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Bài viết không tồn tại hoặc đã bị xóa."));
         }
     }
 
     @PostMapping(path = "/posts", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createOrUpdatePost(
-            @ModelAttribute Post postFromRequest, // Đổi tên để rõ ràng hơn
+            @ModelAttribute Post postFromRequest,
             Authentication authentication) {
 
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal().toString())) {
@@ -87,24 +86,22 @@ public class ApiPostController {
         User currentUser = userService.getUserByUsername(username);
         if (currentUser == null) {
             logger.error("Không tìm thấy thông tin người dùng đã xác thực trong DB: {}", username);
-            // Đây là lỗi nghiêm trọng nếu token hợp lệ nhưng user không có trong DB
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi thông tin người dùng hệ thống."));
         }
 
         boolean isCreatingNewPost = (postFromRequest.getPostId() == null);
-        if (isCreatingNewPost &&
-            (postFromRequest.getContent() == null || postFromRequest.getContent().trim().isEmpty()) &&
-            (postFromRequest.getImageFile() == null || postFromRequest.getImageFile().isEmpty())) {
+        if (isCreatingNewPost
+                && (postFromRequest.getContent() == null || postFromRequest.getContent().trim().isEmpty())
+                && (postFromRequest.getImageFile() == null || postFromRequest.getImageFile().isEmpty())) {
             logger.warn("Nội dung bài viết và hình ảnh đều rỗng khi tạo bài viết mới bởi user: {}", username);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Nội dung hoặc hình ảnh không được để trống khi tạo bài viết."));
         }
 
         try {
-            // Truyền currentUser vào service để xử lý gán userId cho bài mới hoặc kiểm tra quyền cho bài cập nhật
-            PostDTO resultPostDTO = postApiService.addOrUpdatePost(postFromRequest, currentUser); // <<<< THAY ĐỔI Ở ĐÂY
 
-            // Service sẽ ném Exception nếu có lỗi (ví dụ: EntityNotFound, SecurityException)
-            // nên nếu đến đây là đã thành công.
+            PostDTO resultPostDTO = postApiService.addOrUpdatePost(postFromRequest, currentUser);
+
             HttpStatus status = isCreatingNewPost ? HttpStatus.CREATED : HttpStatus.OK;
             String action = isCreatingNewPost ? "tạo mới" : "cập nhật";
             logger.info("Bài viết ID: {} đã được {} thành công bởi user: {}", resultPostDTO.getPostId(), action, username);
@@ -119,7 +116,7 @@ public class ApiPostController {
         } catch (IllegalArgumentException e) {
             logger.warn("Lỗi dữ liệu không hợp lệ khi {} bài viết bởi user {}: {}", (isCreatingNewPost ? "tạo mới" : "cập nhật"), username, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) { // Bắt các lỗi không mong muốn khác
+        } catch (Exception e) { 
             String action = isCreatingNewPost ? "tạo mới" : "cập nhật";
             logger.error("Lỗi không xác định khi {} bài viết bởi user {}: {}", action, username, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi máy chủ không xác định khi xử lý bài viết."));
@@ -146,12 +143,12 @@ public class ApiPostController {
         }
 
         try {
-            boolean deleted = postApiService.deletePost(postId, currentUser); // <<<< THAY ĐỔI Ở ĐÂY
-            if (deleted) { // Service trả về true nếu thành công (và không ném exception)
+            boolean deleted = postApiService.deletePost(postId, currentUser); 
+            if (deleted) { 
                 logger.info("Post {} deleted successfully by user {}", postId, username);
-                return ResponseEntity.noContent().build(); // 204 No Content là chuẩn cho DELETE thành công
+                return ResponseEntity.noContent().build(); 
             } else {
-                // Trường hợp này ít khi xảy ra nếu service dùng exception để báo lỗi
+                
                 logger.warn("Post deletion indicated as failed (returned false) for post {} by user {}.", postId, username);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Không thể xóa bài viết do lỗi không xác định từ service."));
             }
@@ -161,7 +158,7 @@ public class ApiPostController {
         } catch (SecurityException e) {
             logger.warn("Security exception for user {} deleting post {}: {}", username, postId, e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
-        } catch (Exception e) { // Bắt các lỗi không mong muốn khác
+        } catch (Exception e) { 
             logger.error("Error deleting post {} for user {}: {}", postId, username, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi máy chủ không xác định khi xóa bài viết."));
         }
@@ -186,7 +183,7 @@ public class ApiPostController {
 
         String username = getUsernameFromPrincipal(authentication.getPrincipal());
         if (username == null) {
-             logger.error("Không thể lấy username từ principal cho hoạt động comment bài viết ID: {}", postId);
+            logger.error("Không thể lấy username từ principal cho hoạt động comment bài viết ID: {}", postId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Thông tin xác thực không hợp lệ."));
         }
         User currentUser = userService.getUserByUsername(username);
@@ -203,7 +200,7 @@ public class ApiPostController {
             commentDTO.setCommentId(newCommentEntity.getCommentId());
             commentDTO.setContent(newCommentEntity.getContent());
             if (newCommentEntity.getUserId() != null) {
-                commentDTO.setUserId(newCommentEntity.getUserId().getId()); // Gán userId cho comment DTO
+                commentDTO.setUserId(newCommentEntity.getUserId().getId());
                 commentDTO.setUserFullName(newCommentEntity.getUserId().getFullName());
                 commentDTO.setUserAvatar(newCommentEntity.getUserId().getAvatar());
             }
@@ -212,14 +209,14 @@ public class ApiPostController {
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime());
             }
-            commentDTO.setReactions(new HashMap<>()); // Mặc định khi mới tạo comment
+            commentDTO.setReactions(new HashMap<>());
 
             logger.info("Người dùng ID: {} (username: {}) đã thêm bình luận ID: {} cho bài viết ID: {}",
                     currentUser.getId(), username, newCommentEntity.getCommentId(), postId);
             return new ResponseEntity<>(commentDTO, HttpStatus.CREATED);
 
-        } catch (EntityNotFoundException e) { // Ví dụ: nếu bài viết postId không tồn tại
-             logger.warn("Lỗi khi thêm bình luận cho bài viết ID {} (user: {}): {}", postId, username, e.getMessage());
+        } catch (EntityNotFoundException e) {
+            logger.warn("Lỗi khi thêm bình luận cho bài viết ID {} (user: {}): {}", postId, username, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (IllegalArgumentException e) {
             logger.warn("Lỗi dữ liệu không hợp lệ khi thêm bình luận cho bài viết ID {} (user: {}): {}", postId, username, e.getMessage());
@@ -229,8 +226,7 @@ public class ApiPostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Lỗi máy chủ khi thêm bình luận."));
         }
     }
-    
-    // === THÊM ENDPOINT MỚI CHO KHÓA/MỞ KHÓA BÌNH LUẬN ===
+
     @PostMapping("/posts/{postId}/toggle-comment-lock")
     public ResponseEntity<?> togglePostCommentLock(
             @PathVariable("postId") Integer postId,
@@ -243,7 +239,7 @@ public class ApiPostController {
 
         String username = getUsernameFromPrincipal(authentication.getPrincipal());
         if (username == null) {
-             logger.error("Không thể lấy username từ principal cho hoạt động khóa/mở khóa comment của bài viết ID: {}", postId);
+            logger.error("Không thể lấy username từ principal cho hoạt động khóa/mở khóa comment của bài viết ID: {}", postId);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Thông tin xác thực không hợp lệ."));
         }
         User currentUser = userService.getUserByUsername(username);
@@ -253,7 +249,7 @@ public class ApiPostController {
         }
 
         try {
-            // Gọi service method (bạn cần tạo nó trong PostApiService và triển khai trong PostApiServiceImpl)
+
             PostDTO updatedPost = postApiService.toggleCommentLock(postId, currentUser);
             return ResponseEntity.ok(updatedPost);
         } catch (EntityNotFoundException e) {

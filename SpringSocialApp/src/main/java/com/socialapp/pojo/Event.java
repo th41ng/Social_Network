@@ -68,9 +68,6 @@ public class Event implements Serializable {
     @Column(name = "location")
     private String location;
 
-    //@Column(name = "is_deleted")
-    //private boolean isDeleted; // Trường xóa mềm
-    //QUan hệ
     @OneToOne(mappedBy = "event", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private EventNotification eventNotification;
 
@@ -78,7 +75,6 @@ public class Event implements Serializable {
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id", insertable = false, updatable = false, nullable = false)
     private User admin;
 
-    //Kế thúc
     public Event() {
     }
 

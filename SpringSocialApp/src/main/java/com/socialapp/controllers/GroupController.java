@@ -54,10 +54,10 @@ public class GroupController {
         if (page < 1) {
             page = 1;
         }
-        // Đảm bảo params luôn có "page" cho repository và để giữ lại trên URL khi chuyển trang
+      
         params.put("page", String.valueOf(page));
         long totalGroup = this.groupService.countGroup();
-        // Sử dụng PAGE_SIZE đã import hoặc định nghĩa ở trên
+       
         int pageSize = UserGroupRepositoryImpl.PAGE_SIZE;
         int totalGroupPages = (int) Math.ceil((double) totalGroup / pageSize);
         List<UserGroups> group = this.groupService.getAllGroups(params);
@@ -72,7 +72,7 @@ public class GroupController {
     public String listMember(@RequestParam Map<String, String> params,
             @RequestParam(name = "groupId") int groupId,
             Model model) {
-        // Lấy danh sách thành viên của nhóm dựa trên groupId
+     
         List<GroupMembers> members = this.groupMemberService.getMembersByGroupId(groupId);
         UserGroups group = this.groupService.getGroupById(groupId);
         model.addAttribute("params", params);
@@ -91,10 +91,10 @@ public class GroupController {
             throw new IllegalArgumentException("Người dùng không hợp lệ.");
         }
 
-        List<User> users = userService.getAllUsers(params); // Lấy danh sách người dùng
+        List<User> users = userService.getAllUsers(params);
         model.addAttribute("newGroup", new UserGroups());
         model.addAttribute("adminId", currentUser.getId());
-        model.addAttribute("users", users); // Gửi danh sách người dùng sang giao diện
+        model.addAttribute("users", users); 
 
         return "add_group";
     }
@@ -146,16 +146,16 @@ public class GroupController {
         }
     }
 
-    // Hiển thị form sửa nhóm
+   
     @GetMapping("/edit/{id}")
     public String showEditGroupForm(Model model, @PathVariable("id") int groupId) {
-        // Lấy nhóm cần sửa
+       
         UserGroups group = this.groupService.getGroupById(groupId);
         if (group == null) {
             throw new IllegalArgumentException("Không tìm thấy nhóm với ID: " + groupId);
         }
 
-        // Lấy thông tin người dùng hiện tại từ SecurityContextHolder
+       
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         User currentUser = userService.getUserByUsername(username);
@@ -164,12 +164,12 @@ public class GroupController {
             throw new IllegalArgumentException("Người dùng không hợp lệ.");
         }
 
-        // Thêm thông tin cần thiết vào model
+      
         model.addAttribute("group", group);
 
         model.addAttribute("adminId", currentUser.getId());
 
-        return "edit_group"; // Tên file HTML hiển thị form
+        return "edit_group"; 
     }
 
     @PostMapping("/edit/{id}")
@@ -183,7 +183,7 @@ public class GroupController {
             model.addAttribute("error", "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.");
             model.addAttribute("adminId", adminId);
 
-            // Lấy lại nhóm gốc để hiển thị giá trị cũ trong form
+          
             UserGroups existingGroup = groupService.getGroupById(groupId);
             if (existingGroup != null) {
                 model.addAttribute("group", existingGroup);
@@ -192,23 +192,23 @@ public class GroupController {
         }
 
         try {
-            // Lấy nhóm gốc từ cơ sở dữ liệu
+           
             UserGroups existingGroup = groupService.getGroupById(groupId);
             if (existingGroup == null) {
                 throw new IllegalArgumentException("Không tìm thấy nhóm với ID: " + groupId);
             }
 
-            // Lấy admin từ adminId
+           
             User admin = userService.getUserById(adminId);
             if (admin == null) {
                 throw new IllegalArgumentException("Admin không tồn tại.");
             }
 
-            // Gán giá trị mới vào nhóm gốc
+           
             existingGroup.setGroupName(group.getGroupName());
             existingGroup.setAdmin(admin);
 
-            // Cập nhật nhóm
+            
             groupService.addOrUpdateGroup(existingGroup);
 
             return "redirect:/Group/listGroup";

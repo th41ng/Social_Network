@@ -49,11 +49,7 @@ public class IndexController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private SurveyQuestionService surveyQuestionService;
 
-    @Autowired
-    private SurveyResponseService surveyResponseService;
 
     @Autowired
     private PlatformStatsService platformStatsService;
@@ -69,71 +65,78 @@ public class IndexController {
             Model model) {
         Map<String, String> params = new HashMap<>();
 
-        // Thêm các tham số từ request vào params
+        
         model.asMap().forEach((k, v) -> {
-            if (v instanceof String) {
-                params.put(k, (String) v);
+            if (v instanceof String string) {
+                params.put(k, string);
             }
         });
-        // Đảm bảo param 'page' luôn có trong map
+       
         params.put("page", String.valueOf(page));
         params.put("categoryId", String.valueOf(categoryId));
 
-        model.addAttribute("params", params); // Dùng chung params để lọc kết quả
-        model.addAttribute("currentPage", page); // Truyền trang hiện tại cho frontend
+        model.addAttribute("params", params); 
+        model.addAttribute("currentPage", page); 
 
         if (categoryId != null) {
             switch (categoryId) {
-                case 5: //User
+                case 5 -> {
+                    //User
                     var users = userService.getAllUsers(params);
-                    long totalUser = userService.countUsers(); // Lấy tổng số bài viết
-                    int totalPage = (int) Math.ceil((double) totalUser / PAGE_SIZE); // Tính tổng số trang
-
+                    long totalUser = userService.countUsers();
+                    int totalPage = (int) Math.ceil((double) totalUser / PAGE_SIZE);
+                    
                     model.addAttribute("users", users);
-                    model.addAttribute("totalUsers", totalUser); // Tổng số người dùng
-                    model.addAttribute("currentPage", page); // Trang hiện tại
-                    model.addAttribute("totalPage", totalPage); // Tổng số trang
-                    model.addAttribute("params", params); // Truyền params để dùng trong frontend
+                    model.addAttribute("totalUsers", totalUser);
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPage", totalPage);
+                    model.addAttribute("params", params); 
                     model.addAttribute("categoryId", categoryId);
                     return "user_management";
-                case 3: // Thông báo
+                }
+                case 3 -> {
+                    // Thông báo
                     var noti = EventNotificationService.getNotifications(params);
-                    long totalNoti = EventNotificationService.countNotis(); // Lấy tổng số bài viết
-                    int totalNotiPage = (int) Math.ceil((double) totalNoti / PAGE_SIZE); // Tính tổng số trang
-                    model.addAttribute("totalUsers", totalNoti); // Tổng số người dùng
-                    model.addAttribute("currentPage", page); // Trang hiện tại
-                    model.addAttribute("totalPages", totalNotiPage); // Tổng số trang
+                    long totalNoti = EventNotificationService.countNotis(); 
+                    int totalNotiPage = (int) Math.ceil((double) totalNoti / PAGE_SIZE);
+                    model.addAttribute("totalUsers", totalNoti);
+                    model.addAttribute("currentPage", page);
+                    model.addAttribute("totalPages", totalNotiPage); 
                     model.addAttribute("notification", noti);
                     return "notification_management";
+                }
 
-                case 4: // Surveys
-                    // Lấy page từ params, đảm bảo params có "page"
-                    String pageParamSurvey = params.get("page"); // params này là params của IndexController
+                case 4 -> {
+                    // Surveys
+ 
+                    String pageParamSurvey = params.get("page");
                     int surveyPage = (pageParamSurvey == null || pageParamSurvey.trim().isEmpty()) ? 1 : Integer.parseInt(pageParamSurvey);
                     if (surveyPage < 1) {
                         surveyPage = 1;
                     }
-                    // Tạo một Map params riêng cho surveyService nếu cần, hoặc dùng chung nếu cấu trúc params phù hợp
-                    Map<String, String> surveyParams = new HashMap<>(params); // Sao chép params hiện tại
+                    
+                    Map<String, String> surveyParams = new HashMap<>(params); 
                     surveyParams.put("page", String.valueOf(surveyPage));
 
                     List<Survey> surveys = surveyService.getSurveys(surveyParams);
-                    long totalSurveys = surveyService.countSurveys(surveyParams); // Đếm tổng số survey
-
-                    int pageSizeSurveys = com.socialapp.repository.impl.SurveyRepositoryImpl.PAGE_SIZE; // Lấy PAGE_SIZE từ SurveyRepositoryImpl
+                    long totalSurveys = surveyService.countSurveys(surveyParams);
+                    
+                    int pageSizeSurveys = com.socialapp.repository.impl.SurveyRepositoryImpl.PAGE_SIZE; 
                     int totalSurveyPages = (int) Math.ceil((double) totalSurveys / pageSizeSurveys);
 
                     model.addAttribute("surveys", surveys);
-                    model.addAttribute("params", surveyParams); // Truyền params đã cập nhật (có page)
+                    model.addAttribute("params", surveyParams); 
                     model.addAttribute("currentPage", surveyPage);
                     model.addAttribute("totalPages", totalSurveyPages);
                     return "survey_management";
+                }
 
-                case 2: // Posts
+                case 2 -> {
+                    // Posts
                     var posts = postService.getPosts(params);
-                    long totalPosts = postService.countPosts(params); // Đảm bảo countPosts nhận params
-                    int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE); // Tính tổng số trang
-
+                    long totalPosts = postService.countPosts(params);
+                    int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE);
+                    
                     Map<Integer, List<Comment>> commentsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> postReactionsMap = new HashMap<>();
                     Map<Integer, Map<String, Long>> commentReactionsMap = new HashMap<>();
@@ -155,25 +158,28 @@ public class IndexController {
                     model.addAttribute("commentsMap", commentsMap);
                     model.addAttribute("reactionsMap", postReactionsMap);
                     model.addAttribute("commentReactionsMap", commentReactionsMap);
-                    model.addAttribute("counter", counter); // Truyền tổng số trang cho frontend
-
+                    model.addAttribute("counter", counter);
+                    
                     return "post_management";
+                }
 
-                case 6: // Thống kê nền tảng
-                    platformStatsService.generateDailySummary(); // Đảm bảo có dữ liệu mỗi ngày
+                case 6 -> {
+                    // Thống kê nền tảng
+                    platformStatsService.generateDailySummary();
                     model.addAttribute("stats", platformStatsService.getAllSummaries());
 
                     List<PeriodicSummaryStats> periodicStats = platformStatsService.getAllPeriodicSummaries();
                     model.addAttribute("periodicStats", periodicStats);
 
                     return "stats_management";
+                }
 
             }
         }
 
-        // Mặc định: hiển thị tất cả post
-        var posts = postService.getPosts(params); // Truyền params để sử dụng phân trang
-        long totalPosts = postService.countPosts(params); // Đảm bảo countPosts nhận params
+       
+        var posts = postService.getPosts(params); 
+        long totalPosts = postService.countPosts(params); 
         int counter = (int) Math.ceil((double) totalPosts / PAGE_SIZE); // Tính tổng số trang
 
         Map<Integer, List<Comment>> commentsMap = new HashMap<>();

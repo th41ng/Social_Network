@@ -12,5 +12,6 @@ import java.util.List;
  * @author DELL G15
  */
 public interface CategoryRepository2 {
-      List<Category2> getCategories2();
+
+    List<Category2> getCategories2();
 }

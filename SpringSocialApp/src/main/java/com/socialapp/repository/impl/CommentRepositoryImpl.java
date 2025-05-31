@@ -51,7 +51,7 @@ public class CommentRepositoryImpl implements CommentRepository {
 
             String postId = params.get("postId");
             if (postId != null && !postId.isEmpty()) {
-                predicates.add(b.equal(root.get("postId").get("postId"), Integer.parseInt(postId)));
+                predicates.add(b.equal(root.get("postId").get("postId"), Integer.valueOf(postId)));
             }
 
             q.where(predicates.toArray(Predicate[]::new));

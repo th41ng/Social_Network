@@ -23,8 +23,6 @@ public interface GroupMembersRepository {
     GroupMembers addOrUpdateMember(GroupMembers groupMember);
 
     void deleteMember(int memberId);
-//
-//    void deleteMemberByGroupAndUserId(int groupId, int userId);
 
     List<GroupMembers> getMembersByGroupId(int groupId);
 

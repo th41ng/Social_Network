@@ -14,18 +14,14 @@ import java.util.Map;
  */
 public interface UserGroupService {
 
-    // Lấy danh sách tất cả các nhóm với các tham số lọc
     List<UserGroups> getAllGroups(Map<String, String> params);
 
-    // Lấy thông tin nhóm cụ thể theo ID
     UserGroups getGroupById(int groupId);
 
     long countGroup();
 
-    // Thêm mới hoặc cập nhật thông tin nhóm
     UserGroups addOrUpdateGroup(UserGroups group);
 
-    // Xóa nhóm theo ID
     void deleteGroup(int groupId);
 
 }

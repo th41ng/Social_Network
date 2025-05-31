@@ -96,7 +96,7 @@ public class ReactionRepositoryImpl implements ReactionRepository {
         Session s = this.factory.getObject().getCurrentSession();
         Reaction reaction = this.getReactionById(id);
         if (reaction != null) {
-            s.remove(reaction); // Xóa cứng
+            s.remove(reaction);
         }
     }
 
@@ -170,8 +170,8 @@ public class ReactionRepositoryImpl implements ReactionRepository {
         Root<Reaction> root = cq.from(Reaction.class);
         cq.select(root);
         cq.where(
-                b.equal(root.get("userId"), user), // "userId" là tên trường trong Pojo Reaction
-                b.equal(root.get("postId"), post) // "postId" là tên trường trong Pojo Reaction
+                b.equal(root.get("userId"), user), 
+                b.equal(root.get("postId"), post) 
         );
         try {
             return Optional.ofNullable(s.createQuery(cq).getSingleResult());
@@ -189,7 +189,7 @@ public class ReactionRepositoryImpl implements ReactionRepository {
         cq.select(root);
         cq.where(
                 b.equal(root.get("userId"), user),
-                b.equal(root.get("commentId"), comment) // "commentId" là tên trường trong Pojo Reaction
+                b.equal(root.get("commentId"), comment) 
         );
         try {
             return Optional.ofNullable(s.createQuery(cq).getSingleResult());

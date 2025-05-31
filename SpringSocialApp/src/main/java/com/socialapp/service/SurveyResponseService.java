@@ -18,6 +18,6 @@ public interface SurveyResponseService {
     SurveyResponse addSurveyResponse(SurveyResponse response);
 
     void deleteSurveyResponse(int responseId);
-    
+
     List<SurveyResponse> getResponsesByQuestionId(int questionId);
 }

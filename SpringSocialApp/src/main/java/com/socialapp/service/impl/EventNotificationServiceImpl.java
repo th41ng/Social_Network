@@ -40,7 +40,7 @@ public class EventNotificationServiceImpl implements EventNotificationService {
     }
 
     @Override
-    public List<EventNotification> getNotificationsForUser(int userId,Map<String, String> params) {
+    public List<EventNotification> getNotificationsForUser(int userId, Map<String, String> params) {
         return eventNotificationRepository.getNotificationsForUser(userId, params);
     }
 

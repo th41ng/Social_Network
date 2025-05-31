@@ -19,7 +19,7 @@ public interface PostRepository {
 
     List<Comment> getCommentsByPostId(int postId);
 
-    long countPosts(Map<String, String> params); // Cập nhật với params phân trang
+    long countPosts(Map<String, String> params);
 
     int countPostsCreatedToday();
 }

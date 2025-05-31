@@ -10,8 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Repository Implementation for GroupMembers
@@ -30,7 +28,7 @@ public class GroupMemberRepositoryImpl implements GroupMembersRepository {
 
         if (params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
-            query.setMaxResults(10); // Số bản ghi mỗi trang
+            query.setMaxResults(10); 
             query.setFirstResult((page - 1) * 10);
         }
 

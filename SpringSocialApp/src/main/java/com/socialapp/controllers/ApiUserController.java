@@ -7,7 +7,6 @@ import com.socialapp.pojo.Post;
 import com.socialapp.pojo.User;
 import com.socialapp.service.EmailService;
 import com.socialapp.service.PostApiService;
-import com.socialapp.service.PostService;
 import com.socialapp.service.UserService;
 import com.socialapp.utils.JwtUtils;
 import java.security.Principal;
@@ -228,7 +227,7 @@ public class ApiUserController {
                 }
             }
 
-            // Cập nhật ảnh bìa nếu có
+            // Cập nhật ảnh bìa (nếu có)
             if (coverImage != null && !coverImage.isEmpty()) {
                 try {
                     Map<String, Object> coverResult = cloudinary.uploader().upload(

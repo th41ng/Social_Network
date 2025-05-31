@@ -39,19 +39,19 @@ public class EventRepositoryImpl implements EventRepository {
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Filter by event title
+           
             String title = params.get("title");
             if (title != null && !title.isEmpty()) {
                 predicates.add(b.like(root.get("title"), String.format("%%%s%%", title)));
             }
 
-            // Add other filters as necessary
+           
             q.where(predicates.toArray(Predicate[]::new));
         }
 
         Query query = s.createQuery(q);
 
-        // Pagination
+       
         if (params != null && params.containsKey("page")) {
             int page = params != null && params.containsKey("page") ? Integer.parseInt(params.get("page")) : 1;
             query.setFirstResult((page - 1) * PAGE_SIZE);
@@ -71,13 +71,13 @@ public class EventRepositoryImpl implements EventRepository {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // Subquery kiểm tra sự kiện chưa có trong event_notifications
+      
         Subquery<Long> subQuery = q.subquery(Long.class);
         Root<EventNotification> subRoot = subQuery.from(EventNotification.class);
         subQuery.select(b.count(subRoot)).where(b.equal(subRoot.get("event").get("event_id"), root.get("event_id")));
         predicates.add(b.equal(subQuery, 0L));
 
-        // Thêm điều kiện lọc (nếu cần)
+       
         if (params != null) {
             String title = params.get("title");
             if (title != null && !title.isEmpty()) {
@@ -94,7 +94,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         Query query = s.createQuery(q);
 
-        // Phân trang (nếu cần)
+       
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setMaxResults(PAGE_SIZE);
@@ -114,9 +114,9 @@ public class EventRepositoryImpl implements EventRepository {
     public Event addOrUpdateEvent(Event event) {
         Session s = this.factory.getObject().getCurrentSession();
         if (event.getEvent_id() == null) {
-            s.persist(event); // Insert if it's a new event
+            s.persist(event); 
         } else {
-            s.merge(event); // Update if the event already exists
+            s.merge(event); 
         }
         return event;
     }

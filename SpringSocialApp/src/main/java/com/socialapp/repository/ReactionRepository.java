@@ -34,7 +34,6 @@ public interface ReactionRepository {
 
     Map<String, Long> countReactionsByCommentId(int commentId);
 
-    // Phương thức mới để tìm reaction cụ thể
     Optional<Reaction> findByUserAndPost(User user, Post post);
 
     Optional<Reaction> findByUserAndComment(User user, Comment comment);

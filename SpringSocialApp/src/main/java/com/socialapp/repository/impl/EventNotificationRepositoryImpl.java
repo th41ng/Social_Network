@@ -6,7 +6,6 @@ import com.socialapp.repository.EventNotificationRepository;
 import org.hibernate.query.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +40,7 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                 query.setParameter("title", "%" + params.get("title") + "%");
             }
         }
-// Phân trang
+
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setFirstResult((page - 1) * PAGE_SIZE);
@@ -61,9 +59,9 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
     public EventNotification addOrUpdateNotification(EventNotification notification) {
         Session session = this.factory.getObject().getCurrentSession();
         if (notification.getNotificationId() == null) {
-            session.persist(notification);  // Insert đối tượng mới
+            session.persist(notification);
         } else {
-            session.merge(notification);  // Update đối tượng hiện tại
+            session.merge(notification);
         }
         return notification;
     }
@@ -73,11 +71,8 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         Session s = this.factory.getObject().getCurrentSession();
         EventNotification notification = this.getNotificationById(id);
         if (notification != null) {
-            // Soft delete by setting the isDeleted flag to true
-            //notification.setIsDeleted(true);
-            //s.merge(notification);
-            //Xóa cứng
-            s.delete(notification);  // Xóa cứng bản ghi
+
+            s.delete(notification);
 
         }
     }
@@ -87,7 +82,6 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
         Session session = this.factory.getObject().getCurrentSession();
         Query<EventNotification> query = session.getNamedQuery("Notis.findForUser");
 
-        // Get the user's group IDs
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Integer> groupQuery = builder.createQuery(Integer.class);
         Root<GroupMembers> groupRoot = groupQuery.from(GroupMembers.class);
@@ -95,12 +89,9 @@ public class EventNotificationRepositoryImpl implements EventNotificationReposit
                 .where(builder.equal(groupRoot.get("userId"), userId));
         List<Integer> userGroupIds = session.createQuery(groupQuery).getResultList();
 
-        // Set query parameters
         query.setParameter("userId", userId);
-        query.setParameter("groupIds", userGroupIds.isEmpty() ? List.of(-1) : userGroupIds); 
-       
+        query.setParameter("groupIds", userGroupIds.isEmpty() ? List.of(-1) : userGroupIds);
 
-        // Apply pagination if needed
         if (params != null && params.containsKey("page")) {
             int page = Integer.parseInt(params.get("page"));
             query.setFirstResult((page - 1) * PAGE_SIZE);

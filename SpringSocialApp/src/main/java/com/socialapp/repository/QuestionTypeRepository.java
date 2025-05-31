@@ -12,9 +12,8 @@ import java.util.List;
  * @author DELL G15
  */
 public interface QuestionTypeRepository {
-    
+
     List<QuestionType> findAll();
 
-   
     QuestionType findById(int typeId);
 }

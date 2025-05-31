@@ -84,7 +84,7 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
     @Override
     public List<PeriodicSummaryStats> getAllPeriodicSummaries() {
         List<PeriodicSummaryStats> list = periodicStatsRepo.getAllPeriodicStats();
-        logger.info("📊 Periodic stats count: {}", list.size());
+        logger.info(" Periodic stats count: {}", list.size());
         return list;
     }
 
@@ -97,9 +97,9 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
         int prevMonthValue = previousMonthPeriod.getMonthValue();
         int prevMonthYear = previousMonthPeriod.getYear();
 
-        // Luôn tính toán dữ liệu cho kỳ tháng trước
+        //  tính toán dữ liệu cho kỳ tháng trước
         LocalDateTime startOfPrevMonth = previousMonthPeriod.atDay(1).atStartOfDay();
-        // Ngày đầu tiên của tháng hiện tại (để làm mốc cuối cho tháng trước)
+        // Ngày đầu tiên của tháng hiện tại 
         LocalDateTime endOfPrevMonthExclusive = YearMonth.from(now).atDay(1).atStartOfDay();
 
         Long newUsersLastMonth = statsRepo.sumNewUsersByDateRange(startOfPrevMonth, endOfPrevMonthExclusive);
@@ -113,14 +113,15 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
                 monthlySummary = new PeriodicSummaryStats();
                 monthlySummary.setSummaryYear(prevMonthYear);
                 monthlySummary.setSummaryMonth(prevMonthValue);
-                monthlySummary.setSummaryQuarter(null); // Cho monthly thì quarter là null
+                monthlySummary.setSummaryQuarter(null);
+                monthlySummary.setSummaryQuarter(null);
                 monthlySummary.setPeriodType(PeriodType.monthly);
                 actionType = "CREATING";
             }
 
             monthlySummary.setNewUsersCount(newUsersLastMonth.intValue());
             monthlySummary.setNewPostsCount(newPostsLastMonth.intValue());
-            monthlySummary.setCalculatedAt(now); // Luôn cập nhật thời điểm tính toán
+            monthlySummary.setCalculatedAt(now);
 
             periodicStatsRepo.save(monthlySummary);
             logger.info("{} monthly summary for {}: Users={}, Posts={}", actionType, previousMonthPeriod, newUsersLastMonth, newPostsLastMonth);
@@ -148,7 +149,7 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
 
         // Tính toán dữ liệu cho quý trước
         LocalDate startOfPrevQuarterDate = LocalDate.of(prevQuarterYear, (prevQuarterValue - 1) * 3 + 1, 1);
-        // Ngày đầu tiên của quý hiện tại (làm mốc cuối cho quý trước)
+        // Ngày đầu tiên của quý hiện tại 
         LocalDate startOfCurrentQuarterDate = LocalDate.of(currentYearForQuarter, (currentQuarterValue - 1) * 3 + 1, 1);
 
         LocalDateTime startOfPrevQuarterTime = startOfPrevQuarterDate.atStartOfDay();
@@ -163,7 +164,7 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
             if (quarterlySummary == null) {
                 quarterlySummary = new PeriodicSummaryStats();
                 quarterlySummary.setSummaryYear(prevQuarterYear);
-                quarterlySummary.setSummaryMonth(null); // Cho quarterly thì month là null
+                quarterlySummary.setSummaryMonth(null);
                 quarterlySummary.setSummaryQuarter(prevQuarterValue);
                 quarterlySummary.setPeriodType(PeriodType.quarterly);
                 actionType = "CREATING";
@@ -179,13 +180,12 @@ public class PlatformStatsServiceImpl implements PlatformStatsService {
             logger.warn("No daily data available to generate/update quarterly summary for {}", prevQuarterId);
         }
 
-
         // --- YEARLY ---
         int prevYearValue = now.getYear() - 1; // Năm trước đó
 
         // Tính toán dữ liệu cho năm trước
         LocalDateTime startOfPrevYear = LocalDateTime.of(prevYearValue, 1, 1, 0, 0);
-        // Ngày đầu tiên của năm hiện tại (làm mốc cuối cho năm trước)
+        // Ngày đầu tiên của năm hiện tại 
         LocalDateTime endOfPrevYearExclusive = LocalDateTime.of(now.getYear(), 1, 1, 0, 0);
 
         Long newUsersLastYear = statsRepo.sumNewUsersByDateRange(startOfPrevYear, endOfPrevYearExclusive);

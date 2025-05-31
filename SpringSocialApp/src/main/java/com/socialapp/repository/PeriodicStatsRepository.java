@@ -18,5 +18,5 @@ public interface PeriodicStatsRepository {
 
     PeriodicSummaryStats findByPeriod(int year, Integer month, Integer quarter, PeriodType periodType);
 
-    void save(PeriodicSummaryStats summary); // Thêm phương thức save
+    void save(PeriodicSummaryStats summary);
 }
